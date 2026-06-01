@@ -34,6 +34,8 @@ The mentor design emphasizes:
 - Scaffold fading: "Can you take the next step before I give another hint?"
 - Reflection and transfer: "What will you change next time?"
 
+The detailed instructional design rules are documented in [`INSTRUCTIONAL_DESIGN_PRINCIPLES.md`](INSTRUCTIONAL_DESIGN_PRINCIPLES.md). The development rationale and evidence register are documented in [`DEVELOPMENT_LOG.md`](DEVELOPMENT_LOG.md).
+
 ## Mentor Experience
 
 The mentor, Marin, has two research-facing modes:

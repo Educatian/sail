@@ -4,7 +4,9 @@ SAIL is a research prototype for college and graduate students who need help man
 
 Live prototype: https://sail-dia.pages.dev  
 Project concept: [`PROJECT_CONCEPT.md`](PROJECT_CONCEPT.md)  
-Architecture: [`ARCHITECTURE.md`](ARCHITECTURE.md)
+Architecture: [`ARCHITECTURE.md`](ARCHITECTURE.md)  
+Development log and evidence: [`DEVELOPMENT_LOG.md`](DEVELOPMENT_LOG.md)  
+Instructional design principles: [`INSTRUCTIONAL_DESIGN_PRINCIPLES.md`](INSTRUCTIONAL_DESIGN_PRINCIPLES.md)
 
 SAIL is a build artifact for the KPIDT research line on metacognitive prompting, help-seeking quality, judgment-of-learning calibration, and self-regulated AI tutoring.
 
@@ -91,6 +93,8 @@ sail/
   screenshots/  Key product screens
   ARCHITECTURE.md
   BENCHMARKING.md
+  DEVELOPMENT_LOG.md
+  INSTRUCTIONAL_DESIGN_PRINCIPLES.md
   PROJECT_CONCEPT.md
 ```
 

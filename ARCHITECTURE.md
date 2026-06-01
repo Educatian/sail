@@ -57,7 +57,7 @@ interface StudySession {
 - JOL explicitly NOT collected in-app.
 
 ## Strengthened 5-layer architecture (2026-05-31 brainstorming)
-1. **Trace layer**: dialogue, goals, strategies, JOL prediction, task performance, help-seeking labels, time/session logs, optional place/context category, opt-in spatial sensor trace, foreground live-tracking summary, reflection responses.
+1. **Trace layer**: dialogue, goals, strategies, external JOL linkage/placeholder, task performance, help-seeking labels, time/session logs, optional place/context category, opt-in spatial sensor trace, foreground live-tracking summary, reflection responses.
 2. **SRL parser layer**: detects planning absence, monitoring risk, executive help-seeking, persistence/avoidance, and context-specific strategy patterns.
 3. **Open learner model layer**: exposes calibration state, scaffold level, hint trend, strategy efficacy, spacing, and context patterns; learners can correct the model during reflection.
 4. **Pedagogical policy layer**: chooses `abstain`, `prompt_monitoring`, `prompt_control`, `prompt_reflection`, `fade`, or `escalate`.

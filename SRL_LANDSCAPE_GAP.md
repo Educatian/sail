@@ -36,7 +36,7 @@ Method: Understand-Anything/agent profiling of 6 cloned codebases (uniform archi
 | Scaffolding type | agents | mentor | agents | agentic | Socratic | none | hint/viz | none | **Socratic+graded hints** |
 | Adaptive **fading** | ✓ | ~ | ~ | ✗ | ✗ | ✗ | ✗ | ✗ | **~ (competence-based)** |
 | Learner-state detection | ✓ sensors | ~ | ~ | ~ | ~ rules | ✗ | ✗ | ✗ | **~ text-only (RQ13)** |
-| JOL/calibration | ~ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | **✓ in-app** |
+| JOL/calibration | ~ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | **~ externalized for study integrity** |
 | Help-seeking shaping (exec→instrumental) | ~ | ✗ | ✗ | ✗ | ~ | ✗ | ✓(EduChat) | ✗ | **✓** |
 | Memory / learner model | ✓ | ✓ | ~ | ✓✓ (3-layer) | ✓ aspect | ✗ | ✗ | ~ | ~ (model + recent refl) |
 | RAG / knowledge grounding | n/a | n/a | ~ | ✓ | ✓ repo | ✗ | ~ | ✗ | **✗** |
@@ -47,9 +47,9 @@ Method: Understand-Anything/agent profiling of 6 cloned codebases (uniform archi
 | Affect regulation | ~ | ✓ | ~ | ✗ | ~ | ✗ | ✗ | ~(Ebb) | ✗ |
 
 ## 3. Where SAIL leads (novelty, already built)
-1. **Self-instrumenting research platform** — manipulable condition × scaffoldStyle × scaffoldTiming in one deployed app, per-turn LABEL+STATE logging, JOL calibration, JSON/CSV export. No other system here is a deployable SRL-research instrument.
+1. **Self-instrumenting research platform** — manipulable condition × scaffoldStyle × scaffoldTiming in one deployed app, per-turn LABEL+STATE logging, external JOL linkage, and JSON/CSV export. No other system here is a deployable SRL-research instrument.
 2. **Closed SRL loop across sessions** (reflection→carry-forward→next forethought). Classic ITS + commercial apps are within-session.
-3. **JOL calibration in-app** (|confidence−performance|) — essentially unique in the set.
+3. **Calibration-aware study design** — JOL is deliberately externalized to Canvas/LMS for the intended KPIDT study so the mentor does not contaminate calibration judgments.
 4. **Coach-not-answer + graded hints + help-seeking instrumentation** — directly answers the over-help critique most LLM tutors fail.
 5. **Text-only contingent state detection (RQ13)** — MetaTutor needed eye-tracking/physio; SAIL infers from messages.
 6. **Production shape** — serverless (Pages+Workers+D1), multiuser auth, email-scaffold reminders, cron.

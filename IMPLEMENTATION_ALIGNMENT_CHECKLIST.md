@@ -3,7 +3,7 @@
 Use this file to audit whether the KPIDT brainstorming claims are concretely implemented in the app.
 
 ## 1. Trace-informed SRL coach, not generic chatbot
-- Evidence in code: session traces include task type, goals, strategies, JOL prediction, performance, context trace, reflection, and learner correction.
+- Evidence in code: session traces include task type, goals, strategies, external JOL linkage/placeholder, performance, context trace, reflection, and learner correction.
 - Evidence in logs: `session_started`, `strategy_selected`, `state_detected`, `help_seeking_classified`, `policy_decided`, `scaffold_fidelity`, `context_corrected`, `reflection_submitted`.
 - Evidence in UI: Goal Studio, Active Session policy panel, Reflection correction fields, Dashboard research panels.
 
