@@ -6,20 +6,15 @@ export function Screen({ children, pad = true }: { children: ReactNode; pad?: bo
   return <div className={`min-h-full bg-canvas ${pad ? 'pb-28' : ''}`}>{children}</div>;
 }
 
-/** Swiss top bar: SAIL / NN section marker + big bold title + rule. */
-export function TopBar({ section, title, left, right }: { section?: string; title?: string; left?: ReactNode; right?: ReactNode }) {
+/** Cozy top bar: gentle title, no section markers. */
+export function TopBar({ title, left, right }: { section?: string; title?: string; left?: ReactNode; right?: ReactNode }) {
   return (
     <div className="px-5 pt-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-baseline gap-2">
-          {left}
-          <span className="font-mono text-xs uppercase tracking-[0.25em]">SAIL</span>
-          {section && <span className="accent font-mono text-xs uppercase tracking-[0.25em]">/ {section}</span>}
-        </div>
+        <div className="flex items-center gap-2">{left}{!left && <span className="font-display text-base font-bold text-accent">SAIL</span>}</div>
         {right}
       </div>
-      {title && <h1 className="font-display mt-4 text-4xl font-bold tracking-tight">{title}</h1>}
-      {title && <div className="rule mt-4 h-px w-full" />}
+      {title && <h1 className="font-display mt-4 text-[1.7rem] font-bold tracking-tight">{title}</h1>}
     </div>
   );
 }
@@ -29,7 +24,9 @@ export function Rule({ bold = false, className = '' }: { bold?: boolean; classNa
 }
 
 export function Label({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`label-mono ${className}`}>{children}</div>;
+  // minimalism: drop the decorative leading "/ " editorial prefix wherever it's used
+  const clean = typeof children === 'string' ? children.replace(/^\/\s*/, '') : children;
+  return <div className={`label-mono ${className}`}>{clean}</div>;
 }
 
 /** Oversized bold numeral + mono caption. */
@@ -69,12 +66,12 @@ export function TextArea({ label, ...props }: { label: string } & React.Textarea
 
 export function PillGroup<T extends string>({ options, value, onChange }: { options: { value: T; label: string }[]; value: T; onChange: (v: T) => void }) {
   return (
-    <div className="flex overflow-hidden rounded-md border border-ink/25">
-      {options.map((o, i) => (
+    <div className="flex gap-1.5 rounded-full border border-ink/12 bg-surface p-1">
+      {options.map((o) => (
         <button
           key={o.value}
           onClick={() => onChange(o.value)}
-          className={`flex-1 py-2.5 text-sm transition-colors ${i > 0 ? 'border-l border-ink/20' : ''} ${value === o.value ? 'bg-ink font-semibold text-canvas' : 'text-ink/55'}`}
+          className={`flex-1 rounded-full py-2.5 text-sm transition-colors ${value === o.value ? 'bg-accent font-semibold text-white' : 'text-ink/55'}`}
         >
           {o.label}
         </button>
@@ -99,7 +96,7 @@ export function Tag({ active, children, onClick }: { active?: boolean; children:
   return (
     <button
       onClick={onClick}
-      className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${active ? 'border-accent bg-accent/8 text-accent' : 'border-black/15 text-ink/55'}`}
+      className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${active ? 'border-accent bg-accent text-white' : 'border-ink/15 bg-surface text-ink/65'}`}
     >
       {children}
     </button>
@@ -113,7 +110,7 @@ export function AccentButton({ children, onClick, disabled, full = true }: { chi
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       onClick={onClick}
       disabled={disabled}
-      className={`btn-accent py-4 text-base tracking-wide uppercase ${full ? 'w-full' : 'px-8'} disabled:opacity-40`}
+      className={`btn-accent py-3.5 text-base ${full ? 'w-full' : 'px-8'} disabled:opacity-40`}
     >
       {children}
     </motion.button>
@@ -122,7 +119,7 @@ export function AccentButton({ children, onClick, disabled, full = true }: { chi
 
 export function GhostButton({ children, onClick }: { children: ReactNode; onClick?: () => void }) {
   return (
-    <motion.button whileTap={{ scale: 0.98 }} onClick={onClick} className="btn-ghost w-full py-4 text-base uppercase tracking-wide">
+    <motion.button whileTap={{ scale: 0.98 }} onClick={onClick} className="btn-ghost w-full py-3.5 text-base">
       {children}
     </motion.button>
   );

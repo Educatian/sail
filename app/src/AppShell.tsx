@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
 import { Landing } from './routes/Landing';
 import { getStudent } from './lib/api';
+import { MarinChat } from './components/MarinChat';
+import { MarinMark } from './components/MarinMark';
 
 function Icon({ d, active }: { d: string; active?: boolean }) {
   return (
@@ -22,16 +24,16 @@ function BottomTab() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.08] bg-canvas/85 backdrop-blur-xl"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-ink/10 bg-canvas/90 backdrop-blur-xl"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex">
         {TABS.map((t) => {
           const active = path === t.to;
           return (
-            <button key={t.to} onClick={() => navigate({ to: t.to })} className={`flex flex-1 flex-col items-center gap-1.5 py-3 transition-colors ${active ? 'text-accent' : 'text-ink/40'}`}>
+            <button key={t.to} onClick={() => navigate({ to: t.to })} className={`flex flex-1 flex-col items-center gap-1.5 py-3 transition-colors ${active ? 'text-accent' : 'text-ink/45'}`}>
               <Icon d={t.d} active={active} />
-              <span className="font-mono text-[9px] uppercase tracking-[0.2em]">{t.label}</span>
+              <span className="text-[10px] font-semibold tracking-wide">{t.label}</span>
             </button>
           );
         })}
@@ -42,6 +44,7 @@ function BottomTab() {
 
 export function RootLayout() {
   const [authed, setAuthed] = useState(!!getStudent());
+  const [askOpen, setAskOpen] = useState(false);
   const path = useRouterState({ select: (s) => s.location.pathname });
   const hideTabs = path.startsWith('/study/active') || path.startsWith('/study/reflect');
   const allowSharedSessionLink = hideTabs;
@@ -49,7 +52,18 @@ export function RootLayout() {
   return (
     <>
       <Outlet />
+      {authed && !hideTabs && (
+        <button
+          onClick={() => setAskOpen(true)}
+          aria-label="Ask Marin"
+          className="fixed right-4 z-40 grid h-14 w-14 place-items-center rounded-full bg-accent text-canvas shadow-lg shadow-accent/30 transition-transform active:scale-95"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom) + 4.6rem)' }}
+        >
+          <MarinMark className="h-7 w-7" />
+        </button>
+      )}
       {authed && !hideTabs && <BottomTab />}
+      {askOpen && <MarinChat mode="ask" onClose={() => setAskOpen(false)} />}
     </>
   );
 }

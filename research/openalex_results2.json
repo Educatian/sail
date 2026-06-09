@@ -1,0 +1,837 @@
+{
+  "A_srl": {
+    "count": 21258,
+    "count_2024plus": 6156,
+    "top_cited": [
+      {
+        "title": "Motivational and self-regulated learning components of classroom academic performance.",
+        "year": 1990,
+        "cited": 7748
+      },
+      {
+        "title": "Formative assessment and self‐regulated learning: a model and seven principles of good feedback practice",
+        "year": 2006,
+        "cited": 5448
+      },
+      {
+        "title": "The Role of Goal Orientation in Self-Regulated Learning",
+        "year": 2000,
+        "cited": 4881
+      },
+      {
+        "title": "Handbook of Competence and Motivation",
+        "year": 2013,
+        "cited": 4686
+      },
+      {
+        "title": "Handbook of Self-Regulation",
+        "year": 2000,
+        "cited": 4441
+      },
+      {
+        "title": "Self-Efficacy: An Essential Motive to Learn",
+        "year": 2000,
+        "cited": 4076
+      }
+    ],
+    "recent": [
+      {
+        "title": "Beware of metacognitive laziness: Effects of generative artificial intelligence on learning motivation, processes, and performance",
+        "year": 2024,
+        "cited": 383
+      },
+      {
+        "title": "A scoping review on how generative artificial intelligence transforms assessment in higher education",
+        "year": 2024,
+        "cited": 270
+      },
+      {
+        "title": "Empowering student self‐regulated learning and science education through <scp>ChatGPT</scp> : A pioneering pilot study",
+        "year": 2024,
+        "cited": 252
+      },
+      {
+        "title": "Empowering ChatGPT with guidance mechanism in blended learning: effect of self-regulated learning, higher-order thinking skills, and knowledge construction",
+        "year": 2024,
+        "cited": 189
+      }
+    ]
+  },
+  "B_srl_mobile": {
+    "count": 121,
+    "count_2024plus": 34,
+    "top_cited": [
+      {
+        "title": "Self-regulated mobile game-based English learning in a virtual reality environment",
+        "year": 2020,
+        "cited": 267
+      },
+      {
+        "title": "Time will tell: The role of mobile learning analytics in self-regulated learning",
+        "year": 2015,
+        "cited": 240
+      },
+      {
+        "title": "Understanding mobile learning from the perspective of self‐regulated learning",
+        "year": 2011,
+        "cited": 200
+      },
+      {
+        "title": "Recognizing and measuring self-regulated learning in a mobile learning environment",
+        "year": 2011,
+        "cited": 144
+      },
+      {
+        "title": "An English vocabulary learning app with self-regulated learning mechanism to improve learning performance and motivation",
+        "year": 2018,
+        "cited": 120
+      },
+      {
+        "title": "The Development and Implementation of Scaffolding-Based Self-Regulated Learning System for e/m-Learning",
+        "year": 2010,
+        "cited": 108
+      }
+    ],
+    "recent": [
+      {
+        "title": "The Role of Mobile Phones in Facilitating Business Education During the Transition to New Normal Learning Models",
+        "year": 2024,
+        "cited": 6
+      },
+      {
+        "title": "An automated self-regulation advising mechanism in mobile learning environment to promote students' learning achievement, self-regulated awareness and approaches to science learning",
+        "year": 2024,
+        "cited": 5
+      },
+      {
+        "title": "Impact of Mobile Learning on Self-Regulated Learning Abilities of Higher Education Students",
+        "year": 2024,
+        "cited": 4
+      },
+      {
+        "title": "Enhancing language proficiency through mobile extensive listening and podcasting: A multifaceted approach to metacognition and critical thinking",
+        "year": 2024,
+        "cited": 4
+      }
+    ]
+  },
+  "C_context_aware_learning": {
+    "count": 412,
+    "count_2024plus": 140,
+    "top_cited": [
+      {
+        "title": "Using ubiquitous games in an English listening and speaking course: Impact on learning outcomes and motivation",
+        "year": 2010,
+        "cited": 548
+      },
+      {
+        "title": "Semi-Supervised Locality Preserving Dense Graph Neural Network With ARMA Filters and Context-Aware Learning for Hyperspectral Image Classification",
+        "year": 2021,
+        "cited": 158
+      },
+      {
+        "title": "Multiscale Graph Sample and Aggregate Network With Context-Aware Learning for Hyperspectral Image Classification",
+        "year": 2021,
+        "cited": 129
+      },
+      {
+        "title": "Context-aware Learning for Sentence-level Sentiment Analysis with Posterior Regularization",
+        "year": 2014,
+        "cited": 126
+      },
+      {
+        "title": "Mobile-based assessment: A literature review of publications in major referred journals from 2009 to 2018",
+        "year": 2018,
+        "cited": 125
+      },
+      {
+        "title": "Science Spots AR: a platform for science learning games with augmented reality",
+        "year": 2016,
+        "cited": 124
+      }
+    ],
+    "recent": [
+      {
+        "title": "An Introduction to Generative AI Tools for Education 2030",
+        "year": 2024,
+        "cited": 47
+      },
+      {
+        "title": "Automated site planning using CAIN-GAN model",
+        "year": 2024,
+        "cited": 37
+      },
+      {
+        "title": "A robust hybrid approach with product context-aware learning and explainable AI for sentiment analysis in Amazon user reviews",
+        "year": 2024,
+        "cited": 34
+      },
+      {
+        "title": "Toward an AI Knowledge Assistant for Context-Aware Learning Experiences in Software Capstone Project Development",
+        "year": 2024,
+        "cited": 29
+      }
+    ]
+  },
+  "D_ubiquitous_learning": {
+    "count": 3095,
+    "count_2024plus": 331,
+    "top_cited": [
+      {
+        "title": "Augmented Reality: An Overview and Five Directions for AR in Education",
+        "year": 2011,
+        "cited": 992
+      },
+      {
+        "title": "A Study of the Effects of Digital Learning on Learning Motivation and Learning Outcome",
+        "year": 2017,
+        "cited": 792
+      },
+      {
+        "title": "A pedagogical framework for mobile learning: Categorizing educational applications of mobile technologies into four types",
+        "year": 2011,
+        "cited": 770
+      },
+      {
+        "title": "A research framework of smart education",
+        "year": 2016,
+        "cited": 649
+      },
+      {
+        "title": "Research trends in mobile and ubiquitous learning: a review of publications in selected journals from 2001 to 2010",
+        "year": 2011,
+        "cited": 606
+      },
+      {
+        "title": "Transforming American Education: Learning Powered by Technology",
+        "year": 2011,
+        "cited": 593
+      }
+    ],
+    "recent": [
+      {
+        "title": "EgoExoLearn: A Dataset for Bridging Asynchronous Ego- and Exo-centric View of Procedural Activities in Real World",
+        "year": 2024,
+        "cited": 30
+      },
+      {
+        "title": "A collaborative professional development and its impact on teachers' ability to foster higher order thinking",
+        "year": 2024,
+        "cited": 27
+      },
+      {
+        "title": "Transition-aware human activity recognition using an ensemble deep learning framework",
+        "year": 2024,
+        "cited": 23
+      },
+      {
+        "title": "The Evolution of E-Learning Platforms: From U-Learning to AI-Driven Adaptive Learning Systems",
+        "year": 2024,
+        "cited": 17
+      }
+    ]
+  },
+  "E_genai_srl": {
+    "count": 478,
+    "count_2024plus": 467,
+    "top_cited": [
+      {
+        "title": "Beware of metacognitive laziness: Effects of generative artificial intelligence on learning motivation, processes, and performance",
+        "year": 2024,
+        "cited": 383
+      },
+      {
+        "title": "Educational Design Principles of Using AI Chatbot That Supports Self-Regulated Learning in Education: Goal Setting, Feedback, and Personalization",
+        "year": 2023,
+        "cited": 280
+      },
+      {
+        "title": "Empowering student self‐regulated learning and science education through <scp>ChatGPT</scp> : A pioneering pilot study",
+        "year": 2024,
+        "cited": 252
+      },
+      {
+        "title": "Empowering ChatGPT with guidance mechanism in blended learning: effect of self-regulated learning, higher-order thinking skills, and knowledge construction",
+        "year": 2024,
+        "cited": 189
+      },
+      {
+        "title": "Extended TAM based acceptance of AI-Powered ChatGPT for supporting metacognitive self-regulated learning in education: A mixed-methods study",
+        "year": 2024,
+        "cited": 170
+      },
+      {
+        "title": "A classification tool to foster self-regulated learning with generative artificial intelligence by applying self-determination theory: a case of ChatGPT",
+        "year": 2024,
+        "cited": 155
+      }
+    ],
+    "recent": [
+      {
+        "title": "Beware of metacognitive laziness: Effects of generative artificial intelligence on learning motivation, processes, and performance",
+        "year": 2024,
+        "cited": 383
+      },
+      {
+        "title": "Empowering student self‐regulated learning and science education through <scp>ChatGPT</scp> : A pioneering pilot study",
+        "year": 2024,
+        "cited": 252
+      },
+      {
+        "title": "Empowering ChatGPT with guidance mechanism in blended learning: effect of self-regulated learning, higher-order thinking skills, and knowledge construction",
+        "year": 2024,
+        "cited": 189
+      },
+      {
+        "title": "Extended TAM based acceptance of AI-Powered ChatGPT for supporting metacognitive self-regulated learning in education: A mixed-methods study",
+        "year": 2024,
+        "cited": 170
+      }
+    ]
+  },
+  "F_ai_tutor_metacog": {
+    "count": 87,
+    "count_2024plus": 30,
+    "top_cited": [
+      {
+        "title": "Handbook of Metacognition in Education",
+        "year": 2009,
+        "cited": 1475
+      },
+      {
+        "title": "Exploring the Assistance Dilemma in Experiments with Cognitive Tutors",
+        "year": 2007,
+        "cited": 585
+      },
+      {
+        "title": "Learning Strategies and Transfer in the Domain of Programming",
+        "year": 1994,
+        "cited": 253
+      },
+      {
+        "title": "Student Learning Benefits of a Mixed-Reality Teacher Awareness Tool in AI-Enhanced Classrooms",
+        "year": 2018,
+        "cited": 208
+      },
+      {
+        "title": "Lessons Learned and Future Directions of MetaTutor: Leveraging Multichannel Data to Scaffold Self-Regulated Learning With an Intelligent Tutoring System",
+        "year": 2022,
+        "cited": 181
+      },
+      {
+        "title": "Data mining and education",
+        "year": 2015,
+        "cited": 141
+      }
+    ],
+    "recent": [
+      {
+        "title": "Hybrid intelligence: Human– <scp>AI</scp> coevolution and learning",
+        "year": 2025,
+        "cited": 37
+      },
+      {
+        "title": "Mapping the Scaffolding of Metacognition and Learning by AI Tools in STEM Classrooms: A Bibliometric–Systematic Review Approach (2005–2025)",
+        "year": 2025,
+        "cited": 9
+      },
+      {
+        "title": "Enhancing Anatomy Education Throu€gh Flipped Classroom and Adaptive Learning A Pilot Project on Liver Anatomy",
+        "year": 2024,
+        "cited": 4
+      },
+      {
+        "title": "Instructional design for tutoring on interactive platforms: creating educational interventions overcoming the digital gap",
+        "year": 2025,
+        "cited": 4
+      }
+    ]
+  },
+  "G_help_seeking_ai": {
+    "count": 251,
+    "count_2024plus": 193,
+    "top_cited": [
+      {
+        "title": "Toward Meta-cognitive Tutoring: A Model of Help Seeking with a Cognitive Tutor",
+        "year": 2006,
+        "cited": 393
+      },
+      {
+        "title": "Improving students’ help-seeking skills using metacognitive feedback in an intelligent tutoring system",
+        "year": 2010,
+        "cited": 362
+      },
+      {
+        "title": "Limitations of Student Control: Do Students Know when They Need Help?",
+        "year": 2000,
+        "cited": 232
+      },
+      {
+        "title": "Help Helps, But Only So Much: Research on Help Seeking with Intelligent Tutoring Systems",
+        "year": 2016,
+        "cited": 225
+      },
+      {
+        "title": "Examining self-efficacy during learning: variability and relations to behavior, performance, and learning",
+        "year": 2014,
+        "cited": 174
+      },
+      {
+        "title": "Designing for metacognition—applying cognitive tutor principles to the tutoring of help seeking",
+        "year": 2007,
+        "cited": 117
+      }
+    ],
+    "recent": [
+      {
+        "title": "An LLM-Driven Chatbot in Higher Education for Databases and Information Systems",
+        "year": 2024,
+        "cited": 103
+      },
+      {
+        "title": "The Effects of Generative AI on Computing Students’ Help-Seeking Preferences",
+        "year": 2024,
+        "cited": 81
+      },
+      {
+        "title": "Unpacking help-seeking process through multimodal learning analytics: A comparative study of ChatGPT vs Human expert",
+        "year": 2024,
+        "cited": 59
+      },
+      {
+        "title": "Understanding young adults’ attitudes towards using AI chatbots for psychotherapy: The role of self-stigma",
+        "year": 2024,
+        "cited": 25
+      }
+    ]
+  },
+  "H_scaffold_fading": {
+    "count": 426,
+    "count_2024plus": 134,
+    "top_cited": [
+      {
+        "title": "Scaffolding in Teacher–Student Interaction: A Decade of Research",
+        "year": 2010,
+        "cited": 1692
+      },
+      {
+        "title": "Caveolin-1 Regulates Transforming Growth Factor (TGF)-β/SMAD Signaling through an Interaction with the TGF-β Type I Receptor",
+        "year": 2001,
+        "cited": 641
+      },
+      {
+        "title": "Cell-type and Tissue-specific Expression of Caveolin-2",
+        "year": 1997,
+        "cited": 526
+      },
+      {
+        "title": "Toward a Script Theory of Guidance in Computer-Supported Collaborative Learning",
+        "year": 2013,
+        "cited": 495
+      },
+      {
+        "title": "Software‐Realized Scaffolding to Facilitate Programming for Science Learning",
+        "year": 1994,
+        "cited": 320
+      },
+      {
+        "title": "Synthesizing Results From Empirical Research on Computer-Based Scaffolding in STEM Education",
+        "year": 2016,
+        "cited": 314
+      }
+    ],
+    "recent": [
+      {
+        "title": "The influence of scaffolding for computational thinking on cognitive load and problem-solving skills in collaborative programming",
+        "year": 2024,
+        "cited": 20
+      },
+      {
+        "title": "Exploring Problem-Solving Scaffolds in General Chemistry: A Systematic Review of Scaffolding Goals and Instructional Approaches",
+        "year": 2025,
+        "cited": 14
+      },
+      {
+        "title": "Using collaborative autoethnography to investigate mentoring relationships for novice engineering education researchers",
+        "year": 2024,
+        "cited": 11
+      },
+      {
+        "title": "Scaffolding for Inclusive Co-design: Supporting People with Cognitive and Learning Disabilities",
+        "year": 2024,
+        "cited": 8
+      }
+    ]
+  },
+  "I_calibration_srl": {
+    "count": 61,
+    "count_2024plus": 15,
+    "top_cited": [
+      {
+        "title": "A Theoretical Review of Winne and Hadwin’s Model of Self-Regulated Learning: New Perspectives and Directions",
+        "year": 2007,
+        "cited": 469
+      },
+      {
+        "title": "The Oxford Handbook of Metamemory",
+        "year": 2015,
+        "cited": 402
+      },
+      {
+        "title": "A macro-level analysis of SRL processes and their relations to the acquisition of a sophisticated mental model of a complex system",
+        "year": 2008,
+        "cited": 354
+      },
+      {
+        "title": "Educational Design Principles of Using AI Chatbot That Supports Self-Regulated Learning in Education: Goal Setting, Feedback, and Personalization",
+        "year": 2023,
+        "cited": 280
+      },
+      {
+        "title": "The effect of a human agent’s external regulation upon college students’ hypermedia learning",
+        "year": 2007,
+        "cited": 98
+      },
+      {
+        "title": "Effects of training self-assessment and using assessment standards on retrospective and prospective monitoring of problem solving",
+        "year": 2014,
+        "cited": 97
+      }
+    ],
+    "recent": [
+      {
+        "title": "The Relation Between Perceived Mental Effort, Monitoring Judgments, and Learning Outcomes: A Meta-Analysis",
+        "year": 2024,
+        "cited": 13
+      },
+      {
+        "title": "Self-regulated learning strategies in L1 and L2 reading",
+        "year": 2024,
+        "cited": 2
+      },
+      {
+        "title": "When two learners are better than one: using flashcards with a partner improves metacognitive accuracy",
+        "year": 2024,
+        "cited": 1
+      },
+      {
+        "title": "Self-explanation Prompts in STEM: Comparing Human and AI Metacognitive Accuracy",
+        "year": 2026,
+        "cited": 0
+      }
+    ]
+  },
+  "X1_spatial_srl": {
+    "count": 3,
+    "count_2024plus": 0,
+    "top_cited": [
+      {
+        "title": "Divergence in student and educator conceptual structures during auscultation training",
+        "year": 2013,
+        "cited": 17
+      },
+      {
+        "title": "The Effects of Seat Location-based Teaching Assistant Support System on the Awareness of Self-Regulated Learning and Learning Performance",
+        "year": 2019,
+        "cited": 1
+      },
+      {
+        "title": "Subject Index",
+        "year": 2023,
+        "cited": 0
+      }
+    ],
+    "recent": []
+  },
+  "X2_context_aware_srl": {
+    "count": 25,
+    "count_2024plus": 17,
+    "top_cited": [
+      {
+        "title": "A Self-Regulated Learning Approach: A Mobile Context-aware and Adaptive Learning Schedule (mCALS) Tool",
+        "year": 2008,
+        "cited": 34
+      },
+      {
+        "title": "Ambient e-Learning: a metacognitive approach",
+        "year": 2012,
+        "cited": 7
+      },
+      {
+        "title": "A MOBILE CONTEXT-AWARE FRAMEWORK FOR SUPPORTING SELF-REGULATED LEARNERS",
+        "year": 2009,
+        "cited": 5
+      },
+      {
+        "title": "Semantic Technologies for Socially-Enhanced Context-Aware Mobile Learning",
+        "year": 2008,
+        "cited": 5
+      },
+      {
+        "title": "A Multidimensional Evaluation Framework for Personal Learning Environments",
+        "year": 2014,
+        "cited": 3
+      },
+      {
+        "title": "Subtopic-specific heterogeneity in computer-based learning behaviors",
+        "year": 2024,
+        "cited": 3
+      }
+    ],
+    "recent": [
+      {
+        "title": "Subtopic-specific heterogeneity in computer-based learning behaviors",
+        "year": 2024,
+        "cited": 3
+      },
+      {
+        "title": "RETRACTED ARTICLE: CHATWELL: an AI-enabled adaptive tutoring system for improving mandarin composition skills in L2 students with learning difficulties",
+        "year": 2025,
+        "cited": 0
+      },
+      {
+        "title": "Design of AI-Powered Tool for Self-Regulation Support in Programming Education",
+        "year": 2025,
+        "cited": 0
+      },
+      {
+        "title": "What Students Ask, How a Generative AI Assistant Responds: Exploring Higher Education Students’ Dialogues on Learning Analytics Feedback",
+        "year": 2026,
+        "cited": 0
+      }
+    ]
+  },
+  "X3_study_location_srl": {
+    "count": 138,
+    "count_2024plus": 32,
+    "top_cited": [
+      {
+        "title": "Personalised and self regulated learning in the Web 2.0 era: International exemplars of innovative pedagogy using social software",
+        "year": 2010,
+        "cited": 914
+      },
+      {
+        "title": "Investigating grit and its relations with college students’ self-regulated learning and academic achievement",
+        "year": 2014,
+        "cited": 605
+      },
+      {
+        "title": "Online Technologies Self-Efficacy and Self-Regulated Learning as Predictors of Final Grade and Satisfaction in College-Level Online Courses",
+        "year": 2008,
+        "cited": 457
+      },
+      {
+        "title": "The Relationship Between Self-Regulation and Online Learning in a Blended Learning Context",
+        "year": 2004,
+        "cited": 403
+      },
+      {
+        "title": "Designing instructional systems — Decision-making in course planning and curriculum design",
+        "year": 1982,
+        "cited": 158
+      },
+      {
+        "title": "A thematic analysis of higher education students’ perceptions of online learning in Hong Kong under COVID-19: Challenges, strategies and support",
+        "year": 2021,
+        "cited": 157
+      }
+    ],
+    "recent": [
+      {
+        "title": "How Generative AI Influences Students’ Self-Regulated Learning and Critical Thinking Skills? A Systematic Review",
+        "year": 2025,
+        "cited": 72
+      },
+      {
+        "title": "Examining Student Characteristics, Self-Regulated Learning Strategies, and Their Perceived Effects on Satisfaction and Academic Performance in MOOCs",
+        "year": 2024,
+        "cited": 9
+      },
+      {
+        "title": "What drives the continuance intention of “Study with Me” virtual learning commons? A perspective from ECM-ISC",
+        "year": 2024,
+        "cited": 3
+      },
+      {
+        "title": "Transitioning from Other-Regulation to Self-Regulation in e-Learning Strategies Among Japanese EFL University Students",
+        "year": 2025,
+        "cited": 2
+      }
+    ]
+  },
+  "X4_genai_context_aware_tutor": {
+    "count": 86,
+    "count_2024plus": 85,
+    "top_cited": [
+      {
+        "title": "An Introduction to Generative AI Tools for Education 2030",
+        "year": 2024,
+        "cited": 47
+      },
+      {
+        "title": "Large language models for whole-learner support: opportunities and challenges",
+        "year": 2024,
+        "cited": 19
+      },
+      {
+        "title": "Intelligent Educational Agent for Education Support Using Long Language Models Through Langchain",
+        "year": 2024,
+        "cited": 13
+      },
+      {
+        "title": "How to Build an Adaptive AI Tutor for Any Course Using Knowledge Graph-Enhanced Retrieval-Augmented Generation (KG-RAG)",
+        "year": 2025,
+        "cited": 12
+      },
+      {
+        "title": "How to Build an Adaptive AI Tutor for Any Course Using Knowledge Graph-Enhanced Retrieval-Augmented Generation (KG-RAG)",
+        "year": 2023,
+        "cited": 11
+      },
+      {
+        "title": "SPL: A Socratic Playground for Learning Powered by Large Language Model",
+        "year": 2024,
+        "cited": 4
+      }
+    ],
+    "recent": [
+      {
+        "title": "An Introduction to Generative AI Tools for Education 2030",
+        "year": 2024,
+        "cited": 47
+      },
+      {
+        "title": "Large language models for whole-learner support: opportunities and challenges",
+        "year": 2024,
+        "cited": 19
+      },
+      {
+        "title": "Intelligent Educational Agent for Education Support Using Long Language Models Through Langchain",
+        "year": 2024,
+        "cited": 13
+      },
+      {
+        "title": "How to Build an Adaptive AI Tutor for Any Course Using Knowledge Graph-Enhanced Retrieval-Augmented Generation (KG-RAG)",
+        "year": 2025,
+        "cited": 12
+      }
+    ]
+  },
+  "X5_mobile_genai_srl": {
+    "count": 10,
+    "count_2024plus": 9,
+    "top_cited": [
+      {
+        "title": "Mobile-based artificial intelligence chatbot for self-regulated learning in a hybrid flipped classroom",
+        "year": 2025,
+        "cited": 16
+      },
+      {
+        "title": "Enhancing English Language Acquisition through ChatGPT: Use of Technology Acceptance Model in Linguistics",
+        "year": 2024,
+        "cited": 3
+      },
+      {
+        "title": "Nested Learning in Higher Education: Integrating Generative AI, Neuroimaging, and Multimodal Deep Learning for a Sustainable and Innovative Ecosystem",
+        "year": 2026,
+        "cited": 2
+      },
+      {
+        "title": "Nested Learning in Higher Education_Data",
+        "year": 2025,
+        "cited": 0
+      },
+      {
+        "title": "AI-Mediated Language Learning: Designing for Agency",
+        "year": 2026,
+        "cited": 0
+      },
+      {
+        "title": "Index",
+        "year": 2023,
+        "cited": 0
+      }
+    ],
+    "recent": [
+      {
+        "title": "Mobile-based artificial intelligence chatbot for self-regulated learning in a hybrid flipped classroom",
+        "year": 2025,
+        "cited": 16
+      },
+      {
+        "title": "Enhancing English Language Acquisition through ChatGPT: Use of Technology Acceptance Model in Linguistics",
+        "year": 2024,
+        "cited": 3
+      },
+      {
+        "title": "Nested Learning in Higher Education: Integrating Generative AI, Neuroimaging, and Multimodal Deep Learning for a Sustainable and Innovative Ecosystem",
+        "year": 2026,
+        "cited": 2
+      },
+      {
+        "title": "Nested Learning in Higher Education_Data",
+        "year": 2025,
+        "cited": 0
+      }
+    ]
+  },
+  "X6_spatial_genai_learning": {
+    "count": 0,
+    "count_2024plus": 0,
+    "top_cited": [],
+    "recent": []
+  },
+  "X7_context_aware_la_srl": {
+    "count": 5,
+    "count_2024plus": 4,
+    "top_cited": [
+      {
+        "title": "A Multidimensional Evaluation Framework for Personal Learning Environments",
+        "year": 2014,
+        "cited": 3
+      },
+      {
+        "title": "Subtopic-specific heterogeneity in computer-based learning behaviors",
+        "year": 2024,
+        "cited": 3
+      },
+      {
+        "title": "What Students Ask, How a Generative AI Assistant Responds: Exploring Higher Education Students’ Dialogues on Learning Analytics Feedback",
+        "year": 2026,
+        "cited": 0
+      },
+      {
+        "title": "What Students Ask, How a Generative AI Assistant Responds: Exploring Higher Education Students' Dialogues on Learning Analytics Feedback",
+        "year": 2026,
+        "cited": 0
+      },
+      {
+        "title": "What Students Ask, How a Generative AI Assistant Responds: Exploring Higher Education Students' Dialogues on Learning Analytics Feedback",
+        "year": 2026,
+        "cited": 0
+      }
+    ],
+    "recent": [
+      {
+        "title": "Subtopic-specific heterogeneity in computer-based learning behaviors",
+        "year": 2024,
+        "cited": 3
+      },
+      {
+        "title": "What Students Ask, How a Generative AI Assistant Responds: Exploring Higher Education Students’ Dialogues on Learning Analytics Feedback",
+        "year": 2026,
+        "cited": 0
+      },
+      {
+        "title": "What Students Ask, How a Generative AI Assistant Responds: Exploring Higher Education Students' Dialogues on Learning Analytics Feedback",
+        "year": 2026,
+        "cited": 0
+      },
+      {
+        "title": "What Students Ask, How a Generative AI Assistant Responds: Exploring Higher Education Students' Dialogues on Learning Analytics Feedback",
+        "year": 2026,
+        "cited": 0
+      }
+    ]
+  }
+}

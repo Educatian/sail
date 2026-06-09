@@ -14,6 +14,9 @@ export function buildContextSnapshot(s: StudySession, hintLevelSoFar: number): s
       elapsedMinutes: s.actualMinutes,
       contextTrace: s.contextTrace ?? null,
       spatialTrace: s.spatialTrace ?? null,
+      momentary: (s.momentaryChecks ?? []).length
+        ? { count: s.momentaryChecks!.length, latest: s.momentaryChecks!.at(-1), focusTrend: s.momentaryChecks!.map((c) => c.focus) }
+        : null,
       hintLevelRequestedSoFar: hintLevelSoFar,
       lastReflection:
         s.focus || s.notes

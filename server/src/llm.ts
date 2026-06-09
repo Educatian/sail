@@ -1,5 +1,9 @@
-// Marin (the SAIL mentor) runs on OpenRouter (OpenAI-compatible). Dev stub when no key.
-const MODEL = process.env.SAIL_MODEL ?? 'anthropic/claude-sonnet-4';
+// Marin (the SAIL mentor). Defaults to LOCAL Ollama (Qwen) via the OpenAI-compatible API so it works
+// with no API key and stays connected across restarts as long as Ollama is running. Set OPENROUTER_API_KEY
+// to use OpenRouter instead, or LLM_BASE_URL / SAIL_MODEL to point elsewhere.
+const useOpenRouter = !!process.env.OPENROUTER_API_KEY;
+const BASE = process.env.LLM_BASE_URL ?? (useOpenRouter ? 'https://openrouter.ai/api/v1' : 'http://localhost:11434/v1');
+const MODEL = process.env.SAIL_MODEL ?? (useOpenRouter ? 'anthropic/claude-sonnet-4' : 'qwen2.5-coder:7b');
 const apiKey = process.env.OPENROUTER_API_KEY;
 
 export interface LlmTurn {
@@ -8,17 +12,18 @@ export interface LlmTurn {
 }
 
 export async function* streamMentor(turn: LlmTurn): AsyncGenerator<string> {
-  if (!apiKey) {
-    yield '[[LABEL:SOCRATIC]] ';
-    yield '(dev mode: set OPENROUTER_API_KEY to enable Marin) ';
+  let res: Response;
+  try {
+    res = await fetch(`${BASE}/chat/completions`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...(apiKey ? { Authorization: `Bearer ${apiKey}`, 'X-Title': 'SAIL' } : {}) },
+      body: JSON.stringify({ model: MODEL, stream: true, max_tokens: 1024, messages: [{ role: 'system', content: turn.system }, ...turn.messages] }),
+    });
+  } catch {
+    yield '[[LABEL:SOCRATIC]] (mentor offline — start Ollama, or set OPENROUTER_API_KEY) ';
     yield 'What is the very first thing you want to understand here, in your own words?';
     return;
   }
-  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', Authorization: `Bearer ${apiKey}`, 'X-Title': 'SAIL' },
-    body: JSON.stringify({ model: MODEL, stream: true, max_tokens: 1024, messages: [{ role: 'system', content: turn.system }, ...turn.messages] }),
-  });
   if (!res.ok || !res.body) { yield `[[LABEL:SOCRATIC]] (mentor error ${res.status})`; return; }
   const reader = res.body.getReader();
   const dec = new TextDecoder();
@@ -44,4 +49,4 @@ export async function* streamMentor(turn: LlmTurn): AsyncGenerator<string> {
 }
 
 export const modelName = MODEL;
-export const llmEnabled = !!apiKey;
+export const llmEnabled = true;   // local Ollama is the default endpoint

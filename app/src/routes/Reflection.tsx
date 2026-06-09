@@ -4,6 +4,7 @@ import { Screen, TopBar, Label, Field, TextArea, Tag, Slider, AccentButton, Rule
 import { Reveal } from '../components/ui';
 import { Confetti } from '../components/Confetti';
 import { api } from '../lib/api';
+import { MarinChat } from '../components/MarinChat';
 import { STRATEGY_LABELS } from '../domain';
 import type { MobilityState, PlaceCategory, Rating, SpatialTrace, StrategyKind, StudySession } from '../domain';
 
@@ -33,6 +34,7 @@ export function Reflection() {
   const { id } = useParams({ from: '/study/reflect/$id' });
   const navigate = useNavigate();
   const [s, setS] = useState<StudySession | null>(null);
+  const [marinOpen, setMarinOpen] = useState(false);
   const [ratings, setRatings] = useState<Record<string, Rating | undefined>>({});
   const [notes, setNotes] = useState('');
   const [adjustment, setAdjustment] = useState('');
@@ -129,6 +131,7 @@ export function Reflection() {
                 ? 'Where did your chosen strategy help, and where did it fall short? Name one concrete change for next time.'
                 : "What's one thing that went well, and one thing you'd do differently next time?"}
             </p>
+            <button onClick={() => setMarinOpen(true)} className="label-mono accent mt-2">Talk it through with Marin</button>
           </div>
         </Reveal>
 
@@ -209,6 +212,7 @@ export function Reflection() {
         <Rule className="mt-8" />
         <div className="mt-6"><AccentButton onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save reflection ✓'}</AccentButton></div>
       </div>
+      {marinOpen && <MarinChat mode="reflection" sessionId={id} onClose={() => setMarinOpen(false)} />}
     </Screen>
   );
 }

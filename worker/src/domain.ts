@@ -26,6 +26,15 @@ export interface SpatialTrace {
   trackingEndedAt?: string; lastSampleAt?: string; sampleCount?: number; distanceMeters?: number; dwellSeconds?: number;
   transitionCount?: number; routePreview?: { x: number; y: number }[]; rawLocationStored: false;
 }
+export type ContextFit = 'good' | 'mixed' | 'poor';
+export type RegulationAction = 'stayed' | 'changed_place' | 'removed_distraction' | 'took_break' | 'none';
+export type MomentaryTrigger = 'break' | 'return' | 'manual';
+/** In-session momentary check: event-contingent EMA at organic SRL touchpoints (Shiffman et al. 2007). */
+export interface MomentaryCheck {
+  at: string; elapsedOnTaskMin: number; trigger: MomentaryTrigger;
+  focus: Rating; contextFit: ContextFit; regulationAction: RegulationAction;
+  placeCategoryAtCheck?: PlaceCategory; mobilityStateAtCheck?: MobilityState;
+}
 export interface PolicyDecision {
   action: PolicyAction; phaseTarget: Phase; intensity: 'none' | 'low' | 'medium' | 'high'; reason: string; confidence: number;
 }
@@ -37,6 +46,8 @@ export interface StudySession {
   confidencePre?: number;      // JOL prediction 0-100 (pre-task, isolated from mentor)
   contextTrace?: ContextTrace;
   spatialTrace?: SpatialTrace;
+  momentaryChecks?: MomentaryCheck[];   // in-session EMA at organic touchpoints
+  courseId?: string; subgoalId?: string;   // course-goal spine links
   timerSegments: TimerSegment[]; actualMinutes: number; inProgress: boolean;
   focus?: Rating; progress?: Rating; satisfaction?: Rating; notes?: string; adjustment?: string; usefulStrategy?: StrategyKind;
   performanceActual?: number;  // self-assessed actual mastery 0-100 (post-task) -> calibration |conf-perf|
@@ -46,6 +57,18 @@ export interface StudySession {
 
 /** Intake self-report (baseline SRL) for moderation analysis (RQ12). */
 export interface Profile { studentId: string; baselineSRL: number; items: number[]; createdAt: string; remindersOn?: boolean; lastRemindedAt?: string }
+
+// Course + achievement-goal spine (session loop nested in course-goal loop).
+export type GoalOrientation = 'mastery' | 'performance';
+export interface Course {
+  id: string; studentId: string; title: string;
+  externalId?: string; externalSource?: 'canvas' | 'manual'; termEnd?: string; createdAt: string;
+}
+export interface ProximalSubgoal { id: string; text: string; targetDate?: string; done: boolean }
+export interface AchievementGoal {
+  id: string; studentId: string; courseId: string; distal: string; orientation: GoalOrientation;
+  targetDate?: string; subgoals: ProximalSubgoal[]; createdAt: string; updatedAt: string;
+}
 
 export type MentorLabel = 'SOCRATIC' | 'HINT_L1' | 'HINT_L2' | 'HINT_L3' | 'EXPLAIN' | 'VERIFY' | 'FINISH';
 export interface CheckpointOption { id: string; text: string }
@@ -93,6 +116,15 @@ export type MetricEventType =
   | 'voice_input_started'
   | 'voice_input_stopped'
   | 'reflection_changed'
+  | 'momentary_check_shown'
+  | 'momentary_check_answered'
+  | 'context_regulated'
+  | 'course_created'
+  | 'goal_set'
+  | 'subgoal_completed'
+  | 'badge_earned'
+  | 'marin_chat'
+  | 'metacog_experience'
   | 'research_exported'
   | 'client_error';
 

@@ -1,0 +1,1010 @@
+{
+  "srl_mobile_app": {
+    "count": 6219,
+    "recent_count_2023plus": 4011,
+    "top_cited": [
+      {
+        "title": "Systematic review of research on artificial intelligence applications in higher education – where are the educators?",
+        "year": 2019,
+        "cited": 5072,
+        "venue": "International Journal of Educational Technology in Higher Education",
+        "id": "https://openalex.org/W2981863007"
+      },
+      {
+        "title": "Effectiveness of L2 Instruction: A Research Synthesis and Quantitative Meta‐analysis",
+        "year": 2000,
+        "cited": 2386,
+        "venue": "Language Learning",
+        "id": "https://openalex.org/W2006181802"
+      },
+      {
+        "title": "Promoting Self-Regulation in Science Education: Metacognition as Part of a Broader Perspective on Learning",
+        "year": 2006,
+        "cited": 1481,
+        "venue": "Research in Science Education",
+        "id": "https://openalex.org/W2038252642"
+      },
+      {
+        "title": "Mapping research in student engagement and educational technology in higher education: a systematic evidence map",
+        "year": 2020,
+        "cited": 927,
+        "venue": "International Journal of Educational Technology in Higher Education",
+        "id": "https://openalex.org/W3014646985"
+      },
+      {
+        "title": "A global outlook to the interruption of education due to COVID-19 pandemic: Navigating in a time of uncertainty and crisis",
+        "year": 2020,
+        "cited": 879,
+        "venue": "UniSA Research Outputs Repository (University of South Australia)",
+        "id": "https://openalex.org/W4287762607"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "ChatGPT in education: Strategies for responsible implementation",
+        "year": 2023,
+        "cited": 571
+      },
+      {
+        "title": "“Extending the Technology Acceptance Model (TAM) to Predict University Students’ Intentions to Use Metaverse-Based Learning Platforms”",
+        "year": 2023,
+        "cited": 550
+      },
+      {
+        "title": "AI literacy in K-12: a systematic literature review",
+        "year": 2023,
+        "cited": 513
+      },
+      {
+        "title": "Artificial intelligence in language instruction: impact on English learning achievement, L2 motivation, and self-regulated learning",
+        "year": 2023,
+        "cited": 402
+      }
+    ]
+  },
+  "mall_mobile_assisted_lang": {
+    "count": 1644,
+    "recent_count_2023plus": 1123,
+    "top_cited": [
+      {
+        "title": "Artificial intelligence in language instruction: impact on English learning achievement, L2 motivation, and self-regulated learning",
+        "year": 2023,
+        "cited": 402,
+        "venue": "Frontiers in Psychology",
+        "id": "https://openalex.org/W4388424540"
+      },
+      {
+        "title": "Research agenda: Language learning beyond the classroom",
+        "year": 2017,
+        "cited": 268,
+        "venue": "Language Teaching",
+        "id": "https://openalex.org/W2756464646"
+      },
+      {
+        "title": "Blogging: Promoting Learner Autonomy and Intercultural Competence through Study Abroad",
+        "year": 2011,
+        "cited": 225,
+        "venue": "Language learning & technology",
+        "id": "https://openalex.org/W2109549760"
+      },
+      {
+        "title": "Affective variables and informal digital learning of English: Keys to willingness to communicate in a second language",
+        "year": 2019,
+        "cited": 205,
+        "venue": "Australasian Journal of Educational Technology",
+        "id": "https://openalex.org/W2934692346"
+      },
+      {
+        "title": "Mobile Assisted Language Learning in university EFL courses in Japan: developing attitudes and skills for self-regulated learning",
+        "year": 2012,
+        "cited": 167,
+        "venue": "ReCALL",
+        "id": "https://openalex.org/W2136918300"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "Artificial intelligence in language instruction: impact on English learning achievement, L2 motivation, and self-regulated learning",
+        "year": 2023,
+        "cited": 402
+      },
+      {
+        "title": "Artificial intelligence-based language learning: illuminating the impact on speaking skills and self-regulation in Chinese EFL context",
+        "year": 2023,
+        "cited": 131
+      },
+      {
+        "title": "Extending Technology Acceptance Model to higher-education students’ use of digital academic reading tools on computers",
+        "year": 2023,
+        "cited": 107
+      },
+      {
+        "title": "Modeling Students’ Perceptions of Chatbots in Learning: Integrating Technology Acceptance with the Value-Based Adoption Model",
+        "year": 2023,
+        "cited": 95
+      }
+    ]
+  },
+  "context_aware_learning": {
+    "count": 54424,
+    "recent_count_2023plus": 29334,
+    "top_cited": [
+      {
+        "title": "",
+        "year": 2021,
+        "cited": 50250,
+        "venue": "DROPS (Schloss Dagstuhl – Leibniz Center for Informatics)",
+        "id": "https://openalex.org/W2964121744"
+      },
+      {
+        "title": "Internet of Things (IoT): A vision, architectural elements, and future directions",
+        "year": 2013,
+        "cited": 11938,
+        "venue": "Future Generation Computer Systems",
+        "id": "https://openalex.org/W2111619626"
+      },
+      {
+        "title": "2021 ESC Guidelines on cardiovascular disease prevention in clinical practice",
+        "year": 2021,
+        "cited": 6179,
+        "venue": "European Heart Journal",
+        "id": "https://openalex.org/W3197233987"
+      },
+      {
+        "title": "Machine Learning: Algorithms, Real-World Applications and Research Directions",
+        "year": 2021,
+        "cited": 5066,
+        "venue": "SN Computer Science",
+        "id": "https://openalex.org/W3135028703"
+      },
+      {
+        "title": "Internet of things: Vision, applications and research challenges",
+        "year": 2012,
+        "cited": 3551,
+        "venue": "Ad Hoc Networks",
+        "id": "https://openalex.org/W2119046642"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+        "year": 2023,
+        "cited": 994
+      },
+      {
+        "title": "Transfer learning enables predictions in network biology",
+        "year": 2023,
+        "cited": 992
+      },
+      {
+        "title": "Digital Transformation in Healthcare: Technology Acceptance and Its Applications",
+        "year": 2023,
+        "cited": 803
+      },
+      {
+        "title": "Adaptive Learning Using Artificial Intelligence in e-Learning: A Literature Review",
+        "year": 2023,
+        "cited": 765
+      }
+    ]
+  },
+  "ubiquitous_seamless_learning": {
+    "count": 14112,
+    "recent_count_2023plus": 5096,
+    "top_cited": [
+      {
+        "title": "Digital Twin: Values, Challenges and Enablers From a Modeling Perspective",
+        "year": 2020,
+        "cited": 1684,
+        "venue": "IEEE Access",
+        "id": "https://openalex.org/W3003667836"
+      },
+      {
+        "title": "Vision, challenges, roles and research issues of Artificial Intelligence in Education",
+        "year": 2020,
+        "cited": 1215,
+        "venue": "Computers and Education Artificial Intelligence",
+        "id": "https://openalex.org/W3084021717"
+      },
+      {
+        "title": "A SWOT analysis of ChatGPT: Implications for educational practice and research",
+        "year": 2023,
+        "cited": 1151,
+        "venue": "Innovations in Education and Teaching International",
+        "id": "https://openalex.org/W4361204578"
+      },
+      {
+        "title": "The effectiveness of virtual and augmented reality in health sciences and medical anatomy",
+        "year": 2017,
+        "cited": 999,
+        "venue": "Anatomical Sciences Education",
+        "id": "https://openalex.org/W2605897185"
+      },
+      {
+        "title": "Augmented Reality: An Overview and Five Directions for AR in Education",
+        "year": 2011,
+        "cited": 992,
+        "venue": "Journal of Educational Technology Development and Exchange",
+        "id": "https://openalex.org/W2340239395"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "A SWOT analysis of ChatGPT: Implications for educational practice and research",
+        "year": 2023,
+        "cited": 1151
+      },
+      {
+        "title": "Enhancing academic writing skills and motivation: assessing the efficacy of ChatGPT in AI-assisted language learning for EFL students",
+        "year": 2023,
+        "cited": 540
+      },
+      {
+        "title": "A critical evaluation, challenges, and future perspectives of using artificial intelligence and emerging technologies in smart classrooms",
+        "year": 2023,
+        "cited": 309
+      },
+      {
+        "title": "Unlocking the Potential: A Comprehensive Evaluation of Augmented Reality and Virtual Reality in Education",
+        "year": 2023,
+        "cited": 305
+      }
+    ]
+  },
+  "place_based_learning": {
+    "count": 3977,
+    "recent_count_2023plus": 1748,
+    "top_cited": [
+      {
+        "title": "Decolonization is not a metaphor",
+        "year": 2012,
+        "cited": 4107,
+        "venue": "TSpace",
+        "id": "https://openalex.org/W1728021200"
+      },
+      {
+        "title": "Weaving knowledge systems in IPBES, CBD and beyond—lessons learned for sustainability",
+        "year": 2017,
+        "cited": 830,
+        "venue": "Current Opinion in Environmental Sustainability",
+        "id": "https://openalex.org/W2589456099"
+      },
+      {
+        "title": "Weaving Indigenous and sustainability sciences to diversify our methods",
+        "year": 2015,
+        "cited": 376,
+        "venue": "Sustainability Science",
+        "id": "https://openalex.org/W2186146349"
+      },
+      {
+        "title": "Social-ecological systems, social diversity, and power: insights from anthropology and political ecology",
+        "year": 2014,
+        "cited": 370,
+        "venue": "Ecology and Society",
+        "id": "https://openalex.org/W2040994515"
+      },
+      {
+        "title": "Place-Based Education in the Global Age: Local Diversity",
+        "year": 2007,
+        "cited": 365,
+        "venue": null,
+        "id": "https://openalex.org/W1484708699"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "Virtual reality and gamification in education: a systematic review",
+        "year": 2024,
+        "cited": 281
+      },
+      {
+        "title": "Artificial Intelligence Alone Will Not Democratise Education: On Educational Inequality, Techno-Solutionism and Inclusive Tools",
+        "year": 2024,
+        "cited": 187
+      },
+      {
+        "title": "Place-based education <b>–</b> a systematic review of literature",
+        "year": 2023,
+        "cited": 179
+      },
+      {
+        "title": "Human-centred learning analytics and AI in education: A systematic literature review",
+        "year": 2024,
+        "cited": 155
+      }
+    ]
+  },
+  "mobile_learning_analytics": {
+    "count": 3946,
+    "recent_count_2023plus": 2611,
+    "top_cited": [
+      {
+        "title": "Systematic review of research on artificial intelligence applications in higher education – where are the educators?",
+        "year": 2019,
+        "cited": 5072,
+        "venue": "International Journal of Educational Technology in Higher Education",
+        "id": "https://openalex.org/W2981863007"
+      },
+      {
+        "title": "Artificial Intelligence in Education: A Review",
+        "year": 2020,
+        "cited": 3400,
+        "venue": "IEEE Access",
+        "id": "https://openalex.org/W3017131514"
+      },
+      {
+        "title": "Online University Teaching During and After the Covid-19 Crisis: Refocusing Teacher Presence and Learning Activity",
+        "year": 2020,
+        "cited": 2043,
+        "venue": "Postdigital Science and Education",
+        "id": "https://openalex.org/W3042009104"
+      },
+      {
+        "title": "Vision, challenges, roles and research issues of Artificial Intelligence in Education",
+        "year": 2020,
+        "cited": 1215,
+        "venue": "Computers and Education Artificial Intelligence",
+        "id": "https://openalex.org/W3084021717"
+      },
+      {
+        "title": "A Review of Artificial Intelligence (AI) in Education from 2010 to 2020",
+        "year": 2021,
+        "cited": 1113,
+        "venue": "Complexity",
+        "id": "https://openalex.org/W3156614709"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "Teachers’ AI digital competencies and twenty-first century skills in the post-pandemic world",
+        "year": 2023,
+        "cited": 565
+      },
+      {
+        "title": "The role of ChatGPT in higher education: Benefits, challenges, and future research directions",
+        "year": 2023,
+        "cited": 519
+      },
+      {
+        "title": "AI literacy in K-12: a systematic literature review",
+        "year": 2023,
+        "cited": 513
+      },
+      {
+        "title": "Beware of metacognitive laziness: Effects of generative artificial intelligence on learning motivation, processes, and performance",
+        "year": 2024,
+        "cited": 383
+      }
+    ]
+  },
+  "multimodal_la": {
+    "count": 600,
+    "recent_count_2023plus": 451,
+    "top_cited": [
+      {
+        "title": "Systematic review of research on artificial intelligence applications in higher education – where are the educators?",
+        "year": 2019,
+        "cited": 5072,
+        "venue": "International Journal of Educational Technology in Higher Education",
+        "id": "https://openalex.org/W2981863007"
+      },
+      {
+        "title": "Educational data mining and learning analytics: An updated survey",
+        "year": 2020,
+        "cited": 954,
+        "venue": "Wiley Interdisciplinary Reviews Data Mining and Knowledge Discovery",
+        "id": "https://openalex.org/W3000065748"
+      },
+      {
+        "title": "Utilising learning analytics to support study success in higher education: a systematic review",
+        "year": 2020,
+        "cited": 493,
+        "venue": "Educational Technology Research and Development",
+        "id": "https://openalex.org/W2904980464"
+      },
+      {
+        "title": "The application of AI technologies in STEM education: a systematic review from 2011 to 2021",
+        "year": 2022,
+        "cited": 398,
+        "venue": "International Journal of STEM Education",
+        "id": "https://openalex.org/W4296369454"
+      },
+      {
+        "title": "Beware of metacognitive laziness: Effects of generative artificial intelligence on learning motivation, processes, and performance",
+        "year": 2024,
+        "cited": 383,
+        "venue": "British Journal of Educational Technology",
+        "id": "https://openalex.org/W4405211386"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "Beware of metacognitive laziness: Effects of generative artificial intelligence on learning motivation, processes, and performance",
+        "year": 2024,
+        "cited": 383
+      },
+      {
+        "title": "Human and artificial intelligence collaboration for socially shared regulation in learning",
+        "year": 2023,
+        "cited": 236
+      },
+      {
+        "title": "The interplay of learning, analytics and artificial intelligence in education: A vision for hybrid intelligence",
+        "year": 2024,
+        "cited": 154
+      },
+      {
+        "title": "An artificial intelligence-driven learning analytics method to examine the collaborative problem-solving process from the complex adaptive systems perspective",
+        "year": 2023,
+        "cited": 106
+      }
+    ]
+  },
+  "llm_srl": {
+    "count": 8182,
+    "recent_count_2023plus": 8164,
+    "top_cited": [
+      {
+        "title": "Artificial intelligence in higher education: the state of the field",
+        "year": 2023,
+        "cited": 1321,
+        "venue": "International Journal of Educational Technology in Higher Education",
+        "id": "https://openalex.org/W4366783381"
+      },
+      {
+        "title": "The impact of Generative AI (GenAI) on practices, policies and research direction in education: a case of ChatGPT and Midjourney",
+        "year": 2023,
+        "cited": 665,
+        "venue": "Interactive Learning Environments",
+        "id": "https://openalex.org/W4386417345"
+      },
+      {
+        "title": "ChatGPT in education: Strategies for responsible implementation",
+        "year": 2023,
+        "cited": 571,
+        "venue": "Contemporary Educational Technology",
+        "id": "https://openalex.org/W4323359867"
+      },
+      {
+        "title": "Enhancing academic writing skills and motivation: assessing the efficacy of ChatGPT in AI-assisted language learning for EFL students",
+        "year": 2023,
+        "cited": 540,
+        "venue": "Frontiers in Psychology",
+        "id": "https://openalex.org/W4389793309"
+      },
+      {
+        "title": "The role of ChatGPT in higher education: Benefits, challenges, and future research directions",
+        "year": 2023,
+        "cited": 519,
+        "venue": "Journal of Applied Learning & Teaching",
+        "id": "https://openalex.org/W4376139682"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "Artificial intelligence in higher education: the state of the field",
+        "year": 2023,
+        "cited": 1321
+      },
+      {
+        "title": "The impact of Generative AI (GenAI) on practices, policies and research direction in education: a case of ChatGPT and Midjourney",
+        "year": 2023,
+        "cited": 665
+      },
+      {
+        "title": "ChatGPT in education: Strategies for responsible implementation",
+        "year": 2023,
+        "cited": 571
+      },
+      {
+        "title": "Enhancing academic writing skills and motivation: assessing the efficacy of ChatGPT in AI-assisted language learning for EFL students",
+        "year": 2023,
+        "cited": 540
+      }
+    ]
+  },
+  "ai_tutor_metacognition": {
+    "count": 3076,
+    "recent_count_2023plus": 1782,
+    "top_cited": [
+      {
+        "title": "Handbook of Metacognition in Education",
+        "year": 2009,
+        "cited": 1475,
+        "venue": null,
+        "id": "https://openalex.org/W595197191"
+      },
+      {
+        "title": "Epistemologically authentic inquiry in schools: A theoretical framework for evaluating inquiry tasks",
+        "year": 2002,
+        "cited": 1286,
+        "venue": "Science Education",
+        "id": "https://openalex.org/W2128340945"
+      },
+      {
+        "title": "What is assessment for learning?",
+        "year": 2011,
+        "cited": 1238,
+        "venue": "Studies In Educational Evaluation",
+        "id": "https://openalex.org/W1977995727"
+      },
+      {
+        "title": "A Review of Artificial Intelligence (AI) in Education from 2010 to 2020",
+        "year": 2021,
+        "cited": 1113,
+        "venue": "Complexity",
+        "id": "https://openalex.org/W3156614709"
+      },
+      {
+        "title": "Evolution and Revolution in Artificial Intelligence in Education",
+        "year": 2016,
+        "cited": 1041,
+        "venue": "International Journal of Artificial Intelligence in Education",
+        "id": "https://openalex.org/W2337155942"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "ChatGPT: A revolutionary tool for teaching and learning mathematics",
+        "year": 2023,
+        "cited": 419
+      },
+      {
+        "title": "<scp>AI</scp>‐driven adaptive learning for sustainable educational transformation",
+        "year": 2024,
+        "cited": 369
+      },
+      {
+        "title": "Impact of AI assistance on student agency",
+        "year": 2023,
+        "cited": 364
+      },
+      {
+        "title": "Promises and challenges of generative artificial intelligence for human learning",
+        "year": 2024,
+        "cited": 311
+      }
+    ]
+  },
+  "ai_help_seeking": {
+    "count": 12128,
+    "recent_count_2023plus": 8441,
+    "top_cited": [
+      {
+        "title": "International estimates of infertility prevalence and treatment-seeking: potential need and demand for infertility medical care",
+        "year": 2007,
+        "cited": 2476,
+        "venue": "Human Reproduction",
+        "id": "https://openalex.org/W2124608202"
+      },
+      {
+        "title": "The Psychosis High-Risk State",
+        "year": 2012,
+        "cited": 1453,
+        "venue": "JAMA Psychiatry",
+        "id": "https://openalex.org/W2198642455"
+      },
+      {
+        "title": "The State of Educational Data Mining in 2009: A Review and Future Visions",
+        "year": 2009,
+        "cited": 1301,
+        "venue": "Zenodo (CERN European Organization for Nuclear Research)",
+        "id": "https://openalex.org/W1539947443"
+      },
+      {
+        "title": "Factors associated with depression, anxiety, and PTSD symptomatology during the COVID-19 pandemic: Clinical implications for U.S. young adult mental health",
+        "year": 2020,
+        "cited": 1191,
+        "venue": "Psychiatry Research",
+        "id": "https://openalex.org/W3030361728"
+      },
+      {
+        "title": "ADHD in children and young people: prevalence, care pathways, and service provision",
+        "year": 2017,
+        "cited": 1182,
+        "venue": "The Lancet Psychiatry",
+        "id": "https://openalex.org/W2614669943"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "ChatGPT in higher education: Considerations for academic integrity and student learning",
+        "year": 2023,
+        "cited": 731
+      },
+      {
+        "title": "Beware of metacognitive laziness: Effects of generative artificial intelligence on learning motivation, processes, and performance",
+        "year": 2024,
+        "cited": 383
+      },
+      {
+        "title": "Digital Learning and Digital Institution in Higher Education",
+        "year": 2023,
+        "cited": 309
+      },
+      {
+        "title": "The Robots Are Here: Navigating the Generative AI Revolution in Computing Education",
+        "year": 2023,
+        "cited": 309
+      }
+    ]
+  },
+  "scaffolding_fading_its": {
+    "count": 1364,
+    "recent_count_2023plus": 582,
+    "top_cited": [
+      {
+        "title": "Scaffolding in Teacher–Student Interaction: A Decade of Research",
+        "year": 2010,
+        "cited": 1692,
+        "venue": "Educational Psychology Review",
+        "id": "https://openalex.org/W2156300785"
+      },
+      {
+        "title": "Active‐Constructive‐Interactive: A Conceptual Framework for Differentiating Learning Activities",
+        "year": 2009,
+        "cited": 1518,
+        "venue": "Topics in Cognitive Science",
+        "id": "https://openalex.org/W2150794602"
+      },
+      {
+        "title": "The Knowledge‐Learning‐Instruction Framework: Bridging the Science‐Practice Chasm to Enhance Robust Student Learning",
+        "year": 2012,
+        "cited": 719,
+        "venue": "Cognitive Science",
+        "id": "https://openalex.org/W2106779500"
+      },
+      {
+        "title": "Supporting Student Self-Regulated Learning in Problem- and Project-Based Learning",
+        "year": 2013,
+        "cited": 475,
+        "venue": "Interdisciplinary Journal of Problem-based Learning",
+        "id": "https://openalex.org/W2066629752"
+      },
+      {
+        "title": "Developing student 21st Century skills in selected exemplary inclusive STEM high schools",
+        "year": 2019,
+        "cited": 423,
+        "venue": "International Journal of STEM Education",
+        "id": "https://openalex.org/W2989864741"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "Leveraging AI in E-Learning: Personalized Learning and Adaptive Assessment through Cognitive Neuropsychology—A Systematic Analysis",
+        "year": 2024,
+        "cited": 247
+      },
+      {
+        "title": "The interplay of learning, analytics and artificial intelligence in education: A vision for hybrid intelligence",
+        "year": 2024,
+        "cited": 154
+      },
+      {
+        "title": "Learning with ChatGPT 3.5 as a more knowledgeable other: an autoethnographic study",
+        "year": 2023,
+        "cited": 148
+      },
+      {
+        "title": "Making Sense of Generative Learning",
+        "year": 2023,
+        "cited": 100
+      }
+    ]
+  },
+  "calibration_jol": {
+    "count": 3496,
+    "recent_count_2023plus": 1716,
+    "top_cited": [
+      {
+        "title": "A Review of Self-regulated Learning: Six Models and Four Directions for Research",
+        "year": 2017,
+        "cited": 2449,
+        "venue": "Frontiers in Psychology",
+        "id": "https://openalex.org/W2597900308"
+      },
+      {
+        "title": "Cognitive Architecture and Instructional Design: 20 Years Later",
+        "year": 2019,
+        "cited": 1878,
+        "venue": "Educational Psychology Review",
+        "id": "https://openalex.org/W2913144876"
+      },
+      {
+        "title": "Handbook of Self-Regulation of Learning and Performance",
+        "year": 2017,
+        "cited": 1790,
+        "venue": null,
+        "id": "https://openalex.org/W1526122805"
+      },
+      {
+        "title": "Basic psychological need theory: Advancements, critical themes, and future directions",
+        "year": 2020,
+        "cited": 1659,
+        "venue": "Motivation and Emotion",
+        "id": "https://openalex.org/W3001065916"
+      },
+      {
+        "title": "Metacognitive theories",
+        "year": 1995,
+        "cited": 1343,
+        "venue": "Educational Psychology Review",
+        "id": "https://openalex.org/W4233638968"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "“Extending the Technology Acceptance Model (TAM) to Predict University Students’ Intentions to Use Metaverse-Based Learning Platforms”",
+        "year": 2023,
+        "cited": 550
+      },
+      {
+        "title": "Impact of AI assistance on student agency",
+        "year": 2023,
+        "cited": 364
+      },
+      {
+        "title": "Educational Design Principles of Using AI Chatbot That Supports Self-Regulated Learning in Education: Goal Setting, Feedback, and Personalization",
+        "year": 2023,
+        "cited": 280
+      },
+      {
+        "title": "Theories of Motivation in Education: an Integrative Framework",
+        "year": 2023,
+        "cited": 248
+      }
+    ]
+  },
+  "spatial_srl": {
+    "count": 44011,
+    "recent_count_2023plus": 20982,
+    "top_cited": [
+      {
+        "title": "Systematic review of research on artificial intelligence applications in higher education – where are the educators?",
+        "year": 2019,
+        "cited": 5072,
+        "venue": "International Journal of Educational Technology in Higher Education",
+        "id": "https://openalex.org/W2981863007"
+      },
+      {
+        "title": "Handbook of Competence and Motivation",
+        "year": 2013,
+        "cited": 4686,
+        "venue": null,
+        "id": "https://openalex.org/W1529024143"
+      },
+      {
+        "title": "Artificial Intelligence in Education: A Review",
+        "year": 2020,
+        "cited": 3400,
+        "venue": "IEEE Access",
+        "id": "https://openalex.org/W3017131514"
+      },
+      {
+        "title": "Developing the theory of formative assessment",
+        "year": 2009,
+        "cited": 3103,
+        "venue": "Educational Assessment Evaluation and Accountability",
+        "id": "https://openalex.org/W1984748091"
+      },
+      {
+        "title": "A Conceptual Framework for Assessing Motivation and Self-Regulated Learning in College Students",
+        "year": 2004,
+        "cited": 3057,
+        "venue": "Educational Psychology Review",
+        "id": "https://openalex.org/W2098880898"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "Artificial intelligence in higher education: the state of the field",
+        "year": 2023,
+        "cited": 1321
+      },
+      {
+        "title": "Creativity, Critical Thinking, Communication, and Collaboration: Assessment, Certification, and Promotion of 21st Century Skills for the Future of Work and Education",
+        "year": 2023,
+        "cited": 621
+      },
+      {
+        "title": "Teachers’ AI digital competencies and twenty-first century skills in the post-pandemic world",
+        "year": 2023,
+        "cited": 565
+      },
+      {
+        "title": "AI Tools in Society: Impacts on Cognitive Offloading and the Future of Critical Thinking",
+        "year": 2025,
+        "cited": 563
+      }
+    ]
+  },
+  "context_srl_mobile": {
+    "count": 1343,
+    "recent_count_2023plus": 870,
+    "top_cited": [
+      {
+        "title": "Vision, challenges, roles and research issues of Artificial Intelligence in Education",
+        "year": 2020,
+        "cited": 1215,
+        "venue": "Computers and Education Artificial Intelligence",
+        "id": "https://openalex.org/W3084021717"
+      },
+      {
+        "title": "Evolution and Revolution in Artificial Intelligence in Education",
+        "year": 2016,
+        "cited": 1041,
+        "venue": "International Journal of Artificial Intelligence in Education",
+        "id": "https://openalex.org/W2337155942"
+      },
+      {
+        "title": "A research framework of smart education",
+        "year": 2016,
+        "cited": 649,
+        "venue": "Smart Learning Environments",
+        "id": "https://openalex.org/W2319285189"
+      },
+      {
+        "title": "Are We There Yet? - A Systematic Literature Review on Chatbots in Education",
+        "year": 2021,
+        "cited": 478,
+        "venue": "Frontiers in Artificial Intelligence",
+        "id": "https://openalex.org/W3185181255"
+      },
+      {
+        "title": "Introductory programming: a systematic literature review",
+        "year": 2018,
+        "cited": 474,
+        "venue": null,
+        "id": "https://openalex.org/W2910880405"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "Explainable Artificial Intelligence (XAI) 2.0: A manifesto of open challenges and interdisciplinary research directions",
+        "year": 2024,
+        "cited": 458
+      },
+      {
+        "title": "Promises and challenges of generative artificial intelligence for human learning",
+        "year": 2024,
+        "cited": 311
+      },
+      {
+        "title": "A critical evaluation, challenges, and future perspectives of using artificial intelligence and emerging technologies in smart classrooms",
+        "year": 2023,
+        "cited": 309
+      },
+      {
+        "title": "Challenging Cognitive Load Theory: The Role of Educational Neuroscience and Artificial Intelligence in Redefining Learning Efficacy",
+        "year": 2025,
+        "cited": 195
+      }
+    ]
+  },
+  "llm_context_aware_tutor": {
+    "count": 28421,
+    "recent_count_2023plus": 28147,
+    "top_cited": [
+      {
+        "title": "Evaluating Large Language Models Trained on Code",
+        "year": 2021,
+        "cited": 1423,
+        "venue": "arXiv (Cornell University)",
+        "id": "https://openalex.org/W3177813494"
+      },
+      {
+        "title": "Proceedings of the 28th International Conference on Computational Linguistics",
+        "year": 2020,
+        "cited": 1422,
+        "venue": null,
+        "id": "https://openalex.org/W4365799947"
+      },
+      {
+        "title": "AutoPrompt: Eliciting Knowledge from Language Models with Automatically Generated Prompts",
+        "year": 2020,
+        "cited": 1170,
+        "venue": null,
+        "id": "https://openalex.org/W3098267758"
+      },
+      {
+        "title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+        "year": 2023,
+        "cited": 994,
+        "venue": "arXiv (Cornell University)",
+        "id": "https://openalex.org/W4389326242"
+      },
+      {
+        "title": "New Era of Artificial Intelligence in Education: Towards a Sustainable Multifaceted Revolution",
+        "year": 2023,
+        "cited": 903,
+        "venue": "Sustainability",
+        "id": "https://openalex.org/W4385878593"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+        "year": 2023,
+        "cited": 994
+      },
+      {
+        "title": "New Era of Artificial Intelligence in Education: Towards a Sustainable Multifaceted Revolution",
+        "year": 2023,
+        "cited": 903
+      },
+      {
+        "title": "Multimodal Learning With Transformers: A Survey",
+        "year": 2023,
+        "cited": 839
+      },
+      {
+        "title": "Adaptive Learning Using Artificial Intelligence in e-Learning: A Literature Review",
+        "year": 2023,
+        "cited": 765
+      }
+    ]
+  },
+  "study_location_achievement": {
+    "count": 10789,
+    "recent_count_2023plus": 5518,
+    "top_cited": [
+      {
+        "title": "Artificial Intelligence in Education: A Review",
+        "year": 2020,
+        "cited": 3400,
+        "venue": "IEEE Access",
+        "id": "https://openalex.org/W3017131514"
+      },
+      {
+        "title": "A Conceptual Framework for Assessing Motivation and Self-Regulated Learning in College Students",
+        "year": 2004,
+        "cited": 3057,
+        "venue": "Educational Psychology Review",
+        "id": "https://openalex.org/W2098880898"
+      },
+      {
+        "title": "Understanding Patients’ Adherence-Related Beliefs about Medicines Prescribed for Long-Term Conditions: A Meta-Analytic Review of the Necessity-Concerns Framework",
+        "year": 2013,
+        "cited": 1148,
+        "venue": "PLoS ONE",
+        "id": "https://openalex.org/W2045685449"
+      },
+      {
+        "title": "Personalised and self regulated learning in the Web 2.0 era: International exemplars of innovative pedagogy using social software",
+        "year": 2010,
+        "cited": 914,
+        "venue": "Australasian Journal of Educational Technology",
+        "id": "https://openalex.org/W1758841086"
+      },
+      {
+        "title": "What five decades of research tells us about the effects of youth psychological therapy: A multilevel meta-analysis and implications for science and practice.",
+        "year": 2017,
+        "cited": 860,
+        "venue": "American Psychologist",
+        "id": "https://openalex.org/W2525696540"
+      }
+    ],
+    "recent_top": [
+      {
+        "title": "Teachers’ AI digital competencies and twenty-first century skills in the post-pandemic world",
+        "year": 2023,
+        "cited": 565
+      },
+      {
+        "title": "<scp>AI</scp>‐driven adaptive learning for sustainable educational transformation",
+        "year": 2024,
+        "cited": 369
+      },
+      {
+        "title": "Digital Learning and Digital Institution in Higher Education",
+        "year": 2023,
+        "cited": 309
+      },
+      {
+        "title": "Challenges, opportunities, and prospects of adopting and using smart digital technologies in learning environments: An iterative review",
+        "year": 2023,
+        "cited": 262
+      }
+    ]
+  }
+}

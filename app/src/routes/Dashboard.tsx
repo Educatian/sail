@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Screen, TopBar, Label, Stat, Rule, Row, AccentButton } from '../components/editorial';
 import { CountUp, Reveal } from '../components/ui';
-import { api, type LearnerModel, type Stats } from '../lib/api';
+import { api, isInstructor, type LearnerModel, type Stats } from '../lib/api';
 import { STRATEGY_LABELS, TASK_LABELS, type StrategyKind, type TaskKind } from '../domain';
 
 function Bar({ label, value, max, accent = false }: { label: string; value: number; max: number; accent?: boolean }) {
@@ -69,7 +69,7 @@ export function Dashboard() {
       <TopBar
         section="04"
         title="Progress"
-        right={<button onClick={() => navigate({ to: '/research' })} className="label-mono accent">Research view</button>}
+        right={isInstructor() ? <button onClick={() => navigate({ to: '/research' })} className="label-mono accent">Research view</button> : undefined}
       />
 
       <div className="px-5 pt-7">

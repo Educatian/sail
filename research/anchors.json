@@ -1,0 +1,92 @@
+{
+  "metacog_laziness": {
+    "title": "Beware of metacognitive laziness: Effects of generative artificial intelligence on learning motivation, processes, and performance",
+    "year": 2024,
+    "cited": 383,
+    "authors": [
+      "Yizhou Fan",
+      "Luzhen Tang",
+      "Huixiao Le",
+      "Kejie Shen"
+    ],
+    "venue": "British Journal of Educational Technology",
+    "doi": "https://doi.org/10.1111/bjet.13544"
+  },
+  "design_principles_chatbot_srl": {
+    "title": "Educational Design Principles of Using AI Chatbot That Supports Self-Regulated Learning in Education: Goal Setting, Feedback, and Personalization",
+    "year": 2023,
+    "cited": 280,
+    "authors": [
+      "Daniel Chang",
+      "Michael Pin-Chuan Lin",
+      "Shiva Hajian",
+      "Quincy Q. Wang"
+    ],
+    "venue": "Sustainability",
+    "doi": "https://doi.org/10.3390/su151712921"
+  },
+  "mCALS": {
+    "title": "Effects of heat stress on energetic metabolism in lactating Holstein cows",
+    "year": 2010,
+    "cited": 819,
+    "authors": [
+      "J B Wheelock",
+      "Robert P. Rhoads",
+      "M.J. VanBaale",
+      "S.R. Sanders"
+    ],
+    "venue": "Journal of Dairy Science",
+    "doi": "https://doi.org/10.3168/jds.2009-2295"
+  },
+  "time_will_tell": {
+    "title": "Time will tell: The role of mobile learning analytics in self-regulated learning",
+    "year": 2015,
+    "cited": 240,
+    "authors": [
+      "Bernardo Tabuenca",
+      "Marco Kalz",
+      "Hendrik Drachsler",
+      "Marcus Specht"
+    ],
+    "venue": "Computers & Education",
+    "doi": "https://doi.org/10.1016/j.compedu.2015.08.004"
+  },
+  "mobile_chatbot_flipped": {
+    "title": "Mobile-based artificial intelligence chatbot for self-regulated learning in a hybrid flipped classroom",
+    "year": 2025,
+    "cited": 16,
+    "authors": [
+      "Insook Han",
+      "Hyangeun Ji",
+      "Seo-Yeon Jin",
+      "Koun Choi"
+    ],
+    "venue": "Journal of Computing in Higher Education",
+    "doi": "https://doi.org/10.1007/s12528-025-09434-8"
+  },
+  "help_seeking_cognitive_tutor": {
+    "title": "Toward Meta-cognitive Tutoring: A Model of Help Seeking with a Cognitive Tutor",
+    "year": 2006,
+    "cited": 393,
+    "authors": [
+      "Vincent Aleven",
+      "Bruce M. McLaren",
+      "Ido Roll",
+      "Kenneth R. Koedinger"
+    ],
+    "venue": "International Journal of Artificial Intelligence in Education",
+    "doi": "https://doi.org/10.3233/irg-2006-16(2)02"
+  },
+  "chatgpt_srl_pilot": {
+    "title": "Empowering student self‐regulated learning and science education through <scp>ChatGPT</scp> : A pioneering pilot study",
+    "year": 2024,
+    "cited": 252,
+    "authors": [
+      "Davy Tsz Kit Ng",
+      "Chee Wei Tan",
+      "Jac Ka Lok Leung"
+    ],
+    "venue": "British Journal of Educational Technology",
+    "doi": "https://doi.org/10.1111/bjet.13454"
+  }
+}

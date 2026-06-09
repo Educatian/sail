@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Screen, TopBar, Rule, Label, Stat, AccentButton, Row } from '../components/editorial';
 import { CountUp, Reveal } from '../components/ui';
-import { api, apiUrl, studentQuery, getStudent, clearStudent, type LearnerModel, type Stats } from '../lib/api';
-import type { StudySession, Profile } from '../domain';
+import { api, apiUrl, studentQuery, getStudent, clearStudent, isInstructor, setInstructor, enableInstructorWithPasscode, type LearnerModel, type Stats } from '../lib/api';
+import { MarinChat, type MarinMode } from '../components/MarinChat';
+import type { StudySession, Profile, Course, AchievementGoal } from '../domain';
 
 export function Home() {
   const navigate = useNavigate();
@@ -12,12 +13,37 @@ export function Home() {
   const [profile, setProfile] = useState<Profile | null | undefined>(undefined);
   const [stats, setStats] = useState<Stats | null>(null);
   const [testMsg, setTestMsg] = useState('');
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [goals, setGoals] = useState<AchievementGoal[]>([]);
+  const [marin, setMarin] = useState<MarinMode | null>(null);
+  const [instructor, setInstr] = useState(isInstructor());
+  const reloadCoursesGoals = () => { api.listCourses().then(setCourses).catch(() => {}); api.listGoals().then(setGoals).catch(() => {}); };
   useEffect(() => {
     api.listSessions().then(setSessions).catch(() => setSessions([]));
     api.getLearner().then(setLearner).catch(() => {});
     api.getProfile().then(setProfile).catch(() => setProfile(null));
     api.getStats().then(setStats).catch(() => {});
+    api.listCourses().then(setCourses).catch(() => {});
+    api.listGoals().then(setGoals).catch(() => {});
   }, []);
+
+  async function addCourse() {
+    const title = window.prompt('Course title (e.g., Calculus II)')?.trim();
+    if (!title) return;
+    const course = await api.createCourse(title);
+    setCourses((prev) => [course, ...prev]);
+    const distal = window.prompt('Your learning goal for this course (specific + challenging)\ne.g., "Master integration techniques by the midterm"')?.trim();
+    if (!distal) return;
+    const subRaw = window.prompt('Break it into 2-3 proximal subgoals, comma-separated\ne.g., u-substitution, integration by parts, partial fractions')?.trim();
+    const subgoals = subRaw ? subRaw.split(',').map((x) => x.trim()).filter(Boolean) : [];
+    const goal = await api.createGoal({ courseId: course.id, distal, subgoals });
+    setGoals((prev) => [goal, ...prev]);
+  }
+  async function tickSubgoal(goalId: string, subgoalId: string) {
+    const updated = await api.completeSubgoal(goalId, subgoalId);
+    setGoals((prev) => prev.map((g) => (g.id === goalId ? updated : g)));
+    api.getStats().then(setStats).catch(() => {});  // refresh XP/badges earned by logging
+  }
   const needsBaseline = profile !== undefined && (!profile || !profile.items?.length);
   const remindersOn = profile?.remindersOn ?? true;
   const [query, setQuery] = useState('');
@@ -65,16 +91,26 @@ export function Home() {
 
         {stats && stats.gamification.xp > 0 && (
           <Reveal delay={0.11}>
-            <div className="mt-6 flex items-center gap-4 border-t border-black/[0.07] pt-4">
-              <span className="num text-2xl">🔥 {stats.gamification.streakDays}<span className="text-sm text-ink/40"> day{stats.gamification.streakDays === 1 ? '' : 's'}</span></span>
-              <span className="num text-2xl">Lv {stats.gamification.level}</span>
-              <span className="label-mono ml-auto">{stats.gamification.xp} XP · best {stats.gamification.longestStreak}d</span>
+            <div className="mt-6 flex items-center gap-5 border-t border-black/[0.07] pt-4 text-sm text-ink/70">
+              <span>{stats.gamification.streakDays}-day streak</span>
+              <span>Level {stats.gamification.level}</span>
+              <span className="label-mono ml-auto">{stats.gamification.xp} XP</span>
             </div>
+            {stats.gamification.badges && stats.gamification.badges.some((b) => b.earned) && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {stats.gamification.badges.filter((b) => b.earned).map((b) => (
+                  <span key={b.id} title={b.hint} className="rounded-full border border-accent/30 px-2.5 py-1 text-xs text-accent">{b.label}</span>
+                ))}
+              </div>
+            )}
           </Reveal>
         )}
 
         <Reveal delay={0.14}>
-          <div className="mt-7"><AccentButton onClick={() => navigate({ to: '/study/new' })}>+ New session</AccentButton></div>
+          <div className="mt-7 flex items-center gap-4">
+            <AccentButton onClick={() => navigate({ to: '/study/new' })}>New session</AccentButton>
+            <button onClick={() => setMarin('plan')} className="label-mono accent">Plan with Marin</button>
+          </div>
         </Reveal>
 
         {needsBaseline && (
@@ -87,9 +123,48 @@ export function Home() {
         )}
       </div>
 
+      <div className="mt-10 flex items-end justify-between px-5">
+        <Label>Courses & goals</Label>
+        <div className="flex items-center gap-3">
+          <button onClick={() => setMarin('goal_setup')} className="label-mono accent">Chart with Marin</button>
+          <button onClick={addCourse} className="label-mono text-ink/45">Manual</button>
+        </div>
+      </div>
+      <Rule className="mt-3" />
+      {courses.length === 0 && (
+        <div className="px-5 py-4 text-sm text-ink/55">
+          Set a course goal — talk it through with <button onClick={() => setMarin('goal_setup')} className="accent underline underline-offset-2">Marin</button>, who breaks it into proximal subgoals that feed each study session.
+        </div>
+      )}
+      {courses.map((c) => {
+        const goal = goals.find((g) => g.courseId === c.id);
+        const done = goal ? goal.subgoals.filter((s) => s.done).length : 0;
+        const total = goal ? goal.subgoals.length : 0;
+        return (
+          <div key={c.id} className="border-b border-black/[0.07] px-5 py-4">
+            <div className="flex items-center justify-between">
+              <span className="font-display text-lg font-medium">{c.title}</span>
+              {total > 0 && <span className="label-mono">{done}/{total} subgoals</span>}
+            </div>
+            {goal && <p className="mt-1 text-sm text-ink/60">{goal.distal}</p>}
+            {goal && goal.subgoals.length > 0 && (
+              <div className="mt-2 space-y-1.5">
+                {goal.subgoals.map((sg) => (
+                  <button key={sg.id} onClick={() => !sg.done && tickSubgoal(goal.id, sg.id)} disabled={sg.done}
+                    className="flex w-full items-center gap-2.5 text-left text-sm">
+                    <span className={`grid h-4 w-4 shrink-0 place-items-center rounded border text-[10px] text-white ${sg.done ? 'border-accent bg-accent' : 'border-black/30'}`}>{sg.done ? '✓' : ''}</span>
+                    <span className={sg.done ? 'text-ink/40 line-through' : ''}>{sg.text}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+
       {learner && learner.spacing.length > 0 && (
         <>
-          <div className="mt-10 px-5"><Label>/ Review due · spacing</Label></div>
+          <div className="mt-10 px-5"><Label>Review due</Label></div>
           <Rule className="mt-3" />
           {learner.spacing.map((sp) => (
             <Row key={sp.subject} onClick={() => navigate({ to: '/study/new' })}>
@@ -101,7 +176,7 @@ export function Home() {
       )}
 
       <div className="mt-10 flex items-end justify-between px-5">
-        <Label>/ {has ? 'Recent' : 'Get started'}</Label>
+        <Label>{has ? 'Recent' : 'Get started'}</Label>
         {has && <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="search…" className="w-32 border-b border-black/15 bg-transparent pb-0.5 text-right text-sm outline-none placeholder:text-ink/30 focus:border-accent" />}
       </div>
       <Rule className="mt-3" />
@@ -127,6 +202,7 @@ export function Home() {
             ))}
           </div>
           <p className="mt-5 text-xs text-ink/45">Your next plan carries into the next session, and Marin fades its help as you grow.</p>
+          <div className="mt-5"><AccentButton onClick={() => setMarin('onboarding')}>Start with Marin</AccentButton></div>
         </div>
       )}
 
@@ -140,7 +216,7 @@ export function Home() {
                 <div className="font-display truncate text-lg font-medium">{s.subject}</div>
                 <div className="label-mono mt-1">{s.date} · {s.actualMinutes}M · {s.goals.filter((g) => g.isTicked).length}/{s.goals.length} GOALS{s.completed ? ' · DONE' : s.inProgress ? ' · LIVE' : ''}</div>
               </div>
-              <span className={`label-mono ${s.condition === 'metacog' ? 'accent' : ''}`}>{s.condition}</span>
+              {instructor && <span className={`label-mono ${s.condition === 'metacog' ? 'accent' : ''}`}>{s.condition}</span>}
             </button>
             <button onClick={() => renameSession(s)} title="Rename" className="px-1.5 text-ink/30 hover:text-ink">✎</button>
             <button onClick={() => deleteSession(s)} title="Delete" className="px-1.5 text-ink/30 hover:text-accent">✕</button>
@@ -148,7 +224,7 @@ export function Home() {
         </Reveal>
       ))}
 
-      <div className="mt-10 px-5"><Label>/ Email reminders</Label></div>
+      <div className="mt-10 px-5"><Label>Email reminders</Label></div>
       <Rule className="mt-3" />
       <div className="px-5 py-4">
         <button onClick={async () => { const p = await api.setReminders(!remindersOn); setProfile(p); }} className="flex w-full items-center justify-between text-left">
@@ -161,17 +237,33 @@ export function Home() {
         </div>
       </div>
 
-      <div className="px-5 py-8">
-        <Label>Research</Label>
-        <div className="mt-2 text-sm text-ink/55">
-          <button onClick={() => navigate({ to: '/research' })} className="underline decoration-black/20 underline-offset-4">Evidence view</button>
-          {'   ·   '}
-          <a href={apiUrl('/api/export' + studentQuery())} className="underline decoration-black/20 underline-offset-4">Export JSON</a>
-          {'   ·   '}
-          <a href={apiUrl('/api/export.csv')} className="underline decoration-black/20 underline-offset-4">Events CSV</a>
-          <span className="ml-2 opacity-40">· {getStudent()}</span>
+      {instructor && (
+        <div className="px-5 py-8">
+          <Label>Research</Label>
+          <div className="mt-2 text-sm text-ink/55">
+            <button onClick={() => navigate({ to: '/research' })} className="underline decoration-black/20 underline-offset-4">Evidence view</button>
+            {'   ·   '}
+            <a href={apiUrl('/api/export' + studentQuery())} className="underline decoration-black/20 underline-offset-4">Export JSON</a>
+            {'   ·   '}
+            <a href={apiUrl('/api/export.csv')} className="underline decoration-black/20 underline-offset-4">Events CSV</a>
+            <span className="ml-2 opacity-40">· {getStudent()}</span>
+          </div>
         </div>
+      )}
+
+      <div className="px-5 pb-8 pt-2">
+        <button
+          onClick={() => {
+            if (instructor) { setInstructor(false); setInstr(false); }     // leaving needs no passcode
+            else if (enableInstructorWithPasscode()) setInstr(true);        // entering is passcode-gated
+          }}
+          className="text-xs text-ink/40"
+        >
+          {instructor ? 'Instructor view: on — tap to hide research tools' : '🔒 Instructor view'}
+        </button>
       </div>
+
+      {marin && <MarinChat mode={marin} onClose={() => setMarin(null)} onAction={() => { reloadCoursesGoals(); api.getStats().then(setStats).catch(() => {}); }} onSessionCreated={(sid) => navigate({ to: '/study/active/$id', params: { id: sid } })} />}
     </Screen>
   );
 }

@@ -2,12 +2,13 @@ import { useEffect, useRef, useState, lazy, Suspense } from 'react';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { Screen, TopBar, Label, AccentButton, GhostButton, Rule } from '../components/editorial';
 import { LocationMap } from '../components/LocationMap';
+import { MarinChat } from '../components/MarinChat';
 import { parseMentor, labelBadge } from '../lib/mentor';
-import { api, streamChat } from '../lib/api';
+import { api, streamChat, isInstructor } from '../lib/api';
 
 // lazy: keeps react-markdown + KaTeX out of the initial bundle
 const MentorText = lazy(() => import('../components/MentorText').then((m) => ({ default: m.MentorText })));
-import { TASK_LABELS, type StudySession, type ChatMessage, type TimerSegment, type TaskKind } from '../domain';
+import { TASK_LABELS, type StudySession, type ChatMessage, type TimerSegment, type TaskKind, type Rating, type ContextFit, type RegulationAction, type MomentaryTrigger, type MomentaryCheck } from '../domain';
 
 function fmt(ms: number) {
   const s = Math.floor(ms / 1000);
@@ -143,6 +144,14 @@ export function ActiveSession() {
   const trackingModeRef = useRef<'spot' | 'route'>('spot');
   const trackingSampleLoggedRef = useRef(0);
   const mapLoggedRef = useRef(false);
+  // T1 momentary check (event-contingent EMA at organic touchpoints)
+  const lastCheckAtRef = useRef(0);
+  const checkCountRef = useRef(0);
+  const hiddenSinceRef = useRef<number | null>(null);
+  const [momentaryDue, setMomentaryDue] = useState<MomentaryTrigger | null>(null);
+  const [mFocus, setMFocus] = useState<Rating | null>(null);
+  const [mFit, setMFit] = useState<ContextFit | null>(null);
+  const [stretchOpen, setStretchOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const SR: any = typeof window !== 'undefined' ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition : null;
   function toggleMic() {
@@ -162,6 +171,20 @@ export function ActiveSession() {
   useEffect(() => () => {
     if (trackingWatchRef.current !== null && 'geolocation' in navigator) navigator.geolocation.clearWatch(trackingWatchRef.current);
   }, []);
+  // T1: return-contingent trigger — learner comes back to a running session after being away
+  useEffect(() => {
+    function onVis() {
+      if (document.visibilityState === 'hidden') { hiddenSinceRef.current = Date.now(); return; }
+      const awayMin = hiddenSinceRef.current ? (Date.now() - hiddenSinceRef.current) / 60000 : 0;
+      hiddenSinceRef.current = null;
+      if (!running || momentaryDue) return;
+      if (awayMin >= 3 && checkCountRef.current < 2 && (Date.now() - lastCheckAtRef.current) / 60000 >= 8) setMomentaryDue('return');
+    }
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, [running, momentaryDue]);
+  // T1: log when a check surfaces
+  useEffect(() => { if (momentaryDue && session) void api.track('momentary_check_shown', { trigger: momentaryDue }, id, session.condition); }, [momentaryDue]);
   useEffect(() => { trackingModeRef.current = trackingMode; }, [trackingMode]);
   useEffect(() => {
     if (mapLoggedRef.current) return;
@@ -209,6 +232,30 @@ export function ActiveSession() {
   if (!session) return <Screen pad={false}><div className="px-5 py-10"><Label>Loading…</Label></div></Screen>;
 
   async function patch(p: Partial<StudySession>) { setSession(await api.patchSession(id, p)); }
+  function openMomentary() { if (!momentaryDue) setMomentaryDue('manual'); }
+  function dismissMomentary() {
+    lastCheckAtRef.current = Date.now();
+    setMomentaryDue(null); setMFocus(null); setMFit(null);
+  }
+  async function submitMomentary(regulationAction: RegulationAction) {
+    const current = session!;
+    if (mFocus == null || mFit == null) return;
+    const check: MomentaryCheck = {
+      at: new Date().toISOString(),
+      elapsedOnTaskMin: Math.round(elapsedMs(current.timerSegments) / 60000),
+      trigger: momentaryDue ?? 'manual',
+      focus: mFocus, contextFit: mFit, regulationAction,
+      placeCategoryAtCheck: current.contextTrace?.placeCategory,
+      mobilityStateAtCheck: current.spatialTrace?.mobilityState,
+    };
+    const fit = mFit, focus = mFocus;
+    lastCheckAtRef.current = Date.now(); checkCountRef.current += 1;
+    setMomentaryDue(null); setMFocus(null); setMFit(null);
+    void api.track('momentary_check_answered', { trigger: check.trigger, focus, contextFit: fit, regulationAction, elapsedOnTaskMin: check.elapsedOnTaskMin }, id, current.condition);
+    if (regulationAction !== 'stayed' && regulationAction !== 'none')
+      void api.track('context_regulated', { regulationAction, contextFit: fit, from: check.placeCategoryAtCheck }, id, current.condition);
+    await patch({ momentaryChecks: [...(current.momentaryChecks ?? []), check] });
+  }
   async function persistSpatialTrace(spatialTrace: StudySession['spatialTrace']) {
     if (!spatialTrace) return;
     setSession((cur) => (cur ? { ...cur, spatialTrace } : cur));
@@ -326,6 +373,8 @@ export function ActiveSession() {
       last.endTime = new Date().toISOString();
       void api.track('timer_paused', { segmentCount: segs.length, elapsedMs: elapsedMs(segs) }, id, current.condition);
       patch({ timerSegments: segs, inProgress: false });
+      // T1: break-contingent trigger
+      if (!momentaryDue && elapsedMs(segs) / 60000 >= 10 && checkCountRef.current < 2 && (Date.now() - lastCheckAtRef.current) / 60000 >= 8) setMomentaryDue('break');
     } else {
       segs.push({ startTime: new Date().toISOString() });
       void api.track('timer_started', { segmentCount: segs.length }, id, current.condition);
@@ -388,12 +437,49 @@ export function ActiveSession() {
         <div className="px-5 pt-8">
           <div className={`num text-7xl ${running ? 'accent' : 'text-ink'}`}>{fmt(elapsed)}</div>
           <div className="label-mono mt-2">On task · {taskLabel(session.taskKind)} · planned {session.plannedMinutes}m</div>
-          <div className="mt-5">
+          <div className="mt-5 flex items-center gap-4">
             {running
               ? <GhostButton onClick={toggleTimer}>Pause</GhostButton>
               : <AccentButton onClick={toggleTimer}>{elapsed > 0 ? 'Resume' : 'Start studying'}</AccentButton>}
+            {running && !momentaryDue && <button onClick={openMomentary} className="label-mono text-ink/45">Check in</button>}
           </div>
         </div>
+
+        {/* T1 momentary check (in-session EMA at organic touchpoints) */}
+        {momentaryDue && (
+          <div className="mx-5 mt-6 rounded-2xl border border-accent/40 bg-accent/5 p-4">
+            <div className="label-mono accent mb-2">
+              Momentary check{momentaryDue === 'return' ? ' · welcome back' : momentaryDue === 'break' ? ' · taking a break' : ''}
+            </div>
+            <p className="text-sm font-medium">How's your focus right now?</p>
+            <div className="mt-2 flex gap-2">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button key={n} onClick={() => setMFocus(n as Rating)}
+                  className={`h-9 w-9 rounded-full border text-sm ${mFocus === n ? 'border-accent bg-accent text-white' : 'border-black/25 text-ink/60'}`}>{n}</button>
+              ))}
+            </div>
+            <p className="mt-3 text-sm font-medium">Is this spot working for you?</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {(['good', 'mixed', 'poor'] as ContextFit[]).map((f) => (
+                <button key={f} disabled={mFocus == null}
+                  onClick={() => { setMFit(f); if (f === 'good' && mFocus != null) void submitMomentary('stayed'); }}
+                  className={`rounded-md border px-3 py-1.5 text-sm capitalize disabled:opacity-40 ${mFit === f ? 'border-accent bg-accent text-white' : 'border-black/25 text-ink/65'}`}>{f}</button>
+              ))}
+            </div>
+            {mFit && mFit !== 'good' && (
+              <>
+                <p className="mt-3 text-sm font-medium">What will you do about it?</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {([['changed_place', 'Change place'], ['removed_distraction', 'Remove distraction'], ['took_break', 'Take a break'], ['stayed', 'Stay here']] as [RegulationAction, string][]).map(([a, lbl]) => (
+                    <button key={a} disabled={mFocus == null} onClick={() => void submitMomentary(a)}
+                      className="rounded-md border border-accent px-3 py-1.5 text-sm text-accent disabled:opacity-40">{lbl}</button>
+                  ))}
+                </div>
+              </>
+            )}
+            <button onClick={dismissMomentary} className="mt-3 text-xs text-ink/45">Not now</button>
+          </div>
+        )}
 
         {/* goals */}
         {session.goals.length > 0 && (
@@ -410,8 +496,11 @@ export function ActiveSession() {
         )}
 
         {/* mentor */}
-        <div className="mt-9 px-5"><Label>/ Marin — asks, not answers</Label></div>
-        {session.lastPolicy && (
+        <div className="mt-9 flex items-end justify-between px-5">
+          <Label>/ Marin — asks, not answers</Label>
+          <button onClick={() => setStretchOpen(true)} className="label-mono accent">Stretch me</button>
+        </div>
+        {isInstructor() && session.lastPolicy && (
           <div className="mx-5 mt-3 rounded-md border border-black/12 p-3">
             <div className="flex items-center justify-between gap-3">
               <span className="label-mono accent">Policy: {session.lastPolicy.action.replace(/_/g, ' ')}</span>
@@ -548,6 +637,7 @@ export function ActiveSession() {
           <button disabled={streaming} className="btn-accent grid h-11 w-11 shrink-0 place-items-center text-lg disabled:opacity-40">↑</button>
         </form>
       </div>
+      {stretchOpen && <MarinChat mode="stretch" sessionId={id} onClose={() => setStretchOpen(false)} />}
     </Screen>
   );
 }

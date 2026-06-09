@@ -1,4 +1,4 @@
-import type { StudySession, ChatMessage, Condition, StrategyKind, Checkpoint, MentorLabel, ScaffoldStyle, ScaffoldTiming, Profile, TaskKind, MetricEventType } from '../domain';
+import type { StudySession, ChatMessage, Condition, StrategyKind, Checkpoint, MentorLabel, ScaffoldStyle, ScaffoldTiming, Profile, TaskKind, MetricEventType, Course, AchievementGoal } from '../domain';
 
 // In the browser dev server, '' lets Vite proxy /api -> :3001.
 // In a bundled mobile (Capacitor) build, set VITE_API_BASE to the hosted/LAN server, e.g. http://192.168.0.10:3001
@@ -21,6 +21,25 @@ export const getStudent = (): string => { try { return localStorage.getItem(SKEY
 export const setStudent = (sid: string) => { try { localStorage.setItem(SKEY, sid); } catch { /* ignore */ } };
 export const clearStudent = () => { try { localStorage.removeItem(SKEY); } catch { /* ignore */ } };
 export const studentQuery = () => (getStudent() ? `?studentId=${encodeURIComponent(getStudent())}` : '');
+
+// instructor/researcher view: gates research jargon (policy, export, condition, telemetry) out of the student UI
+const IKEY = 'sail-instructor';
+export const isInstructor = (): boolean => { try { return localStorage.getItem(IKEY) === '1'; } catch { return false; } };
+export const setInstructor = (on: boolean) => { try { localStorage.setItem(IKEY, on ? '1' : '0'); } catch { /* ignore */ } };
+// Optional passcode gate: a student can't just toggle into the research view. Configure via
+// VITE_INSTRUCTOR_PASSCODE; set it to '' to disable the gate (free toggle). Asked once per session.
+const INSTR_PASSCODE = (import.meta.env.VITE_INSTRUCTOR_PASSCODE as string | undefined) ?? 'sail-instr';
+export const enableInstructorWithPasscode = (): boolean => {
+  if (!INSTR_PASSCODE) { setInstructor(true); return true; }
+  let unlocked = false;
+  try { unlocked = sessionStorage.getItem('sail-instr-ok') === '1'; } catch { /* ignore */ }
+  if (!unlocked) {
+    const entry = window.prompt('Instructor passcode:');
+    if (entry !== INSTR_PASSCODE) { if (entry !== null) window.alert('Incorrect passcode.'); return false; }
+    try { sessionStorage.setItem('sail-instr-ok', '1'); } catch { /* ignore */ }
+  }
+  setInstructor(true); return true;
+};
 const withSid = <T extends object>(body: T) => ({ ...body, studentId: getStudent() || undefined });
 
 export const api = {
@@ -54,9 +73,19 @@ export const api = {
     confidencePre?: number;
     contextTrace?: StudySession['contextTrace'];
     spatialTrace?: StudySession['spatialTrace'];
+    courseId?: string;
+    subgoalId?: string;
   }): Promise<StudySession> {
     return fetch(apiUrl('/api/sessions'), { method: 'POST', headers: JSON_H, body: JSON.stringify(withSid(body)) }).then(j);
   },
+  listCourses: (): Promise<Course[]> => fetch(apiUrl('/api/courses' + studentQuery())).then(j),
+  createCourse: (title: string, termEnd?: string): Promise<Course> =>
+    fetch(apiUrl('/api/courses'), { method: 'POST', headers: JSON_H, body: JSON.stringify(withSid({ title, termEnd })) }).then(j),
+  listGoals: (): Promise<AchievementGoal[]> => fetch(apiUrl('/api/goals' + studentQuery())).then(j),
+  createGoal: (body: { courseId: string; distal: string; targetDate?: string; subgoals?: string[] }): Promise<AchievementGoal> =>
+    fetch(apiUrl('/api/goals'), { method: 'POST', headers: JSON_H, body: JSON.stringify(withSid(body)) }).then(j),
+  completeSubgoal: (goalId: string, subgoalId: string): Promise<AchievementGoal> =>
+    fetch(apiUrl(`/api/goals/${goalId}`), { method: 'PATCH', headers: JSON_H, body: JSON.stringify(withSid({ completeSubgoalId: subgoalId })) }).then(j),
   getSession: (id: string): Promise<StudySession> => fetch(apiUrl(`/api/sessions/${id}`)).then(j),
   listSessions: (): Promise<StudySession[]> => fetch(apiUrl('/api/sessions' + studentQuery())).then(j),
   patchSession: (id: string, patch: Partial<StudySession>): Promise<StudySession> =>
@@ -93,7 +122,7 @@ export interface LearnerModel {
 }
 
 export interface Stats {
-  gamification: { streakDays: number; longestStreak: number; xp: number; level: number };
+  gamification: { streakDays: number; longestStreak: number; xp: number; level: number; loggingXp?: number; badges?: { id: string; label: string; hint: string; earned: boolean }[] };
   eventCounts: Record<string, number>;
   stateCounts: Record<string, number>;
   policyCounts: Record<string, number>;
@@ -139,6 +168,39 @@ export interface MentorDone {
   hintLevel: number;
   checkpoint?: Checkpoint;
   displayText: string;
+}
+
+/** Session-independent Marin conversation (ask / goal_setup / reflection / onboarding). */
+export async function streamMarin(
+  mode: 'ask' | 'goal_setup' | 'reflection' | 'onboarding' | 'stretch' | 'plan',
+  messages: { role: 'user' | 'assistant'; content: string }[],
+  onDelta: (textSoFar: string) => void,
+  opts?: { sessionId?: string },
+): Promise<string> {
+  const res = await fetch(apiUrl('/api/marin/chat'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode, messages, sessionId: opts?.sessionId, studentId: getStudent() || undefined }),
+  });
+  const reader = res.body!.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  let full = '';
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    const frames = buf.split('\n\n');
+    buf = frames.pop() ?? '';
+    for (const frame of frames) {
+      const ev = /event:\s*(.*)/.exec(frame)?.[1]?.trim();
+      const dataLine = /data:\s*([\s\S]*)/.exec(frame)?.[1]?.trim();
+      if (!ev || dataLine == null) continue;
+      if (ev === 'delta') { full += JSON.parse(dataLine) as string; onDelta(full); }
+      else if (ev === 'error') { full += `\n\n[error: ${JSON.parse(dataLine)}]`; onDelta(full); }
+    }
+  }
+  return full;
 }
 
 /** POST a turn and stream the mentor reply (SSE over fetch). */

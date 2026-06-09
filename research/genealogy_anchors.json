@@ -1,0 +1,168 @@
+{
+  "cybernetics_wiener": {
+    "title": "Cybernetics or Control and Communication in the Animal and the Machine",
+    "year": 2019,
+    "cited": 5020,
+    "authors": [
+      "Norbert Wiener"
+    ]
+  },
+  "miller_TOTE_plans": {
+    "title": "Plans and the structure of behavior.",
+    "year": 1960,
+    "cited": 4533,
+    "authors": [
+      "George A. Miller",
+      "Eugene Galanter",
+      "Karl H. Pribram"
+    ]
+  },
+  "skinner_teaching_machines": {
+    "title": "Identification and system parameter Estimation",
+    "year": 1975,
+    "cited": 219,
+    "authors": [
+      "Rolf Isermann"
+    ]
+  },
+  "flavell_metamemory": {
+    "title": "A process-oriented model of metacognition: Links between motivation and executive functioning",
+    "year": 2000,
+    "cited": 173,
+    "authors": [
+      "John G. Borkowski",
+      "Kim Sang Lorna 陳鉗笙 Chan",
+      "Nithi Muthukrishna"
+    ]
+  },
+  "flavell_metacognition_1979": {
+    "title": "Metacognition and cognitive monitoring: A new area of cognitive–developmental inquiry.",
+    "year": 1979,
+    "cited": 9805,
+    "authors": [
+      "John H. Flavell"
+    ]
+  },
+  "bandura_social_foundations": {
+    "title": "Social Foundations of Thought and Action : A Social Cognitive Theory",
+    "year": 1985,
+    "cited": 19079,
+    "authors": [
+      "Albert Bandura"
+    ]
+  },
+  "bandura_self_efficacy_1977": {
+    "title": "Self-efficacy: Toward a unifying theory of behavioral change.",
+    "year": 1977,
+    "cited": 42314,
+    "authors": [
+      "Albert Bandura"
+    ]
+  },
+  "vygotsky_mind_society": {
+    "title": "Vygotsky and the Social Formation of Mind",
+    "year": 1987,
+    "cited": 3358,
+    "authors": [
+      "Alex Kozulin",
+      "James V. Wertsch"
+    ]
+  },
+  "brown_collins_duguid_1989": {
+    "title": "Situated Cognition and the Culture of Learning",
+    "year": 1989,
+    "cited": 12957,
+    "authors": [
+      "John Seely Brown",
+      "Allan Collins",
+      "Paul Duguid"
+    ]
+  },
+  "lave_wenger_1991": {
+    "title": "Situated Learning: Legitimate Peripheral Participation.",
+    "year": 1994,
+    "cited": 39797,
+    "authors": [
+      "Maurice Bloch",
+      "Jean Lave",
+      "Étienne Wenger"
+    ]
+  },
+  "zimmerman_1989_srl": {
+    "title": "A social cognitive view of self-regulated academic learning.",
+    "year": 1989,
+    "cited": 3433,
+    "authors": [
+      "Barry J. Zimmerman"
+    ]
+  },
+  "zimmerman_2000_cyclical": {
+    "title": "Handbook of Self-Regulation",
+    "year": 2000,
+    "cited": 4441,
+    "authors": [
+      "Monique Boekaerts",
+      "Paul R. Pintrich",
+      "Zeider, Moshe"
+    ]
+  },
+  "pintrich_mslq_1990": {
+    "title": "Motivational and self-regulated learning components of classroom academic performance.",
+    "year": 1990,
+    "cited": 7748,
+    "authors": [
+      "Paul R. Pintrich",
+      "Elisabeth Vialpando De Groot"
+    ]
+  },
+  "pintrich_2000_framework": {
+    "title": "The Role of Goal Orientation in Self-Regulated Learning",
+    "year": 2000,
+    "cited": 4881,
+    "authors": [
+      "Paul R. Pintrich"
+    ]
+  },
+  "winne_hadwin_1998": {
+    "title": "Metacognition in Educational Theory and Practice",
+    "year": 1998,
+    "cited": 2109,
+    "authors": []
+  },
+  "nelson_narens_metamemory": {
+    "title": "Metamemory: A Theoretical Framework and New Findings",
+    "year": 1990,
+    "cited": 2460,
+    "authors": [
+      "Thomas O. Nelson"
+    ]
+  },
+  "hutchins_distributed": {
+    "title": "Cognition in the Wild",
+    "year": 1995,
+    "cited": 6865,
+    "authors": [
+      "Edwin Hutchins"
+    ]
+  },
+  "tabuenca_2015": {
+    "title": "Time will tell: The role of mobile learning analytics in self-regulated learning",
+    "year": 2015,
+    "cited": 240,
+    "authors": [
+      "Bernardo Tabuenca",
+      "Marco Kalz",
+      "Hendrik Drachsler"
+    ]
+  },
+  "fan_2024_laziness": {
+    "title": "Beware of metacognitive laziness: Effects of generative artificial intelligence on learning motivation, processes, and performance",
+    "year": 2024,
+    "cited": 383,
+    "authors": [
+      "Yizhou Fan",
+      "Luzhen Tang",
+      "Huixiao Le"
+    ]
+  }
+}

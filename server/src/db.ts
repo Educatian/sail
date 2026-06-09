@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import { mkdirSync, appendFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { StudySession, ChatMessage, MetricEvent, Profile } from './domain.js';
+import type { StudySession, ChatMessage, MetricEvent, Profile, Course, AchievementGoal } from './domain.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, '..', 'data');
@@ -62,6 +62,17 @@ db.exec(`
     createdAt TEXT NOT NULL
   );
   CREATE INDEX IF NOT EXISTS idx_materials_subj ON materials(studentId, subject);
+  CREATE TABLE IF NOT EXISTS courses (
+    id TEXT PRIMARY KEY, studentId TEXT NOT NULL, json TEXT NOT NULL, createdAt TEXT NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_courses_student ON courses(studentId);
+  CREATE TABLE IF NOT EXISTS goals (
+    id TEXT PRIMARY KEY, studentId TEXT NOT NULL, courseId TEXT NOT NULL, json TEXT NOT NULL, createdAt TEXT NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_goals_student ON goals(studentId);
+  CREATE TABLE IF NOT EXISTS olm (
+    learnerId TEXT PRIMARY KEY, json TEXT NOT NULL, updatedAt TEXT NOT NULL
+  );
 `);
 
 // ---- sessions ----
@@ -164,6 +175,18 @@ export function saveProfile(p: Profile): void {
   ).run({ studentId: p.studentId, json: JSON.stringify(p), createdAt: p.createdAt });
 }
 
+// ---- shared Open Learner Model (persisted so it survives restarts) ----
+export function loadOlmRow(learnerId: string): unknown | undefined {
+  const row = db.prepare('SELECT json FROM olm WHERE learnerId = ?').get(learnerId) as { json: string } | undefined;
+  return row ? JSON.parse(row.json) : undefined;
+}
+export function saveOlmRow(learnerId: string, data: unknown): void {
+  db.prepare(
+    `INSERT INTO olm (learnerId, json, updatedAt) VALUES (@learnerId, @json, @updatedAt)
+     ON CONFLICT(learnerId) DO UPDATE SET json=@json, updatedAt=@updatedAt`,
+  ).run({ learnerId, json: JSON.stringify(data), updatedAt: new Date().toISOString() });
+}
+
 export interface UserRow { studentId: string; salt: string; passHash: string; createdAt: string }
 export function getUser(studentId: string): UserRow | undefined {
   return (db.prepare('SELECT * FROM users WHERE studentId = ?').get(studentId) as UserRow | undefined) ?? undefined;
@@ -173,6 +196,30 @@ export function saveUser(u: UserRow): void {
 }
 export function listUsers(): { studentId: string }[] {
   return db.prepare('SELECT studentId FROM users').all() as { studentId: string }[];
+}
+
+// ---- courses + achievement goals (course-goal spine) ----
+export function saveCourse(ctx: Course): void {
+  db.prepare(
+    `INSERT INTO courses (id, studentId, json, createdAt) VALUES (@id, @studentId, @json, @createdAt)
+     ON CONFLICT(id) DO UPDATE SET json=@json`,
+  ).run({ id: ctx.id, studentId: ctx.studentId, json: JSON.stringify(ctx), createdAt: ctx.createdAt });
+}
+export function listCourses(studentId: string): Course[] {
+  return (db.prepare('SELECT json FROM courses WHERE studentId = ? ORDER BY createdAt DESC').all(studentId) as { json: string }[]).map((r) => JSON.parse(r.json) as Course);
+}
+export function saveGoal(g: AchievementGoal): void {
+  db.prepare(
+    `INSERT INTO goals (id, studentId, courseId, json, createdAt) VALUES (@id, @studentId, @courseId, @json, @createdAt)
+     ON CONFLICT(id) DO UPDATE SET json=@json`,
+  ).run({ id: g.id, studentId: g.studentId, courseId: g.courseId, json: JSON.stringify(g), createdAt: g.createdAt });
+}
+export function getGoal(id: string): AchievementGoal | undefined {
+  const row = db.prepare('SELECT json FROM goals WHERE id = ?').get(id) as { json: string } | undefined;
+  return row ? (JSON.parse(row.json) as AchievementGoal) : undefined;
+}
+export function listGoals(studentId: string): AchievementGoal[] {
+  return (db.prepare('SELECT json FROM goals WHERE studentId = ? ORDER BY createdAt DESC').all(studentId) as { json: string }[]).map((r) => JSON.parse(r.json) as AchievementGoal);
 }
 
 export default db;

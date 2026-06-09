@@ -15,12 +15,15 @@ export function decidePolicy(session: StudySession, learner: LearnerModel, messa
     ? Math.max(Math.abs(session.confidencePre - 50), learner.calibration.recentError)
     : learner.calibration.recentError;
   const contextRisk = session.contextTrace?.placeCategory === 'transit' || session.contextTrace?.placeCategory === 'work_social';
+  const lastCheck = session.momentaryChecks?.at(-1);
+  const flaggedButUnregulated = lastCheck?.contextFit === 'poor' && (lastCheck.regulationAction === 'stayed' || lastCheck.regulationAction === 'none');
 
   if (highHintCount >= 3 && learner.scaffold.level === 'high') return { action: 'escalate', phaseTarget, intensity: 'high', reason: 'repeated regulation breakdown across recent turns', confidence: 0.69 };
   if (learner.scaffold.level === 'low' && goalRate >= 0.7 && !asksForAnswer) return { action: 'fade', phaseTarget, intensity: 'low', reason: 'stable progress and low scaffold need', confidence: 0.72 };
   if ((asksForAnswer && !correctionSaysIndependent) || highHintCount >= 2) return { action: 'prompt_control', phaseTarget, intensity: 'high', reason: asksForAnswer ? 'executive help-seeking signal' : 'repeated deep hints', confidence: 0.76 };
   if (noPlan) return { action: 'prompt_monitoring', phaseTarget: 'forethought', intensity: 'medium', reason: 'planning trace is missing', confidence: 0.7 };
   if (phaseTarget === 'reflection' || session.actualMinutes >= session.plannedMinutes) return { action: 'prompt_reflection', phaseTarget: 'reflection', intensity: 'medium', reason: 'plan-action-result comparison is due', confidence: 0.68 };
+  if (flaggedButUnregulated) return { action: 'prompt_control', phaseTarget, intensity: 'medium', reason: 'environment flagged poor but left unregulated', confidence: 0.7 };
   if (contextRisk) return { action: 'prompt_monitoring', phaseTarget, intensity: 'low', reason: 'context may fragment attention', confidence: 0.58 };
   if (calibrationGap != null && calibrationGap >= 25) return { action: 'prompt_monitoring', phaseTarget, intensity: 'medium', reason: 'calibration gap suggests monitoring check', confidence: 0.66 };
   if (learner.scaffold.level === 'high') return { action: 'prompt_monitoring', phaseTarget, intensity: 'medium', reason: learner.scaffold.reason, confidence: 0.64 };

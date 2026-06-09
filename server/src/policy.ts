@@ -15,6 +15,8 @@ export function decidePolicy(session: StudySession, learner: LearnerModel, messa
     ? Math.max(Math.abs(session.confidencePre - 50), learner.calibration.recentError)
     : learner.calibration.recentError;
   const contextRisk = session.contextTrace?.placeCategory === 'transit' || session.contextTrace?.placeCategory === 'work_social';
+  const lastCheck = session.momentaryChecks?.at(-1);
+  const flaggedButUnregulated = lastCheck?.contextFit === 'poor' && (lastCheck.regulationAction === 'stayed' || lastCheck.regulationAction === 'none');
 
   if (highHintCount >= 3 && learner.scaffold.level === 'high') {
     return { action: 'escalate', phaseTarget, intensity: 'high', reason: 'repeated regulation breakdown across recent turns', confidence: 0.69 };
@@ -30,6 +32,9 @@ export function decidePolicy(session: StudySession, learner: LearnerModel, messa
   }
   if (phaseTarget === 'reflection' || session.actualMinutes >= session.plannedMinutes) {
     return { action: 'prompt_reflection', phaseTarget: 'reflection', intensity: 'medium', reason: 'plan-action-result comparison is due', confidence: 0.68 };
+  }
+  if (flaggedButUnregulated) {
+    return { action: 'prompt_control', phaseTarget, intensity: 'medium', reason: 'environment flagged poor but left unregulated', confidence: 0.7 };
   }
   if (contextRisk) {
     return { action: 'prompt_monitoring', phaseTarget, intensity: 'low', reason: 'context may fragment attention', confidence: 0.58 };

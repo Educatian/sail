@@ -58,6 +58,21 @@ export interface SpatialTrace {
   rawLocationStored: false;
 }
 
+export type ContextFit = 'good' | 'mixed' | 'poor';
+export type RegulationAction = 'stayed' | 'changed_place' | 'removed_distraction' | 'took_break' | 'none';
+export type MomentaryTrigger = 'break' | 'return' | 'manual';
+/** In-session momentary check: event-contingent EMA at organic SRL touchpoints (Shiffman et al. 2007). */
+export interface MomentaryCheck {
+  at: string;
+  elapsedOnTaskMin: number;
+  trigger: MomentaryTrigger;
+  focus: Rating;
+  contextFit: ContextFit;
+  regulationAction: RegulationAction;
+  placeCategoryAtCheck?: PlaceCategory;
+  mobilityStateAtCheck?: MobilityState;
+}
+
 export interface PolicyDecision {
   action: PolicyAction;
   phaseTarget: Phase;
@@ -81,6 +96,9 @@ export interface StudySession {
   confidencePre?: number;      // JOL prediction 0-100 (pre-task)
   contextTrace?: ContextTrace;
   spatialTrace?: SpatialTrace;
+  momentaryChecks?: MomentaryCheck[];   // in-session EMA at organic touchpoints
+  courseId?: string;                    // links session to a course (goal spine)
+  subgoalId?: string;                   // links session to a proximal subgoal
   timerSegments: TimerSegment[];
   actualMinutes: number;
   inProgress: boolean;
@@ -101,6 +119,23 @@ export interface StudySession {
 }
 
 export interface Profile { studentId: string; baselineSRL: number; items: number[]; createdAt: string; remindersOn?: boolean; lastRemindedAt?: string }
+
+// Course + achievement-goal spine: nests the session loop inside a course-goal loop.
+export type GoalOrientation = 'mastery' | 'performance';   // research field; UI frames mastery
+export interface Course {
+  id: string; studentId: string; title: string;
+  externalId?: string; externalSource?: 'canvas' | 'manual';  // future LMS anchor
+  termEnd?: string; createdAt: string;
+}
+export interface ProximalSubgoal { id: string; text: string; targetDate?: string; done: boolean }
+export interface AchievementGoal {
+  id: string; studentId: string; courseId: string;
+  distal: string;                       // specific + challenging (Locke & Latham 1990)
+  orientation: GoalOrientation;
+  targetDate?: string;
+  subgoals: ProximalSubgoal[];          // proximal decomposition (Bandura & Schunk 1981)
+  createdAt: string; updatedAt: string;
+}
 
 export type MentorLabel = 'SOCRATIC' | 'HINT_L1' | 'HINT_L2' | 'HINT_L3' | 'EXPLAIN' | 'VERIFY' | 'FINISH';
 export interface CheckpointOption { id: string; text: string }
@@ -153,6 +188,15 @@ export type MetricEventType =
   | 'voice_input_started'
   | 'voice_input_stopped'
   | 'reflection_changed'
+  | 'momentary_check_shown'
+  | 'momentary_check_answered'
+  | 'context_regulated'
+  | 'course_created'
+  | 'goal_set'
+  | 'subgoal_completed'
+  | 'badge_earned'
+  | 'marin_chat'
+  | 'metacog_experience'
   | 'research_exported'
   | 'client_error';
 

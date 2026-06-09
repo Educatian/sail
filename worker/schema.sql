@@ -47,3 +47,23 @@ CREATE TABLE IF NOT EXISTS materials (
   createdAt TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_materials_subj ON materials(studentId, subject);
+CREATE TABLE IF NOT EXISTS courses (
+  id TEXT PRIMARY KEY,
+  studentId TEXT NOT NULL,
+  json TEXT NOT NULL,
+  createdAt TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_courses_student ON courses(studentId);
+CREATE TABLE IF NOT EXISTS olm (
+  learnerId TEXT PRIMARY KEY,
+  json TEXT NOT NULL,
+  updatedAt TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS goals (
+  id TEXT PRIMARY KEY,
+  studentId TEXT NOT NULL,
+  courseId TEXT NOT NULL,
+  json TEXT NOT NULL,
+  createdAt TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_goals_student ON goals(studentId);

@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { streamSSE } from 'hono/streaming';
 import { nanoid } from 'nanoid';
-import { saveSession, getSession, listSessions, deleteSession, saveMessage, getMessages, logEvent, allEvents, getProfile, saveProfile, getUser, saveUser, listUsers, replaceMaterials, getMaterialChunks } from './db';
+import { saveSession, getSession, listSessions, deleteSession, saveMessage, getMessages, logEvent, allEvents, getProfile, saveProfile, getUser, saveUser, listUsers, replaceMaterials, getMaterialChunks, saveCourse, listCourses, saveGoal, getGoal, listGoals } from './db';
 import { randSalt, pbkdf2 } from './auth';
 import { dueReminder, reminderEmail, sendEmail } from './reminders';
 import { chunkText, retrieve } from './rag';
@@ -12,7 +12,11 @@ import { decidePolicy, policyInstruction } from './policy';
 import { classifyHelpSeeking, scaffoldFidelity } from './analysis';
 import { parseMentor, hintLevelSoFar, toLlmMessages } from './mentor';
 import { buildLearnerModel } from './learner';
-import type { StudySession, ChatMessage, Condition, ContextTrace, MetricEvent, MetricEventType, SpatialTrace } from './domain';
+import { buildMarinSystem, type MarinMode, type MarinCtx } from './marin';
+import { stretchSteering } from './meEngine';
+import { getOLM, applyUpdate as olmApply, macroSummary, type Diff } from './olm';
+import { scheduleReviews, reviewNudge } from './reviewScheduler';
+import type { StudySession, ChatMessage, Condition, ContextTrace, MetricEvent, MetricEventType, SpatialTrace, Course, AchievementGoal, ProximalSubgoal, GoalOrientation } from './domain';
 
 type Bindings = { DB: D1Database; OPENROUTER_API_KEY?: string; SAIL_MODEL?: string; RESEND_API_KEY?: string; RESEND_FROM?: string };
 const app = new Hono<{ Bindings: Bindings }>();
@@ -47,6 +51,10 @@ const CLIENT_EVENTS = new Set<MetricEventType>([
   'research_exported',
   'client_error',
   'checkpoint_answered',
+  'momentary_check_shown',
+  'momentary_check_answered',
+  'context_regulated',
+  'metacog_experience',
 ]);
 const REDACT_KEYS = new Set(['lat', 'lng', 'latitude', 'longitude', 'coords', 'coordinates', 'position', 'rawPosition', 'rawLocation']);
 function recomputeMinutes(s: StudySession): number {
@@ -188,6 +196,8 @@ app.post('/api/sessions', async (c) => {
     confidencePre: typeof b.confidencePre === 'number' ? b.confidencePre : undefined,
     contextTrace: normalizeContextTrace(b.contextTrace),
     spatialTrace: normalizeSpatialTrace(b.spatialTrace),
+    courseId: typeof b.courseId === 'string' ? b.courseId : undefined,
+    subgoalId: typeof b.subgoalId === 'string' ? b.subgoalId : undefined,
     timerSegments: [], actualMinutes: 0, inProgress: false, completed: false, createdAt: ts, updatedAt: ts,
   };
   await saveSession(c.env.DB, s);
@@ -196,6 +206,50 @@ app.post('/api/sessions', async (c) => {
 });
 
 app.get('/api/sessions', async (c) => c.json(await listSessions(c.env.DB, c.req.query('studentId') ?? 'demo')));
+
+// --- courses + achievement goals (course-goal spine) ---
+app.get('/api/courses', async (c) => c.json(await listCourses(c.env.DB, c.req.query('studentId') ?? 'demo')));
+app.post('/api/courses', async (c) => {
+  const b = await c.req.json().catch(() => ({}));
+  const course: Course = {
+    id: nanoid(), studentId: b.studentId ?? 'demo', title: (b.title ?? 'Untitled course').trim(),
+    externalId: typeof b.externalId === 'string' ? b.externalId : undefined,
+    externalSource: b.externalSource === 'canvas' ? 'canvas' : 'manual',
+    termEnd: typeof b.termEnd === 'string' ? b.termEnd : undefined, createdAt: now(),
+  };
+  await saveCourse(c.env.DB, course);
+  await emit(c.env.DB, { sessionId: '', studentId: course.studentId, type: 'course_created', payload: { courseId: course.id, title: course.title }, condition: 'metacog' });
+  return c.json(course);
+});
+app.get('/api/goals', async (c) => c.json(await listGoals(c.env.DB, c.req.query('studentId') ?? 'demo')));
+app.post('/api/goals', async (c) => {
+  const b = await c.req.json().catch(() => ({}));
+  const ts = now();
+  const subgoals: ProximalSubgoal[] = (b.subgoals ?? []).map((t: string) => ({ id: nanoid(), text: t, done: false }));
+  const goal: AchievementGoal = {
+    id: nanoid(), studentId: b.studentId ?? 'demo', courseId: b.courseId ?? '',
+    distal: (b.distal ?? '').trim(), orientation: (b.orientation === 'performance' ? 'performance' : 'mastery') as GoalOrientation,
+    targetDate: typeof b.targetDate === 'string' ? b.targetDate : undefined, subgoals, createdAt: ts, updatedAt: ts,
+  };
+  await saveGoal(c.env.DB, goal);
+  await emit(c.env.DB, { sessionId: '', studentId: goal.studentId, type: 'goal_set', payload: { goalId: goal.id, courseId: goal.courseId, subgoalCount: subgoals.length }, condition: 'metacog' });
+  return c.json(goal);
+});
+app.patch('/api/goals/:id', async (c) => {
+  const g = await getGoal(c.env.DB, c.req.param('id'));
+  if (!g) return c.json({ error: 'not found' }, 404);
+  const p = await c.req.json().catch(() => ({}));
+  if (typeof p.distal === 'string') g.distal = p.distal.trim();
+  if (typeof p.targetDate === 'string') g.targetDate = p.targetDate;
+  if (Array.isArray(p.subgoals)) g.subgoals = p.subgoals;
+  if (typeof p.completeSubgoalId === 'string') {
+    const sg = g.subgoals.find((x) => x.id === p.completeSubgoalId);
+    if (sg && !sg.done) { sg.done = true; await emit(c.env.DB, { sessionId: '', studentId: g.studentId, type: 'subgoal_completed', payload: { goalId: g.id, subgoalId: sg.id }, condition: 'metacog' }); }
+  }
+  g.updatedAt = now();
+  await saveGoal(c.env.DB, g);
+  return c.json(g);
+});
 app.get('/api/sessions/:id', async (c) => { const s = await getSession(c.env.DB, c.req.param('id')); return s ? c.json(s) : c.json({ error: 'not found' }, 404); });
 app.delete('/api/sessions/:id', async (c) => { await deleteSession(c.env.DB, c.req.param('id')); return c.json({ ok: true }); });
 app.get('/api/learner', async (c) => c.json(await buildLearnerModel(c.env.DB, c.req.query('studentId') ?? 'demo')));
@@ -257,6 +311,9 @@ app.patch('/api/sessions/:id', async (c) => {
   if (typeof p.performanceActual === 'number') s.performanceActual = p.performanceActual;
   if (p.contextTrace) s.contextTrace = normalizeContextTrace(p.contextTrace);
   if (p.spatialTrace) s.spatialTrace = normalizeSpatialTrace(p.spatialTrace);
+  if (Array.isArray(p.momentaryChecks)) s.momentaryChecks = p.momentaryChecks;
+  if (typeof p.courseId === 'string') s.courseId = p.courseId;
+  if (typeof p.subgoalId === 'string') s.subgoalId = p.subgoalId;
   if (typeof p.contextHelpfulness === 'number') s.contextHelpfulness = p.contextHelpfulness;
   if (typeof p.contextReflection === 'string') s.contextReflection = p.contextReflection;
   if (typeof p.learnerModelCorrection === 'string') s.learnerModelCorrection = p.learnerModelCorrection;
@@ -348,7 +405,18 @@ app.get('/api/stats', async (c) => {
   }
   let xp = 0;
   for (const s of completed) xp += 10 + s.goals.filter((g) => g.isTicked).length * 2 + (s.adjustment ? 5 : 0) + (typeof s.confidencePre === 'number' && typeof s.performanceActual === 'number' && Math.abs(s.confidencePre - s.performanceActual) <= 15 ? 5 : 0);
-  const gamification = { streakDays, longestStreak: longest, xp, level: 1 + Math.floor(xp / 100) };
+  // gamification rewards the SRL LOGGING behaviors (process, not performance) to reinforce self-monitoring
+  const loggingXp = (eventCounts['momentary_check_answered'] ?? 0) * 3 + (eventCounts['subgoal_completed'] ?? 0) * 8 + (eventCounts['context_regulated'] ?? 0) * 5 + (eventCounts['goal_set'] ?? 0) * 10 + (eventCounts['course_created'] ?? 0) * 5;
+  xp += loggingXp;
+  const reflections = completed.filter((s) => s.adjustment).length;
+  const badges = [
+    { id: 'self_monitor', label: 'Self-monitor', hint: 'Logged 5 momentary check-ins', earned: (eventCounts['momentary_check_answered'] ?? 0) >= 5 },
+    { id: 'course_charted', label: 'Course charted', hint: 'Set a course goal', earned: (eventCounts['goal_set'] ?? 0) >= 1 },
+    { id: 'adapter', label: 'Adapter', hint: 'Regulated your environment 3 times', earned: (eventCounts['context_regulated'] ?? 0) >= 3 },
+    { id: 'reflector', label: 'Reflector', hint: 'Reflected on 5 sessions', earned: reflections >= 5 },
+    { id: 'consistent', label: 'Consistent', hint: '3-day study streak', earned: longest >= 3 },
+  ];
+  const gamification = { streakDays, longestStreak: longest, xp, level: 1 + Math.floor(xp / 100), loggingXp, badges };
 
   return c.json({
     gamification,
@@ -418,6 +486,82 @@ app.post('/api/sessions/:id/chat', async (c) => {
     if (parsed.state) await emit(db, { sessionId: id, studentId: s.studentId, type: 'state_detected', payload: { state: parsed.state }, condition: s.condition });
     await emit(db, { sessionId: id, studentId: s.studentId, type: 'scaffold_fidelity', payload: { fidelity: scaffoldFidelity(policy.action, parsed.label), policyAction: policy.action, label: parsed.label ?? null }, condition: s.condition });
     await stream.writeSSE({ event: 'done', data: JSON.stringify({ id: asst.id, label: parsed.label, state: parsed.state, hintLevel: parsed.hintLevel, checkpoint: parsed.checkpoint, displayText: parsed.displayText }) });
+  });
+});
+
+// --- session-independent Marin conversation (ask / goal_setup / reflection / onboarding) ---
+async function marinContext(db: D1Database, studentId: string, mode: MarinMode, sessionId?: string): Promise<MarinCtx> {
+  const [courses, goals, sessions] = await Promise.all([listCourses(db, studentId), listGoals(db, studentId), listSessions(db, studentId)]);
+  const ctx: MarinCtx = {
+    courses: courses.slice(0, 6).map((c) => {
+      const g = goals.find((x) => x.courseId === c.id);
+      return { title: c.title, distal: g?.distal, openSubgoals: g ? g.subgoals.filter((s) => !s.done).length : 0 };
+    }),
+    recentSubjects: [...new Set(sessions.map((s) => s.subject))].slice(0, 5),
+    completedCount: sessions.filter((s) => s.completed).length,
+  };
+  if (mode === 'reflection' && sessionId) {
+    const s = await getSession(db, sessionId);
+    if (s) ctx.sessionSummary = `"${s.subject}" (${s.taskKind}), ${s.actualMinutes}m, goals ${s.goals.filter((g) => g.isTicked).length}/${s.goals.length}, confidence ${s.confidencePre ?? '?'} vs actual ${s.performanceActual ?? '?'}, focus ${s.focus ?? '?'}/5.`;
+  }
+  return ctx;
+}
+
+// --- shared Open Learner Model (both apps read/write; arbiter enforces ownership + blocks unsafe keys) ---
+app.get('/api/olm', async (c) => c.json(await getOLM(c.env.DB, c.req.query('learnerId') ?? c.req.query('studentId') ?? 'demo')));
+app.post('/api/olm', async (c) => {
+  const body = await c.req.json().catch(() => ({})) as { learnerId?: string; studentId?: string; writer?: string; diff?: Diff };
+  const id = String(body.learnerId ?? body.studentId ?? 'demo').slice(0, 128);
+  if (!id.trim() || !/^[\w@.:-]{1,128}$/.test(id)) return c.json({ ok: false, error: 'invalid learnerId' }, 400);
+  const writer = body.writer === 'sail' ? 'sail' : 'me';
+  const diff = (body.diff && typeof body.diff === 'object') ? body.diff : {};
+  const r = await olmApply(c.env.DB, id, writer, diff);
+  return c.json({ ok: true, rev: r.olm._rev, applied: r.applied, rejected: r.rejected });
+});
+// adaptive review schedule from the latent ME beliefs + forgetting drift
+app.get('/api/review', async (c) => {
+  const id = c.req.query('learnerId') ?? c.req.query('studentId') ?? 'demo';
+  const olm = await getOLM(c.env.DB, id) as { by_concept?: Record<string, unknown> };
+  return c.json({ queue: scheduleReviews(olm.by_concept ?? {}, { now: Date.now() }) });
+});
+
+app.post('/api/marin/chat', async (c) => {
+  const body = await c.req.json().catch(() => ({}));
+  const studentId = String(body.studentId ?? 'demo');
+  const mode: MarinMode = ['ask', 'goal_setup', 'reflection', 'onboarding', 'stretch', 'plan'].includes(body.mode) ? body.mode : 'ask';
+  const history: { role: 'user' | 'assistant'; content: string }[] = Array.isArray(body.messages)
+    ? body.messages.filter((m: { role?: string; content?: string }) => (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string').slice(-12)
+    : [];
+  const ctx = await marinContext(c.env.DB, studentId, mode, body.sessionId);
+  let system = buildMarinSystem(mode, ctx);
+  const olmNote = await macroSummary(c.env.DB, studentId);   // micro→macro: read what the ME chatbot wrote
+  if (olmNote) system += `\n\n## From their problem practice (shared learner model)\n${olmNote}`;
+  if (mode === 'plan' || mode === 'reflection' || mode === 'goal_setup') {
+    const olm = await getOLM(c.env.DB, studentId) as { by_concept?: Record<string, unknown> };
+    const nudge = reviewNudge(olm.by_concept ?? {}, { now: Date.now() });
+    if (nudge) system += `\n\n## Adaptive review (from the latent learner model)\n${nudge} Weave this into the plan naturally if it fits.`;
+  }
+  // Stretch mode: deterministic policy picks ONE metacognitive move (the LLM is now only a renderer).
+  // Evidence: MetaCLASS shows LLMs can't reliably abstain when they own move selection (4.2% vs 41.7% needed).
+  let steer: ReturnType<typeof stretchSteering> | null = null;
+  if (mode === 'stretch') {
+    steer = stretchSteering(history);
+    system += `\n\n## Move steering (deterministic — obey exactly)\nA policy engine has selected the next move. Render ONLY this move; do not run the full loop yourself.\n${steer.directive}`;
+  }
+  const llmMessages = history.length ? history : [{ role: 'user' as const, content: '[Open the conversation. Greet briefly and ask one helpful opening question for this mode.]' }];
+  const model = c.env.SAIL_MODEL ?? 'claude-sonnet-4-6';
+  const apiKey = c.env.OPENROUTER_API_KEY;
+  const db = c.env.DB;
+  await emit(db, { sessionId: body.sessionId ?? '', studentId, type: 'marin_chat', payload: { mode, turn: history.length, ...(steer ? { move: steer.decision.move, V: steer.decision.V, abstain: steer.decision.move === 'ABSTAIN' } : {}) }, condition: 'metacog' });
+  return streamSSE(c, async (stream) => {
+    let full = '';
+    try {
+      for await (const chunk of streamMentor({ apiKey, model, system, messages: llmMessages })) {
+        full += chunk;
+        await stream.writeSSE({ event: 'delta', data: JSON.stringify(chunk) });
+      }
+    } catch (err) { await stream.writeSSE({ event: 'error', data: JSON.stringify(String(err)) }); }
+    await stream.writeSSE({ event: 'done', data: JSON.stringify({ ok: true }) });
   });
 });
 

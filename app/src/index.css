@@ -1,18 +1,23 @@
 @import 'tailwindcss';
 
 /* ─────────────────────────────────────────────
-   SAIL — Swiss Typographic
-   paper white · oversized bold numerals · mono caps labels ·
-   crisp black hairline rules · black + one accent (vermillion)
+   SAIL — Calm & cozy
+   warm cream · soft surfaces · gentle rounded cards ·
+   friendly humanist sans · calm teal accent · low contrast, airy
    ───────────────────────────────────────────── */
 
 @theme {
-  --color-canvas: #faf9f6;   /* warm paper */
-  --color-ink: #0b0b0c;
-  --color-accent: #ff3b2e;   /* vermillion */
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --font-sans: 'Inter', system-ui, sans-serif;
+  /* SAIL = the WARM "calm" half of the shared design system (canonical: sail-me/shared/theme.css).
+     Shared with ME: accent #159a82, --color-warm, Space Grotesk display, 18px cards, soft shadows.
+     SAIL's own character: warm cream + rounded Nunito body (vs ME's cool white + crisp Inter). */
+  --color-canvas: #f6f4ee;   /* warm cream  (ME counterpart: cool #fcfdfd) */
+  --color-surface: #fffdf8;  /* card */
+  --color-ink: #2f2b27;      /* warm soft-dark (not pure black) */
+  --color-accent: #159a82;   /* SHARED teal-green (was #3f9d8e) — unifies with the ME chatbot */
+  --color-warm: #e0875a;     /* SHARED secondary warm (sparingly) */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;   /* SHARED display/brand font */
+  --font-mono: 'Nunito', system-ui, sans-serif;   /* labels now use friendly sans, not mono */
+  --font-sans: 'Nunito', system-ui, sans-serif;   /* SAIL's warm body (ME uses crisp Inter) */
 }
 
 html, body, #root { height: 100%; }
@@ -25,30 +30,32 @@ body {
   padding-top: env(safe-area-inset-top);
 }
 input, textarea, select { font-size: 16px; }
-::selection { background: var(--color-accent); color: #fff; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); color: var(--color-ink); }
 
-/* type */
+/* type — friendly, sentence case (no more terminal mono-caps) */
 .font-display { font-family: var(--font-display); }
 .label-mono {
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 10px;
-  color: color-mix(in srgb, var(--color-ink) 48%, transparent);
+  font-family: var(--font-sans);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--color-ink) 55%, transparent);
 }
 .num {
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
-  line-height: 0.9;
+  line-height: 0.95;
 }
 
-/* rules & surfaces */
-.rule { background: color-mix(in srgb, var(--color-ink) 14%, transparent); }
-.rule-bold { background: var(--color-ink); }
+/* rules & surfaces — softer, cozier */
+.rule { background: color-mix(in srgb, var(--color-ink) 9%, transparent); }
+.rule-bold { background: color-mix(in srgb, var(--color-ink) 18%, transparent); }
 .accent { color: var(--color-accent); }
 .bg-accent\! { background: var(--color-accent); }
+.cozy-card { background: var(--color-surface); border: 1px solid color-mix(in srgb, var(--color-ink) 8%, transparent); border-radius: 18px; box-shadow: 0 1px 2px color-mix(in srgb, var(--color-ink) 5%, transparent), 0 8px 24px color-mix(in srgb, var(--color-ink) 4%, transparent); }
 
 /* markdown (mentor messages) */
 .md > :first-child { margin-top: 0; }
@@ -65,6 +72,6 @@ input, textarea, select { font-size: 16px; }
 .md a { color: var(--color-accent); text-decoration: underline; }
 .md .katex { font-size: 1.04em; }
 
-/* buttons — sharp Swiss rectangles */
-.btn-accent { background: var(--color-accent); color: #fff; font-weight: 600; border-radius: 4px; }
-.btn-ghost { border: 1.5px solid var(--color-ink); color: var(--color-ink); border-radius: 4px; font-weight: 600; }
+/* buttons — soft, rounded, cozy */
+.btn-accent { background: var(--color-accent); color: #fff; font-weight: 700; border-radius: 9999px; }
+.btn-ghost { border: 1.5px solid color-mix(in srgb, var(--color-ink) 22%, transparent); color: var(--color-ink); border-radius: 9999px; font-weight: 700; }

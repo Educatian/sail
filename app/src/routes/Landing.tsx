@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Screen, Label, Field, AccentButton, GhostButton, Rule } from '../components/editorial';
 import { Reveal } from '../components/ui';
 import { api, setStudent } from '../lib/api';
+import { MarinMark } from '../components/MarinMark';
 
 const LOOP = [
   ['1', 'Plan', 'Set one goal, pick the task type, and choose how Marin should coach.'],
@@ -33,6 +34,20 @@ export function Landing({ onAuthed }: { onAuthed: () => void }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [showAccount, setShowAccount] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const fancy = typeof window !== 'undefined'
+    && window.matchMedia('(hover: hover)').matches
+    && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function onHeroMove(e: React.MouseEvent) {
+    if (!fancy) return;
+    const el = heroRef.current; if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    el.style.setProperty('--my', `${e.clientY - r.top}px`);
+    el.style.setProperty('--px', `${(e.clientX - r.left - r.width / 2) * 0.025}px`);
+    el.style.setProperty('--py', `${(e.clientY - r.top - r.height / 2) * 0.025}px`);
+  }
 
   useEffect(() => {
     void api.track('client_app_opened', { surface: 'landing' });
@@ -63,13 +78,21 @@ export function Landing({ onAuthed }: { onAuthed: () => void }) {
   return (
     <Screen pad={false}>
       <div className="mx-auto max-w-md px-6 pb-20">
-        <div className="relative pt-9">
-          <div className="flex items-center justify-between border-b border-black/20 pb-4">
-            <div className="font-mono text-[28px] font-semibold uppercase tracking-[0.28em]">SAIL</div>
+        <div ref={heroRef} onMouseMove={onHeroMove} className="relative isolate pt-9">
+          {fancy && (
+            <div
+              className="pointer-events-none absolute inset-0 -z-10"
+              style={{ background: 'radial-gradient(240px circle at var(--mx,75%) var(--my,18%), color-mix(in srgb, var(--color-accent) 13%, transparent), transparent 70%)' }}
+            />
+          )}
+          <div className="flex items-center justify-between border-b border-ink/12 pb-4">
+            <div className="flex items-center gap-2"><MarinMark className="h-6 w-6 text-accent" /><span className="font-display text-2xl font-extrabold tracking-tight">SAIL</span></div>
             <button onClick={() => setShowAccount((v) => !v)} className="label-mono accent">{showAccount ? 'Close' : 'Sign in'}</button>
           </div>
 
-          <RouteMark />
+          <div className="pointer-events-none absolute inset-0 transition-transform duration-300 ease-out" style={{ transform: 'translate(var(--px,0px), var(--py,0px))' }}>
+            <RouteMark />
+          </div>
 
           <Reveal>
             <h1 className="font-display mt-10 max-w-[14ch] text-[4.1rem] font-bold leading-[0.92] tracking-tight">
@@ -123,7 +146,7 @@ export function Landing({ onAuthed }: { onAuthed: () => void }) {
                     {i < LOOP.length - 1 && <div className="ml-6 mt-1 h-12 w-px bg-ink/25" />}
                   </div>
                   <div>
-                    <div className="font-mono text-[13px] font-semibold uppercase tracking-[0.24em] text-ink">{t}</div>
+                    <div className="font-display text-lg font-bold text-ink">{t}</div>
                     <p className="mt-2 text-sm leading-relaxed text-ink/60">{d}</p>
                   </div>
                 </div>
@@ -138,7 +161,7 @@ export function Landing({ onAuthed }: { onAuthed: () => void }) {
             <div className="grid grid-cols-1 divide-y divide-black/12 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
               {PROOF.map(([t, d]) => (
                 <div key={t} className="py-5 sm:px-3">
-                  <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-ink">{t}</div>
+                  <div className="font-display text-[15px] font-bold text-ink">{t}</div>
                   <p className="mt-2 text-sm leading-relaxed text-ink/55">{d}</p>
                 </div>
               ))}

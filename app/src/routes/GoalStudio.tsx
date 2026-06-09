@@ -5,7 +5,7 @@ import { LocationMap } from '../components/LocationMap';
 import { Reveal } from '../components/ui';
 import { api, type LearnerModel } from '../lib/api';
 import { STRATEGY_LABELS, TASK_LABELS } from '../domain';
-import type { Condition, PlaceCategory, SpatialSource, SpatialTrace, StrategyKind, ScaffoldStyle, ScaffoldTiming, TaskKind } from '../domain';
+import type { Condition, PlaceCategory, SpatialSource, SpatialTrace, StrategyKind, ScaffoldStyle, ScaffoldTiming, TaskKind, Course, AchievementGoal } from '../domain';
 
 const ALL_STRATEGIES = Object.keys(STRATEGY_LABELS) as StrategyKind[];
 const ALL_TASKS = Object.keys(TASK_LABELS) as TaskKind[];
@@ -48,6 +48,10 @@ async function sampleMotion(): Promise<{ source?: SpatialSource; magnitude: numb
 export function GoalStudio() {
   const navigate = useNavigate();
   const [subject, setSubject] = useState('');
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [courseGoals, setCourseGoals] = useState<AchievementGoal[]>([]);
+  const [courseId, setCourseId] = useState<string | undefined>();
+  const [subgoalId, setSubgoalId] = useState<string | undefined>();
   const [taskKind, setTaskKind] = useState<TaskKind>('coursework');
   const [condition, setCondition] = useState<Condition>('metacog');
   const [goals, setGoals] = useState<string[]>(['']);
@@ -70,6 +74,21 @@ export function GoalStudio() {
   const [carry, setCarry] = useState<LearnerModel['carry']>(null);
   const mapLoggedRef = useRef(false);
   const forethoughtSnapshotRef = useRef('');
+
+  useEffect(() => { api.listCourses().then(setCourses).catch(() => {}); api.listGoals().then(setCourseGoals).catch(() => {}); }, []);
+
+  function pickCourse(c: Course) {
+    setCourseId((cur) => (cur === c.id ? undefined : c.id));
+    setSubgoalId(undefined);
+    if (!subject.trim()) setSubject(c.title);
+  }
+  function pickSubgoal(sgId: string, text: string) {
+    setSubgoalId(sgId);
+    setGoals((arr) => {
+      const base = arr.map((x) => x.trim()).filter(Boolean);
+      return base.includes(text) ? [...base, ''] : [...base, text, ''];
+    });
+  }
 
   // close the SRL loop: pull last session's adjustment, unmet goals, and what worked
   useEffect(() => {
@@ -198,6 +217,8 @@ export function GoalStudio() {
         strategies,
         plannedMinutes,
         confidencePre: confidence,
+        courseId,
+        subgoalId,
         contextTrace: {
           placeCategory,
           placeLabel: placeLabel.trim() || undefined,
@@ -240,6 +261,32 @@ export function GoalStudio() {
               {carry.lastAdjustment && <p className="mt-1.5 text-sm">Last time you planned: <span className="font-medium">“{carry.lastAdjustment}”</span></p>}
               {carry.unmetGoals.length > 0 && <p className="mt-1 text-sm text-ink/55">Carried {carry.unmetGoals.length} unfinished goal{carry.unmetGoals.length > 1 ? 's' : ''} + your strategy that worked.</p>}
             </div>
+          </Reveal>
+        )}
+        {courses.length > 0 && (
+          <Reveal>
+            <Label className="mb-3">Course <span className="opacity-50">· links this session to your goal</span></Label>
+            <div className="flex flex-wrap gap-2">
+              {courses.map((c) => <Tag key={c.id} active={courseId === c.id} onClick={() => pickCourse(c)}>{c.title}</Tag>)}
+            </div>
+            {courseId && (() => {
+              const g = courseGoals.find((x) => x.courseId === courseId);
+              if (!g) return null;
+              const open = g.subgoals.filter((s) => !s.done);
+              return (
+                <div className="mt-3">
+                  <p className="text-sm text-ink/55">Goal: {g.distal}</p>
+                  {open.length > 0 && (
+                    <>
+                      <p className="label-mono mt-2">Today toward your goal</p>
+                      <div className="mt-1.5 flex flex-wrap gap-2">
+                        {open.map((sg) => <Tag key={sg.id} active={subgoalId === sg.id} onClick={() => pickSubgoal(sg.id, sg.text)}>{sg.text}</Tag>)}
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })()}
           </Reveal>
         )}
         <Reveal><Field label="Subject - course, seminar, thesis, or exam" placeholder="EDU 612 seminar reading" value={subject} onChange={(e) => setSubject(e.target.value)} /></Reveal>

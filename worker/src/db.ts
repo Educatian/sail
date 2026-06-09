@@ -1,4 +1,4 @@
-import type { StudySession, ChatMessage, MetricEvent, Profile } from './domain';
+import type { StudySession, ChatMessage, MetricEvent, Profile, Course, AchievementGoal } from './domain';
 
 // D1-backed store (async). Each fn takes the D1 binding from the Worker env.
 
@@ -93,4 +93,26 @@ export async function saveUser(db: D1Database, u: UserRow): Promise<void> {
 export async function listUsers(db: D1Database): Promise<{ studentId: string }[]> {
   const { results } = await db.prepare('SELECT studentId FROM users').all<{ studentId: string }>();
   return results ?? [];
+}
+
+// ---- courses + achievement goals (course-goal spine) ----
+export async function saveCourse(db: D1Database, ctx: Course): Promise<void> {
+  await db.prepare('INSERT INTO courses (id, studentId, json, createdAt) VALUES (?,?,?,?) ON CONFLICT(id) DO UPDATE SET json=excluded.json')
+    .bind(ctx.id, ctx.studentId, JSON.stringify(ctx), ctx.createdAt).run();
+}
+export async function listCourses(db: D1Database, studentId: string): Promise<Course[]> {
+  const { results } = await db.prepare('SELECT json FROM courses WHERE studentId = ? ORDER BY createdAt DESC').bind(studentId).all<{ json: string }>();
+  return (results ?? []).map((r) => JSON.parse(r.json) as Course);
+}
+export async function saveGoal(db: D1Database, g: AchievementGoal): Promise<void> {
+  await db.prepare('INSERT INTO goals (id, studentId, courseId, json, createdAt) VALUES (?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET json=excluded.json')
+    .bind(g.id, g.studentId, g.courseId, JSON.stringify(g), g.createdAt).run();
+}
+export async function getGoal(db: D1Database, id: string): Promise<AchievementGoal | undefined> {
+  const row = await db.prepare('SELECT json FROM goals WHERE id = ?').bind(id).first<{ json: string }>();
+  return row ? (JSON.parse(row.json) as AchievementGoal) : undefined;
+}
+export async function listGoals(db: D1Database, studentId: string): Promise<AchievementGoal[]> {
+  const { results } = await db.prepare('SELECT json FROM goals WHERE studentId = ? ORDER BY createdAt DESC').bind(studentId).all<{ json: string }>();
+  return (results ?? []).map((r) => JSON.parse(r.json) as AchievementGoal);
 }

@@ -1,0 +1,67 @@
+{
+  "Han2025_mobile_chatbot_flipped": {
+    "title": "Mobile-based artificial intelligence chatbot for self-regulated learning in a hybrid flipped classroom",
+    "year": 2025,
+    "authors": [
+      "Insook Han",
+      "Hyangeun Ji",
+      "Seo-Yeon Jin",
+      "Koun Choi"
+    ],
+    "venue": "Journal of Computing in Higher Education",
+    "cited": 16,
+    "abstract": ""
+  },
+  "Ng2024_chatgpt_srl_pilot": {
+    "title": "Empowering student self‐regulated learning and science education through <scp>ChatGPT</scp> : A pioneering pilot study",
+    "year": 2024,
+    "authors": [
+      "Davy Tsz Kit Ng",
+      "Chee Wei Tan",
+      "Jac Ka Lok Leung"
+    ],
+    "venue": "British Journal of Educational Technology",
+    "cited": 252,
+    "abstract": "In recent years, AI technologies have been developed to promote students' self‐regulated learning (SRL) and proactive learning in digital learning environments. This paper discusses a comparative study between generative AI‐based (SRLbot) and rule‐based AI chatbots (Nemobot) in a 3‐week science learning experience with 74 Secondary 4 students in Hong Kong. The experimental group used SRLbot to maintain a regular study habit and facilitate their SRL, while the control group utilized rule‐based AI chatbots. Results showed that SRLbot effectively enhanced students' science knowledge, behavioural engagement and motivation. Quantile regression analysis indicated that the number of interactions significantly predicted variations in SRL. Students appreciated the personalized recommendations and flexibility of SRLbot, which adjusted responses based on their specific learning and SRL scenarios. The ChatGPT‐enhanced instructional design reduced learning anxiety and promoted learning performance, motivation and sustained learning habits. Students' feedback on learning challenges, psychological support and self‐regulation behaviours provided insights into their progress and experience with this technology. SRLbot's adaptability and personalized approach distinguished it from rule‐based chatbots. The findings offer valuable evidence for AI developers and educators to consider generative AI settings and chatbot design, facilitating greater success in online science learning. Practitioner notes What is already known about this topic AI technologies have been used to support student self‐regulated learning (SRL) across subjects. SRL has been identified as an important aspect of student learning that can be developed through technological support. Generative AI technologies like ChatGPT have shown potential for enhancing student learning by providing personalized guidance and feedback. What this paper adds This paper reports on a case study that specifically examines the effectiveness of ChatGPT in promoting SRL among secondary students. The study provides evidence that ChatGPT can enhance students' science knowledge, motivation and SRL compared to a rule‐based AI chatbot. The study offers insights into how ChatGPT can be used as a tool to facilitate SRL and promote sustained learning habits. Implications for practice and/or policy The findings of this study suggest that educators should consider the potential of ChatGPT and other generative AI technologies to support student learning and SRL. Educators and students should be aware of the limitations of AI technologies and ensure that they are used appropriately to generate desired responses. It is also important to equip teachers and students with AI competencies to enable them to use AI for learning and teaching."
+  },
+  "Chang2023_design_principles": {
+    "title": "Educational Design Principles of Using AI Chatbot That Supports Self-Regulated Learning in Education: Goal Setting, Feedback, and Personalization",
+    "year": 2023,
+    "authors": [
+      "Daniel Chang",
+      "Michael Pin-Chuan Lin",
+      "Shiva Hajian",
+      "Quincy Q. Wang"
+    ],
+    "venue": "Sustainability",
+    "cited": 280,
+    "abstract": "The invention of ChatGPT and generative AI technologies presents educators with significant challenges, as concerns arise regarding students potentially exploiting these tools unethically, misrepresenting their work, or gaining academic merits without active participation in the learning process. To effectively navigate this shift, it is crucial to embrace AI as a contemporary educational trend and establish pedagogical principles for properly utilizing emerging technologies like ChatGPT to promote self-regulation. Rather than suppressing AI-driven tools, educators should foster collaborations among stakeholders, including educators, instructional designers, AI researchers, and developers. This paper proposes three key pedagogical principles for integrating AI chatbots in classrooms, informed by Zimmerman’s Self-Regulated Learning (SRL) framework and Judgment of Learning (JOL). We argue that the current conceptualization of AI chatbots in education is inadequate, so we advocate for the incorporation of goal setting (prompting), self-assessment and feedback, and personalization as three essential educational principles. First, we propose that teaching prompting is important for developing students’ SRL. Second, configuring reverse prompting in the AI chatbot’s capability will help to guide students’ SRL and monitoring for understanding. Third, developing a data-driven mechanism that enables an AI chatbot to provide learning analytics helps learners to reflect on learning and develop SRL strategies. By bringing in Zimmerman’s SRL framework with JOL, we aim to provide educators with guidelines for implementing AI in teaching and learning contexts, with a focus on promoting students’ self-regulation in higher education through AI-assisted pedagogy and instructional design."
+  },
+  "Fan2024_laziness": {
+    "title": "Beware of metacognitive laziness: Effects of generative artificial intelligence on learning motivation, processes, and performance",
+    "year": 2024,
+    "authors": [
+      "Yizhou Fan",
+      "Luzhen Tang",
+      "Huixiao Le",
+      "Kejie Shen",
+      "Shufang Tan"
+    ],
+    "venue": "British Journal of Educational Technology",
+    "cited": 383,
+    "abstract": "Abstract With the continuous development of technological and educational innovation, learners nowadays can obtain a variety of supports from agents such as teachers, peers, education technologies, and recently, generative artificial intelligence such as ChatGPT. In particular, there has been a surge of academic interest in human‐AI collaboration and hybrid intelligence in learning. The concept of hybrid intelligence is still at a nascent stage, and how learners can benefit from a symbiotic relationship with various agents such as AI, human experts and intelligent learning systems is still unknown. The emerging concept of hybrid intelligence also lacks deep insights and understanding of the mechanisms and consequences of hybrid human‐AI learning based on strong empirical research. In order to address this gap, we conducted a randomised experimental study and compared learners' motivations, self‐regulated learning processes and learning performances on a writing task among different groups who had support from different agents, that is, ChatGPT (also referred to as the AI group), chat with a human expert, writing analytics tools, and no extra tool. A total of 117 university students were recruited, and their multi‐channel learning, performance and motivation data were collected and analysed. The results revealed that: (1) learners who received different learning support showed no difference in post‐task intrinsic motivation; (2) there were significant differences in the frequency and sequences of the self‐regulated learning processes among groups; (3) ChatGPT group outperformed in the essay score improvement but their knowledge gain and transfer were not significantly different. Our research found that in the absence of differences in motivation, learners with different supports still exhibited different self‐regulated learning processes, ultimately leading to differentiated performance. What is particularly noteworthy is that AI technologies such as ChatGPT may promote learners' dependence on technology and potentially trigger “metacognitive laziness”. In conclusion, understanding and leveraging the respective strengths and weaknesses of different agents in learning is critical in the field of future hybrid intelligence. Practitioner notes What is already known about this topic Hybrid intelligence, combining human and machine intelligence, aims to augment human capabilities rather than replace them, creating opportunities for more effective lifelong learning and collaboration. Generative AI, such as ChatGPT, has shown potential in enhancing learning by providing immediate feedback, overcoming language barriers and facilitating personalised educational experiences. The effectiveness of AI in educational contexts varies, with some studies highlighting its benefits in improving academic performance and motivation, while others note limitations in its ability to replace human teachers entirely. What this paper adds We conducted a randomised experimental study in the lab setting and compared learners' motivations, self‐regulated learning processes and learning performances among different agent groups (AI, human expert and checklist tools). We found that AI technologies such as ChatGPT may promote learners' dependence on technology and potentially trigger metacognitive \"laziness\", which can potentially hinder their ability to self‐regulate and engage deeply in learning. We also found that ChatGPT can significantly improve short‐term task performance, but it may not boost intrinsic motivation and knowledge gain and transfer. Implications for practice and/or policy When using AI in learning, learners should focus on deepening their understanding of knowledge and actively engage in metacognitive processes such as evaluation, monitoring, and orientation, rather than blindly following ChatGPT's feedback solely to complete tasks efficiently. When using AI in teaching, teachers should think about which tasks are suitable for learners to complete with the assistance of AI, pay attention to stimulating learners' intrinsic motivations, and develop scaffolding to assist learners in active learning. Researcher should design multi‐task and cross‐context studies in the future to deepen our understanding of how learners could ethically and effectively learn, regulate, collaborate and evolve with AI."
+  },
+  "Tabuenca2015_mobile_la": {
+    "title": "Time will tell: The role of mobile learning analytics in self-regulated learning",
+    "year": 2015,
+    "authors": [
+      "Bernardo Tabuenca",
+      "Marco Kalz",
+      "Hendrik Drachsler",
+      "Marcus Specht"
+    ],
+    "venue": "Computers & Education",
+    "cited": 240,
+    "abstract": ""
+  }
+}
