@@ -1,10 +1,10 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, type Root } from 'react-dom/client';
 import {
   createRootRoute, createRoute, createRouter, RouterProvider,
 } from '@tanstack/react-router';
 import './index.css';
-import { RootLayout } from './AppShell';
+import { RootLayout, RouteError } from './AppShell';
 import { Home } from './routes/Home';
 import { GoalStudio } from './routes/GoalStudio';
 import { ActiveSession } from './routes/ActiveSession';
@@ -13,7 +13,7 @@ import { Dashboard } from './routes/Dashboard';
 import { ResearchEvidence } from './routes/ResearchEvidence';
 import { Intake } from './routes/Intake';
 
-const rootRoute = createRootRoute({ component: RootLayout });
+const rootRoute = createRootRoute({ component: RootLayout, errorComponent: RouteError });
 const routes = [
   createRoute({ getParentRoute: () => rootRoute, path: '/', component: Home }),
   createRoute({ getParentRoute: () => rootRoute, path: '/study/new', component: GoalStudio }),
@@ -29,7 +29,12 @@ declare module '@tanstack/react-router' {
   interface Register { router: typeof router }
 }
 
-createRoot(document.getElementById('root')!).render(
+// HMR-safe mount: Vite hot reload re-runs this module, and calling createRoot()
+// twice on the same container detaches React's view of the DOM (the
+// removeChild/insertBefore NotFoundError crashes in app-dev.err.log).
+const container = document.getElementById('root')! as HTMLElement & { _sailRoot?: Root };
+const root = container._sailRoot ?? (container._sailRoot = createRoot(container));
+root.render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>,

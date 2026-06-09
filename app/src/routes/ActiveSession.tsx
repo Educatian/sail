@@ -249,6 +249,7 @@ export function ActiveSession() {
       mobilityStateAtCheck: current.spatialTrace?.mobilityState,
     };
     const fit = mFit, focus = mFocus;
+    // eslint-disable-next-line react-hooks/purity -- event handler, not render
     lastCheckAtRef.current = Date.now(); checkCountRef.current += 1;
     setMomentaryDue(null); setMFocus(null); setMFit(null);
     void api.track('momentary_check_answered', { trigger: check.trigger, focus, contextFit: fit, regulationAction, elapsedOnTaskMin: check.elapsedOnTaskMin }, id, current.condition);

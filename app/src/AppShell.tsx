@@ -42,6 +42,16 @@ function BottomTab() {
   );
 }
 
+export function RouteError({ error }: { error: Error }) {
+  return (
+    <div style={{ padding: 24 }}>
+      <h2>Something went wrong</h2>
+      <p style={{ opacity: 0.7 }}>{error.message}</p>
+      <button onClick={() => window.location.assign('/')}>Back to home</button>
+    </div>
+  );
+}
+
 export function RootLayout() {
   const [authed, setAuthed] = useState(!!getStudent());
   const [askOpen, setAskOpen] = useState(false);

@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
+    "test": "node --experimental-strip-types tests/traceParser.test.ts",
+    "check": "tsc --noEmit",
     "db:init:local": "wrangler d1 execute sail --local --file schema.sql",
     "db:init:remote": "wrangler d1 execute sail --remote --file schema.sql"
   },
