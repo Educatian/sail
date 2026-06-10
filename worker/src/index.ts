@@ -12,9 +12,10 @@ import { decidePolicy, policyInstruction } from './policy';
 import { classifyHelpSeeking, scaffoldFidelity } from './analysis';
 import { parseMentor, hintLevelSoFar, toLlmMessages } from './mentor';
 import { buildLearnerModel } from './learner';
-import { buildMarinSystem, type MarinMode, type MarinCtx } from './marin';
+import { buildMarinSystem, meControlRule, buildMePlanningContext, type MarinMode, type MarinCtx } from './marin';
 import { stretchSteering } from './meEngine';
 import { getOLM, applyUpdate as olmApply, macroSummary, type Diff } from './olm';
+import { meSignalsFrom } from './olmCore';
 import { scheduleReviews, reviewNudge } from './reviewScheduler';
 import type { StudySession, ChatMessage, Condition, ContextTrace, MetricEvent, MetricEventType, SpatialTrace, Course, AchievementGoal, ProximalSubgoal, GoalOrientation } from './domain';
 
@@ -202,6 +203,13 @@ app.post('/api/sessions', async (c) => {
   };
   await saveSession(c.env.DB, s);
   await emit(c.env.DB, { sessionId: s.id, studentId: s.studentId, type: 'session_started', payload: { subject: s.subject, taskKind: s.taskKind, contextTrace: s.contextTrace, spatialTrace: s.spatialTrace }, condition });
+  // SRL -> OLM (Direction A substrate): write the active plan + performance phase to the SRL-owned
+  // global fields so the ME chatbot can read srlContext when pointed at this learner. Single-writer 'sail'.
+  await writeSrlPlan(c.env.DB, s.studentId, {
+    subject: s.subject, strategy: s.strategies[0]?.kind, minutes: s.plannedMinutes,
+    concepts: s.goals.map((g) => g.text).slice(0, 6), phase: 'performance',
+    sessionId: s.id,
+  });
   return c.json(s);
 });
 
@@ -233,6 +241,8 @@ app.post('/api/goals', async (c) => {
   };
   await saveGoal(c.env.DB, goal);
   await emit(c.env.DB, { sessionId: '', studentId: goal.studentId, type: 'goal_set', payload: { goalId: goal.id, courseId: goal.courseId, subgoalCount: subgoals.length }, condition: 'metacog' });
+  // SRL -> OLM: write the active goal + forethought phase (goal-setting is forethought, Zimmerman).
+  await writeSrlGoal(c.env.DB, goal.studentId, { distal: goal.distal });
   return c.json(goal);
 });
 app.patch('/api/goals/:id', async (c) => {
@@ -507,6 +517,17 @@ async function marinContext(db: D1Database, studentId: string, mode: MarinMode, 
   return ctx;
 }
 
+// SRL-owned OLM writers (single-writer 'sail'): the macro app records the active plan/goal/phase so the
+// micro ME chatbot can read srlContext (Direction A). Arbiter rejects any write outside SRL ownership.
+async function writeSrlPlan(db: D1Database, studentId: string, p: { subject?: string; strategy?: string; minutes?: number; concepts?: string[]; phase?: string; sessionId?: string }) {
+  await olmApply(db, studentId, 'sail', { set: { 'global.active_plan': { subject: p.subject, strategy: p.strategy, minutes: p.minutes, concepts: p.concepts }, 'global.phase': p.phase ?? 'performance' } });
+  await emit(db, { sessionId: p.sessionId ?? '', studentId, type: 'srl_state_written', payload: { kind: 'plan', subject: p.subject, phase: p.phase ?? 'performance' }, condition: 'metacog' });
+}
+async function writeSrlGoal(db: D1Database, studentId: string, g: { distal?: string }) {
+  await olmApply(db, studentId, 'sail', { set: { 'global.active_goal': { distal: g.distal }, 'global.phase': 'forethought' } });
+  await emit(db, { sessionId: '', studentId, type: 'srl_state_written', payload: { kind: 'goal', distal: g.distal, phase: 'forethought' }, condition: 'metacog' });
+}
+
 // --- shared Open Learner Model (both apps read/write; arbiter enforces ownership + blocks unsafe keys) ---
 app.get('/api/olm', async (c) => c.json(await getOLM(c.env.DB, c.req.query('learnerId') ?? c.req.query('studentId') ?? 'demo')));
 app.post('/api/olm', async (c) => {
@@ -537,9 +558,23 @@ app.post('/api/marin/chat', async (c) => {
   const olmNote = await macroSummary(c.env.DB, studentId);   // micro→macro: read what the ME chatbot wrote
   if (olmNote) system += `\n\n## From their problem practice (shared learner model)\n${olmNote}`;
   if (mode === 'plan' || mode === 'reflection' || mode === 'goal_setup') {
-    const olm = await getOLM(c.env.DB, studentId) as { by_concept?: Record<string, unknown> };
-    const nudge = reviewNudge(olm.by_concept ?? {}, { now: Date.now() });
+    const olm = await getOLM(c.env.DB, studentId);
+    const byConcept = (olm.by_concept ?? {}) as Record<string, unknown>;
+    const nudge = reviewNudge(byConcept, { now: Date.now() });
     if (nudge) system += `\n\n## Adaptive review (from the latent learner model)\n${nudge} Weave this into the plan naturally if it fits.`;
+    // DIRECTION B (ME calibration -> SRL planning): deterministic ES-LLMs control rule in code.
+    // The prioritized self-check/review/surface list is computed here, NOT by the LLM, then injected
+    // as structured context so Marin's plan literally adapts to ME calibration/confusion. P0-safe:
+    // reasons render as care, never as a metric word (buildMePlanningContext enforces in the prompt).
+    if (mode === 'plan' || mode === 'goal_setup') {
+      const planItems = meControlRule(meSignalsFrom(olm, Date.now()));
+      if (planItems.length) {
+        system += buildMePlanningContext(planItems);
+        await emit(c.env.DB, { sessionId: body.sessionId ?? '', studentId, type: 'planning_used_me_signal',
+          payload: { mode, items: planItems.map((p) => ({ concept_id: p.concept_id, action: p.action, metric: p.metric })) },
+          condition: 'metacog' });
+      }
+    }
   }
   // Stretch mode: deterministic policy picks ONE metacognitive move (the LLM is now only a renderer).
   // Evidence: MetaCLASS shows LLMs can't reliably abstain when they own move selection (4.2% vs 41.7% needed).

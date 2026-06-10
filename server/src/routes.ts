@@ -30,9 +30,10 @@ import { buildSystemPrompt } from './prompts.js';
 import { decidePolicy, policyInstruction } from './policy.js';
 import { classifyHelpSeeking, scaffoldFidelity } from './analysis.js';
 import { parseMentor, hintLevelSoFar, toLlmMessages } from './mentor.js';
-import { buildMarinSystem, type MarinMode, type MarinCtx } from './marin.js';
+import { buildMarinSystem, meControlRule, buildMePlanningContext, type MarinMode, type MarinCtx } from './marin.js';
 import { stretchSteering } from './meEngine.js';
 import { getOLM, applyUpdate, macroSummary, type Diff } from './olm.js';
+import { meSignalsFrom } from './olmCore.js';
 import { scheduleReviews, reviewNudge } from './reviewScheduler.js';
 import { buildLearnerModel } from './learner.js';
 import type { StudySession, ChatMessage, Condition, ContextTrace, MetricEvent, MetricEventType, SpatialTrace, Course, AchievementGoal, ProximalSubgoal, GoalOrientation } from './domain.js';
@@ -235,6 +236,8 @@ api.post('/sessions', async (c) => {
   };
   saveSession(s);
   emit({ sessionId: s.id, studentId: s.studentId, type: 'session_started', payload: { subject: s.subject, taskKind: s.taskKind, contextTrace: s.contextTrace, spatialTrace: s.spatialTrace }, condition });
+  // SRL -> OLM (Direction A substrate): write the active plan + performance phase to SRL-owned fields.
+  writeSrlPlan(s.studentId, { subject: s.subject, strategy: s.strategies[0]?.kind, minutes: s.plannedMinutes, concepts: s.goals.map((g) => g.text).slice(0, 6), phase: 'performance', sessionId: s.id });
   return c.json(s);
 });
 
@@ -268,6 +271,7 @@ api.post('/goals', async (c) => {
   };
   saveGoal(goal);
   emit({ sessionId: '', studentId: goal.studentId, type: 'goal_set', payload: { goalId: goal.id, courseId: goal.courseId, subgoalCount: subgoals.length }, condition: 'metacog' });
+  writeSrlGoal(goal.studentId, { distal: goal.distal });
   return c.json(goal);
 });
 api.patch('/goals/:id', async (c) => {
@@ -377,6 +381,17 @@ api.post('/auth', async (c) => {
 
 // --- profile (baseline SRL intake, RQ12) ---
 api.get('/profile', (c) => c.json(getProfile(c.req.query('studentId') ?? 'demo') ?? null));
+
+// SRL-owned OLM writers (single-writer 'sail'): macro records active plan/goal/phase so the micro ME
+// chatbot can read srlContext (Direction A). Arbiter rejects any write outside SRL ownership.
+function writeSrlPlan(studentId: string, p: { subject?: string; strategy?: string; minutes?: number; concepts?: string[]; phase?: string; sessionId?: string }) {
+  applyUpdate(studentId, 'sail', { set: { 'global.active_plan': { subject: p.subject, strategy: p.strategy, minutes: p.minutes, concepts: p.concepts }, 'global.phase': p.phase ?? 'performance' } });
+  emit({ sessionId: p.sessionId ?? '', studentId, type: 'srl_state_written', payload: { kind: 'plan', subject: p.subject, phase: p.phase ?? 'performance' }, condition: 'metacog' });
+}
+function writeSrlGoal(studentId: string, g: { distal?: string }) {
+  applyUpdate(studentId, 'sail', { set: { 'global.active_goal': { distal: g.distal }, 'global.phase': 'forethought' } });
+  emit({ sessionId: '', studentId, type: 'srl_state_written', payload: { kind: 'goal', distal: g.distal, phase: 'forethought' }, condition: 'metacog' });
+}
 
 // --- shared Open Learner Model (both apps read/write; arbiter enforces single-writer + field ownership) ---
 api.get('/olm', (c) => c.json(getOLM(c.req.query('learnerId') ?? c.req.query('studentId') ?? 'demo')));
@@ -634,9 +649,20 @@ api.post('/marin/chat', async (c) => {
   if (olmNote) system += `\n\n## From their problem practice (shared learner model)\n${olmNote}`;
   // adaptive planning: when helping plan/reflect, surface what the latent OLM says to review next
   if (mode === 'plan' || mode === 'reflection' || mode === 'goal_setup') {
-    const olm = getOLM(studentId) as { by_concept?: Record<string, unknown> };
-    const nudge = reviewNudge(olm.by_concept ?? {}, { now: Date.now() });
+    const olm = getOLM(studentId);
+    const byConcept = (olm.by_concept ?? {}) as Record<string, unknown>;
+    const nudge = reviewNudge(byConcept, { now: Date.now() });
     if (nudge) system += `\n\n## Adaptive review (from the latent learner model)\n${nudge} Weave this into the plan naturally if it fits.`;
+    // DIRECTION B (ME calibration -> SRL planning): deterministic ES-LLMs control rule in code.
+    if (mode === 'plan' || mode === 'goal_setup') {
+      const planItems = meControlRule(meSignalsFrom(olm, Date.now()));
+      if (planItems.length) {
+        system += buildMePlanningContext(planItems);
+        emit({ sessionId: body.sessionId ?? '', studentId, type: 'planning_used_me_signal',
+          payload: { mode, items: planItems.map((p) => ({ concept_id: p.concept_id, action: p.action, metric: p.metric })) },
+          condition: 'metacog' });
+      }
+    }
   }
   // Stretch mode: deterministic policy picks ONE move (LLM = renderer only). See worker meEngine.ts.
   let steer: ReturnType<typeof stretchSteering> | null = null;
