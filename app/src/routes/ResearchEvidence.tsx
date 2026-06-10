@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Screen, TopBar, Label, Rule, Row } from '../components/editorial';
-import { api, apiUrl, studentQuery, type LearnerModel, type Stats } from '../lib/api';
+import { api, apiUrl, studentQuery, isInstructor, type LearnerModel, type Stats } from '../lib/api';
 import { TASK_LABELS, type TaskKind } from '../domain';
 
 function Bar({ label, value, max, accent = false }: { label: string; value: number; max: number; accent?: boolean }) {
@@ -24,11 +24,14 @@ export function ResearchEvidence() {
   const navigate = useNavigate();
   const [stats, setStats] = useState<Stats | null>(null);
   const [learner, setLearner] = useState<LearnerModel | null>(null);
+  // Route guard: research/telemetry view is instructor-only even via a direct URL.
   useEffect(() => {
+    if (!isInstructor()) { navigate({ to: '/dashboard' }); return; }
     api.getStats().then(setStats).catch(() => setStats(null));
     api.getLearner().then(setLearner).catch(() => {});
-  }, []);
+  }, [navigate]);
 
+  if (!isInstructor()) return <Screen><div className="px-5 py-10"><Label>Loading...</Label></div></Screen>;
   if (!stats) return <Screen><div className="px-5 py-10"><Label>Loading...</Label></div></Screen>;
 
   const sections: { title: string; data: Record<string, number>; note: string; accentKey?: string; label?: (k: string) => string }[] = [

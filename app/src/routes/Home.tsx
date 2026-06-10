@@ -188,9 +188,9 @@ export function Home() {
           <p className="text-sm text-ink/60">SAIL turns college and graduate study into a self-regulated loop. Use it for coursework, seminar reading, exam prep, research writing, or thesis work.</p>
           <div className="mt-5 space-y-5">
             {[
-              { n: '01', t: 'Chart', d: 'Set goals, pick a strategy, plan your time (forethought).' },
-              { n: '02', t: 'Sail', d: 'Study with Marin, a mentor that asks and hints, never hands you the answer (performance).' },
-              { n: '03', t: 'Log', d: 'Rate, reflect, and decide what to change next time (reflection).' },
+              { n: '01', t: 'Chart', d: 'Set goals, pick a strategy, and plan your time.' },
+              { n: '02', t: 'Sail', d: 'Study with Marin, a mentor that asks and hints, never hands you the answer.' },
+              { n: '03', t: 'Log', d: 'Rate, reflect, and decide what to change next time.' },
             ].map((s) => (
               <div key={s.n} className="flex gap-4">
                 <span className="num accent text-2xl">{s.n}</span>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { api, streamMarin } from '../lib/api';
+import { canInterrupt, spendInterruption } from '../lib/friction';
 import { MarinMark } from './MarinMark';
 
 export type MarinMode = 'ask' | 'goal_setup' | 'reflection' | 'onboarding' | 'stretch' | 'plan';
@@ -63,11 +64,14 @@ export function MarinChat({ mode, sessionId, onClose, onAction, onSessionCreated
     try {
       const full = await streamMarin(mode, history, (so) => setDraft(clean(so)), { sessionId });
       const act = (mode === 'goal_setup' || mode === 'plan') ? parseAction(full) : null;
-      const prb = mode === 'stretch' ? parseProbe(full) : null;
+      // Stretch probes share the per-session friction budget with in-session check-ins,
+      // so a learner is never peppered. The stretch dialogue itself always continues;
+      // only the 1-5 feeling tap is suppressed once the budget is spent.
+      const prb = mode === 'stretch' && sessionId && canInterrupt(sessionId) ? parseProbe(full) : null;
       setTurns([...history, { role: 'assistant', content: clean(full) }]);
       setDraft('');
       if (act) setAction(act);
-      if (prb) setProbe(prb);
+      if (prb) { spendInterruption(sessionId!); setProbe(prb); }
     } catch { setTurns([...history, { role: 'assistant', content: 'Sorry, I could not reach the mentor just now.' }]); setDraft(''); }
     finally { setStreaming(false); }
   }

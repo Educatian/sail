@@ -13,7 +13,7 @@ const LOOP = [
 const PROOF = [
   ['Students first', 'Built for college and graduate study: seminars, exams, projects, and thesis work.'],
   ['Your data, your choice', 'Spatial context is optional. Exact raw GPS and background tracking are not stored.'],
-  ['Evidence driven', 'Progress, calibration, help-seeking, and reflection stay available for research export.'],
+  ['Evidence driven', 'Your progress, confidence, help-seeking, and reflections stay available for research export.'],
 ];
 
 function RouteMark() {

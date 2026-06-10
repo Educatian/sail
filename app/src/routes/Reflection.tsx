@@ -3,7 +3,7 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 import { Screen, TopBar, Label, Field, TextArea, Tag, Slider, AccentButton, Rule } from '../components/editorial';
 import { Reveal } from '../components/ui';
 import { Confetti } from '../components/Confetti';
-import { api } from '../lib/api';
+import { api, isInstructor } from '../lib/api';
 import { MarinChat } from '../components/MarinChat';
 import { STRATEGY_LABELS } from '../domain';
 import type { MobilityState, PlaceCategory, Rating, SpatialTrace, StrategyKind, StudySession } from '../domain';
@@ -153,7 +153,8 @@ export function Reflection() {
           <Slider label="What % of your goals did you actually master?" value={performance} onChange={setPerformance} suffix="%" />
           {s.confidencePre != null && (
             <p className="label-mono mt-3 normal-case tracking-normal" style={{ letterSpacing: 0 }}>
-              Predicted {s.confidencePre}% · actual {performance}% · <span className="accent">calibration error {Math.abs(s.confidencePre - performance)}</span>
+              You expected {s.confidencePre}% · it turned out {performance}% · <span className="accent">{Math.abs(s.confidencePre - performance)} apart</span>
+              {isInstructor() && <span className="ml-1 opacity-60">(calibration error)</span>}
             </p>
           )}
         </div>
@@ -205,8 +206,8 @@ export function Reflection() {
               <TextArea label="Context reflection - did this place support your strategy?" rows={2} value={contextReflection} onChange={(e) => setContextReflection(e.target.value)} />
             </>
           )}
-          <TextArea label="Correct SAIL's learner model - optional" rows={2} placeholder="e.g. I was not avoiding help; I was trying to solve it independently." value={learnerModelCorrection} onChange={(e) => setLearnerModelCorrection(e.target.value)} />
-          <TextArea label={metacog ? 'Feed-forward — next time I will…' : 'For next time'} rows={2} placeholder={metacog ? 'e.g. retrieval practice after 15 min instead of re-reading' : ''} value={adjustment} onChange={(e) => setAdjustment(e.target.value)} />
+          <TextArea label="Anything SAIL got wrong about you? - optional" rows={2} placeholder="e.g. I was not avoiding help; I was trying to solve it independently." value={learnerModelCorrection} onChange={(e) => setLearnerModelCorrection(e.target.value)} />
+          <TextArea label={metacog ? 'Next time I will…' : 'For next time'} rows={2} placeholder={metacog ? 'e.g. retrieval practice after 15 min instead of re-reading' : ''} value={adjustment} onChange={(e) => setAdjustment(e.target.value)} />
         </div>
 
         <Rule className="mt-8" />

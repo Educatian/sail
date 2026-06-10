@@ -5,6 +5,7 @@ import { LocationMap } from '../components/LocationMap';
 import { MarinChat } from '../components/MarinChat';
 import { parseMentor, labelBadge } from '../lib/mentor';
 import { api, streamChat, isInstructor } from '../lib/api';
+import { canInterrupt, spendInterruption } from '../lib/friction';
 
 // lazy: keeps react-markdown + KaTeX out of the initial bundle
 const MentorText = lazy(() => import('../components/MentorText').then((m) => ({ default: m.MentorText })));
@@ -178,7 +179,8 @@ export function ActiveSession() {
       const awayMin = hiddenSinceRef.current ? (Date.now() - hiddenSinceRef.current) / 60000 : 0;
       hiddenSinceRef.current = null;
       if (!running || momentaryDue) return;
-      if (awayMin >= 3 && checkCountRef.current < 2 && (Date.now() - lastCheckAtRef.current) / 60000 >= 8) setMomentaryDue('return');
+      // shared friction budget: auto check-ins + stretch probes together cap at 2/session
+      if (awayMin >= 3 && canInterrupt(id) && (Date.now() - lastCheckAtRef.current) / 60000 >= 8) { spendInterruption(id); setMomentaryDue('return'); }
     }
     document.addEventListener('visibilitychange', onVis);
     return () => document.removeEventListener('visibilitychange', onVis);
@@ -374,8 +376,8 @@ export function ActiveSession() {
       last.endTime = new Date().toISOString();
       void api.track('timer_paused', { segmentCount: segs.length, elapsedMs: elapsedMs(segs) }, id, current.condition);
       patch({ timerSegments: segs, inProgress: false });
-      // T1: break-contingent trigger
-      if (!momentaryDue && elapsedMs(segs) / 60000 >= 10 && checkCountRef.current < 2 && (Date.now() - lastCheckAtRef.current) / 60000 >= 8) setMomentaryDue('break');
+      // T1: break-contingent trigger (shares the per-session friction budget with stretch probes)
+      if (!momentaryDue && elapsedMs(segs) / 60000 >= 10 && canInterrupt(id) && (Date.now() - lastCheckAtRef.current) / 60000 >= 8) { spendInterruption(id); setMomentaryDue('break'); }
     } else {
       segs.push({ startTime: new Date().toISOString() });
       void api.track('timer_started', { segmentCount: segs.length }, id, current.condition);
@@ -450,7 +452,7 @@ export function ActiveSession() {
         {momentaryDue && (
           <div className="mx-5 mt-6 rounded-2xl border border-accent/40 bg-accent/5 p-4">
             <div className="label-mono accent mb-2">
-              Momentary check{momentaryDue === 'return' ? ' · welcome back' : momentaryDue === 'break' ? ' · taking a break' : ''}
+              {momentaryDue === 'return' ? 'Welcome back' : momentaryDue === 'break' ? 'Taking a break' : 'Quick check-in'}
             </div>
             <p className="text-sm font-medium">How's your focus right now?</p>
             <div className="mt-2 flex gap-2">
@@ -510,13 +512,13 @@ export function ActiveSession() {
             <p className="mt-1 text-xs text-ink/50">{session.lastPolicy.reason}</p>
           </div>
         )}
-        {session.contextTrace && session.contextTrace.placeCategory !== 'not_shared' && (
+        {isInstructor() && session.contextTrace && session.contextTrace.placeCategory !== 'not_shared' && (
           <div className="mx-5 mt-2 text-xs text-ink/45">
             Context: {session.contextTrace.placeLabel || session.contextTrace.placeCategory.replace(/_/g, ' ')}
             {session.contextTrace.intentionallyChosen ? ' · intentionally chosen' : ''}
           </div>
         )}
-        {session.spatialTrace && session.spatialTrace.acquisitionMode !== 'off' && (
+        {isInstructor() && session.spatialTrace && session.spatialTrace.acquisitionMode !== 'off' && (
           <div className="mx-5 mt-1 text-xs text-ink/45">
             Spatial: {session.spatialTrace.acquisitionMode} · {session.spatialTrace.sources.join(' + ') || 'no sensor'} · {session.spatialTrace.mobilityState}
             {session.spatialTrace.accuracyMeters ? ` · ~${session.spatialTrace.accuracyMeters}m` : ''}
