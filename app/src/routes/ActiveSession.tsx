@@ -6,6 +6,8 @@ import { MarinChat } from '../components/MarinChat';
 import { parseMentor, labelBadge } from '../lib/mentor';
 import { api, streamChat, isInstructor } from '../lib/api';
 import { canInterrupt, spendInterruption } from '../lib/friction';
+import { setAmbientMood, resetAmbientMood, affectToMood, affectFromCheck } from '../lib/ambient';
+import { MarinLoader } from '../components/MarinLoader';
 
 // lazy: keeps react-markdown + KaTeX out of the initial bundle
 const MentorText = lazy(() => import('../components/MentorText').then((m) => ({ default: m.MentorText })));
@@ -166,6 +168,9 @@ export function ActiveSession() {
   }
 
   useEffect(() => { api.getSession(id).then(setSession); api.getMessages(id).then(setMessages); }, [id]);
+  // ambient: a session in progress reads as the "performance" phase (flow) until a check
+  // tells us otherwise; reset to calm when we leave the surface.
+  useEffect(() => { setAmbientMood(affectToMood(null, 'performance')); return () => resetAmbientMood(); }, []);
   const running = !!session?.timerSegments.at(-1) && !session.timerSegments.at(-1)!.endTime;
   useEffect(() => { if (!running) return; const t = setInterval(() => force((n) => n + 1), 1000); return () => clearInterval(t); }, [running]);
   useEffect(() => { chatEnd.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, streaming]);
@@ -231,7 +236,7 @@ export function ActiveSession() {
     }
   }, [session, messages.length, streaming, id]);
 
-  if (!session) return <Screen pad={false}><div className="px-5 py-10"><Label>Loading…</Label></div></Screen>;
+  if (!session) return <Screen pad={false}><div className="grid place-items-center px-5 py-16"><MarinLoader size={44} label="Loading session" /></div></Screen>;
 
   async function patch(p: Partial<StudySession>) { setSession(await api.patchSession(id, p)); }
   function openMomentary() { if (!momentaryDue) setMomentaryDue('manual'); }
@@ -255,6 +260,8 @@ export function ActiveSession() {
     lastCheckAtRef.current = Date.now(); checkCountRef.current += 1;
     setMomentaryDue(null); setMFocus(null); setMFit(null);
     void api.track('momentary_check_answered', { trigger: check.trigger, focus, contextFit: fit, regulationAction, elapsedOnTaskMin: check.elapsedOnTaskMin }, id, current.condition);
+    // ambient responds to the just-reported in-session affect (focus + context fit)
+    setAmbientMood(affectToMood(affectFromCheck(focus, fit), 'performance'));
     if (regulationAction !== 'stayed' && regulationAction !== 'none')
       void api.track('context_regulated', { regulationAction, contextFit: fit, from: check.placeCategoryAtCheck }, id, current.condition);
     await patch({ momentaryChecks: [...(current.momentaryChecks ?? []), check] });
@@ -601,7 +608,9 @@ export function ActiveSession() {
               <div key={m.id} className="max-w-[88%]">
                 {labelBadge(p.label) && <div className="label-mono mb-1 accent">{labelBadge(p.label)}</div>}
                 <div className="rounded-2xl rounded-bl-sm border border-black/15 px-4 py-2.5">
-                  <Suspense fallback={<div className="whitespace-pre-wrap text-sm">{p.displayText || '…'}</div>}><MentorText text={p.displayText || '…'} /></Suspense>
+                  {p.displayText
+                    ? <Suspense fallback={<div className="whitespace-pre-wrap text-sm">{p.displayText}</div>}><MentorText text={p.displayText} /></Suspense>
+                    : <MarinLoader size={26} label="Marin is thinking" />}
                 </div>
               </div>
             );

@@ -5,6 +5,8 @@ import { Reveal } from '../components/ui';
 import { Confetti } from '../components/Confetti';
 import { api, isInstructor } from '../lib/api';
 import { MarinChat } from '../components/MarinChat';
+import { MarinLoader } from '../components/MarinLoader';
+import { setAmbientMood, resetAmbientMood } from '../lib/ambient';
 import { STRATEGY_LABELS } from '../domain';
 import type { MobilityState, PlaceCategory, Rating, SpatialTrace, StrategyKind, StudySession } from '../domain';
 
@@ -50,6 +52,9 @@ export function Reflection() {
   const [celebrate, setCelebrate] = useState(false);
   const openedLoggedRef = useRef(false);
 
+  // reflection phase = arrival → harbor mood; reset to calm on leave
+  useEffect(() => { setAmbientMood('harbor'); return () => resetAmbientMood(); }, []);
+
   useEffect(() => {
     api.getSession(id).then((sess) => {
       setS(sess); setRatings({ focus: sess.focus, progress: sess.progress, satisfaction: sess.satisfaction });
@@ -69,7 +74,7 @@ export function Reflection() {
     });
   }, [id]);
 
-  if (!s) return <Screen><div className="px-5 py-10"><Label>Loading…</Label></div></Screen>;
+  if (!s) return <Screen><div className="grid place-items-center px-5 py-16"><MarinLoader size={44} label="Loading reflection" /></div></Screen>;
   const session = s;
   const done = session.goals.filter((g) => g.isTicked).length;
   const metacog = session.condition === 'metacog';

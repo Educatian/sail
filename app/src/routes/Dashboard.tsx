@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Screen, TopBar, Label, Stat, Rule, Row, AccentButton } from '../components/editorial';
 import { CountUp, Reveal } from '../components/ui';
+import { MarinLoader } from '../components/MarinLoader';
 import { api, isInstructor, type LearnerModel, type Stats } from '../lib/api';
 import { STRATEGY_LABELS, TASK_LABELS, type StrategyKind, type TaskKind } from '../domain';
 
@@ -39,7 +40,7 @@ export function Dashboard() {
     api.getLearner().then(setLearner).catch(() => {});
   }, []);
 
-  if (!stats) return <Screen><div className="px-5 py-10"><Label>Loading...</Label></div></Screen>;
+  if (!stats) return <Screen><div className="grid place-items-center px-5 py-16"><MarinLoader size={44} label="Loading your progress" /></div></Screen>;
   const { totals, byStrategy, hintLevels, timeline } = stats;
 
   if (totals.sessions === 0) {

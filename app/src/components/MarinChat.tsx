@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { api, streamMarin } from '../lib/api';
 import { canInterrupt, spendInterruption } from '../lib/friction';
 import { MarinMark } from './MarinMark';
+import { MarinLoader } from './MarinLoader';
 
 export type MarinMode = 'ask' | 'goal_setup' | 'reflection' | 'onboarding' | 'stretch' | 'plan';
 type Turn = { role: 'user' | 'assistant'; content: string };
@@ -143,7 +144,7 @@ export function MarinChat({ mode, sessionId, onClose, onAction, onSessionCreated
                 <div key={i} className="max-w-[88%] rounded-2xl rounded-bl-sm border border-black/15 px-4 py-2.5 text-sm whitespace-pre-wrap">{m.content}</div>
               )
             ))}
-            {streaming && <div className="max-w-[88%] rounded-2xl rounded-bl-sm border border-black/15 px-4 py-2.5 text-sm whitespace-pre-wrap">{draft || '…'}</div>}
+            {streaming && <div className="max-w-[88%] rounded-2xl rounded-bl-sm border border-black/15 px-4 py-2.5 text-sm whitespace-pre-wrap">{draft || <MarinLoader size={24} label="Marin is thinking" />}</div>}
             {probe && !streaming && (
               <div className="rounded-2xl border border-accent/40 bg-accent/5 p-3">
                 <p className="text-sm font-medium">{probe.prompt}</p>
