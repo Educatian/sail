@@ -3,25 +3,56 @@
 // Persistence is runtime-specific and lives in the olm.ts wrappers (server=sqlite, worker=D1/memory).
 
 export type Writer = 'me' | 'sail';
+// Source of a metacognitive signal (Item-1 two-channel JOL guardrail; Cash 2025 contamination made
+// structural). Calibration/JOL has TWO channels that must NEVER silently merge:
+//   in_bot_felt  = EXPERIENTIAL felt confidence inside the chatbot — used ONLY to ADAPT (policy);
+//                  it is explicitly NOT a research DV (Efklides: a felt online metacognitive experience).
+//   out_of_bot   = MEASUREMENT JOL from the out-of-bot form/Qualtrics, scored vs an answer key — the DV.
+//   emoji_ema    = AFFECT (Pekrun valence/arousal), the AFFECTIVE arm — never calibration (Item 2).
+// The arbiter binds each protected field to its allowed source, so the in_bot_felt path is STRUCTURALLY
+// UNABLE to write the measurement_* fields (rejected like a cross-writer write).
+export type Source = 'in_bot_felt' | 'out_of_bot' | 'emoji_ema';
 // Single-writer field ownership. ME (micro) owns the calibration/confusion/competence signal;
 // SRL/SAIL (macro) owns goal/plan/phase/schedule. Neither may write the other's fields (arbiter
 // rejects cross-writes). This is the substrate of the bidirectional ME<->SRL loop (see
 // research/ME_SRL_LOOP_EVIDENCE.md: IntelliCode single-writer + field ownership).
 export const OWNERSHIP: Record<Writer, string[]> = {
   // ME-owned: calibration sign (CHI-2025 confidence-correctness), confusion, competence Beta (voi/beta).
-  me:   ['by_concept.*.calibration_err', 'by_concept.*.jol_trend', 'by_concept.*.confusion_label', 'by_concept.*.beta', 'by_concept.*.voi'],
+  // experiential_calibration = the in-bot FELT channel (adaptation only, NOT a DV); measurement_jol /
+  // measurement_calibration = the out-of-bot DV channel; affect = the Pekrun emoji-EMA affect field.
+  me:   ['by_concept.*.calibration_err', 'by_concept.*.jol_trend', 'by_concept.*.confusion_label', 'by_concept.*.beta', 'by_concept.*.voi',
+         'by_concept.*.experiential_calibration', 'by_concept.*.measurement_jol', 'by_concept.*.measurement_calibration', 'by_concept.*.affect', 'global.affect'],
   // SRL-owned: active goal/plan + forethought/performance/reflection phase + review schedule (FLoRA phase,
   // goal_setup/plan Marin modes). Written by SAIL, READABLE by ME for srlContext (Direction A).
   sail: ['by_concept.*.help_seeking', 'by_concept.*.last_session', 'global.deadline_proximity', 'global.srl_level',
          'global.active_goal', 'global.active_plan', 'global.phase', 'global.review_schedule'],
 };
+// SOURCE GUARDRAIL (Item 1): a protected field may ONLY be written by a diff carrying the matching
+// `source`. This is a SECOND gate after ownership: even though ME owns all calibration fields, the
+// in_bot_felt path can never land in measurement_* (the DV), and the out_of_bot path can never land
+// in the experiential/adaptation field. Cross-source writes are rejected exactly like cross-writer ones.
+// Each entry: field-suffix (concept-relative or global) -> the ONE source allowed to write it.
+export const SOURCE_BINDING: Record<string, Source> = {
+  'experiential_calibration': 'in_bot_felt',   // felt-confidence vs correctness — ADAPTATION ONLY (not a DV)
+  'measurement_jol':          'out_of_bot',    // out-of-bot JOL (the research DV)
+  'measurement_calibration':  'out_of_bot',    // out-of-bot JOL scored vs answer key (the research DV)
+  'affect':                   'emoji_ema',      // Pekrun emoji affect (the AFFECTIVE arm; never calibration)
+};
+// resolve a field path -> the source it is bound to (null = unbound, no source constraint). Matches on
+// the trailing field name so both `by_concept.<id>.affect` and `global.affect` bind identically.
+export function sourceBindingFor(path: string): Source | null {
+  const field = path.replace(/^by_concept\.[^.]+\./, '').replace(/^global\./, '');
+  return Object.prototype.hasOwnProperty.call(SOURCE_BINDING, field) ? SOURCE_BINDING[field] : null;
+}
 export interface OLM {
   learner_id: string; course_id?: string;
   by_concept: Record<string, Record<string, unknown>>;
   global: Record<string, unknown>;
   events: Array<Record<string, unknown>>; _rev: number;
 }
-export interface Diff { concept_id?: string; set?: Record<string, unknown>; events?: Array<Record<string, unknown>>; }
+// `source` tags the diff's provenance (Item 1). Omitting it is back-compatible for UNBOUND fields, but a
+// SOURCE-BOUND field (measurement_*/experiential_calibration/affect) requires the matching source or is rejected.
+export interface Diff { concept_id?: string; set?: Record<string, unknown>; events?: Array<Record<string, unknown>>; source?: Source; }
 
 export const newOLM = (id: string, course?: string): OLM => ({ learner_id: id, course_id: course, by_concept: {}, global: { srl_level: 'medium' }, events: [], _rev: 0 });
 
@@ -34,7 +65,7 @@ function setDeep(obj: Record<string, unknown>, path: string, value: unknown) {
   o[ks[ks.length - 1]] = value;
 }
 
-// Mutates `olm` in place; enforces field ownership (single-writer). Returns applied/rejected paths.
+// Mutates `olm` in place; enforces field ownership (single-writer) AND the source guardrail. Returns applied/rejected paths.
 export function applyToOlm(olm: OLM, writer: Writer, diff: Diff): { applied: string[]; rejected: Array<{ path: string; reason: string }> } {
   const applied: string[] = []; const rejected: Array<{ path: string; reason: string }> = [];
   if (diff.set) for (const [field, value] of Object.entries(diff.set)) {
@@ -42,11 +73,15 @@ export function applyToOlm(olm: OLM, writer: Writer, diff: Diff): { applied: str
     if (path.split('.').some(s => s === '__proto__' || s === 'constructor' || s === 'prototype')) { rejected.push({ path, reason: 'unsafe key blocked' }); continue; }   // prototype-pollution guard
     const ownPath = path.replace(/by_concept\.[^.]+\./, 'by_concept.*.');
     if (!ownsField(writer, ownPath)) { rejected.push({ path, reason: `${writer} does not own ${ownPath}` }); continue; }
+    // SOURCE GUARDRAIL: a source-bound field can only be written by its bound source (Item 1). This is
+    // what STRUCTURALLY bars the in-bot felt path from the measurement_* DV fields (and vice versa).
+    const bound = sourceBindingFor(path);
+    if (bound && diff.source !== bound) { rejected.push({ path, reason: `${path} requires source="${bound}", got source="${diff.source ?? 'none'}"` }); continue; }
     if (diff.concept_id) { (olm.by_concept[diff.concept_id] ||= {}); olm.by_concept[diff.concept_id][field] = value; }
     else setDeep(olm as unknown as Record<string, unknown>, path, value);
     applied.push(path);
   }
-  if (diff.events) for (const e of diff.events) olm.events.push({ writer, ...e });
+  if (diff.events) for (const e of diff.events) olm.events.push({ writer, source: diff.source, ...e });
   if (applied.length || diff.events) olm._rev += 1;
   return { applied, rejected };
 }
