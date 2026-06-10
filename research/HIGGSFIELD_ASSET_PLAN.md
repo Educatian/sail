@@ -65,3 +65,29 @@ SAIL은 방금 **Calm & cozy**로 재단장했고(크림 #f6f4ee + teal #3f9d8e 
 
 ## 6. 다음 세션 실행 순서
 새 세션(higgsfield 도구 로드 확인) → §5 결정 반영 → 스타일보드 1장 → 레퍼런스 락 → P0 생성·큐레이션·최적화·배선 → 빌드·배포·스크린샷 → 일관되면 P1/P2.
+
+## GENERATED 2026-06-10 — affect-responsive ambient mood set (nano_banana_pro, 2k 16:9, reference-locked)
+Anchor = calm; flow/struggle/harbor generated with anchor as image reference (one family). Textless, cream/teal/clay. Optimized min.webp 33–42KB.
+- mood-calm    (baseline/neutral)     job cba65b98-b199-408b-8ceb-5e66a45fdf2f  (still water, dawn)
+- mood-flow    (flow/momentum)        job 29ed321d-bac9-49b5-904d-ad9cddae05b0  (sailing + wake + sun)
+- mood-struggle(confusion/impasse)    job 58267909-adeb-4983-9edc-4451e2c566c2  (mist + guiding lighthouse beam)
+- mood-harbor  (satisfaction/FoS)     job f0eaf990-b372-48a0-9875-546ae2a87db5  (arrival at cozy harbor, golden hour)
+Placed: sail/app/public/art/mood/ + sail-me/art/mood/. Affect→mood map: frustration/confusion→struggle, boredom→calm, flow→flow, positive/end→harbor; phase reflection→harbor, forethought→calm, performance→flow/struggle by affect.
+Unified loading/transition loop = seedance i2v from calm (job 1c0f9e10-d8b2-4d19-874e-8605d62c7362), gentle bob; reduced-motion → static calm frame.
+Logo unification: SAIL MarinMark compass-rose SVG ported to sail-me header (replaces gradient "S" box).
+
+## WIRED 2026-06-10 (Claude Fable 5) — affect-ambient + unified logo + unified loader, both apps LIVE
+**Status: SHIPPED & live-verified.** All three tasks wired into BOTH apps; P0 invariants kept (faint, calm, instructor-clean, no jank, reduced-motion respected, no mix-blend-mode).
+
+**TASK 1 — affect-responsive ambient.**
+- SAIL: `app/src/components/AmbientMood.tsx` (fixed full-bleed, 4 webp cross-fade, opacity 0.13, pointer-events:none, z-0, NO mix-blend; reduced-motion → instant swap via CSS `.ambient-mood__img`). Driven by `app/src/lib/ambient.ts` (module store + `useAmbientMood()` + `affectToMood`/`affectFromCheck`). AppShell renders it; passes `null` for instructor/`/research` (clean). ActiveSession sets performance→flow on entry, derives affect from momentary-check focus+contextFit on answer; Reflection sets harbor; reset to calm on unmount.
+- sail-me: `#ambientMood` layer in index.html (opacity 0.11, fainter for the denser reading surface). `computeMood()` keys off `S.affect` (emoji EMA), live tracer `confusion`/`confidence_signal`, and session-end → harbor. `refreshMood()` called from onSend (tracer), onSubmit (session-end), onAffectPick (emoji). Hidden in instructor view via `applyInstr`.
+
+**TASK 2 — unified logo.** sail-me header `<span class="logo">S</span>` (gradient box) → inline compass-rose SVG, path byte-identical to SAIL `MarinMark.tsx` (`M12 2.2l1.9 8…`), teal on the `--ds-accent-soft` chip. One identity across both apps (live-verified).
+
+**TASK 3 — unified loader.** SAIL `app/src/components/MarinLoader.tsx` (HEAD-probes `/art/loop/marin-loop.mp4`; video when present + not reduced-motion, else CSS compass-rose with sweeping needle). Wired into ActiveSession (load screen + Marin thinking), MarinChat (streaming), Reflection + Dashboard (data fetch). sail-me mirrors via `loaderMarkup()`/`showThinking()` in onSend/onSubmit. reduced-motion → static mark.
+
+**marin-loop.mp4 PRESENT at wire time** (28KB, dropped by operator before deploy) → video variant active in both apps (verified: SAIL live serves video/mp4 200; ME puppeteer check resolved loader kind=video).
+
+**Verify:** SAIL `tsc --noEmit` clean, `vite build` clean, eslint no new errors (4 pre-existing exhaustive-deps warnings only), server tests 94/94. ME `npm test` 23/23 (10/10 suites). ME puppeteer DOM check: ambient exists+faint(0.11)+non-interactive, calm baseline loaded, cross-fades to struggle on a confused turn, compass SVG logo, loader=video, instructor-hide works.
+**Deploy:** SAIL → sail-dia.pages.dev (assets 200 live). ME → sail-me.pages.dev (ambient div + compass path + mood webp + loop mp4 all 200 live).
