@@ -4,6 +4,42 @@ This document records the main design and implementation decisions behind SAIL, 
 
 ## Development Timeline
 
+### 2026-06-10: Bidirectional ME↔SRL loop closed over the shared OLM (central novelty)
+
+Operationalized the bidirectional ME↔SRL loop — the project's central contribution (no validated
+system closes both arrows; see [`research/ME_SRL_LOOP_EVIDENCE.md`](research/ME_SRL_LOOP_EVIDENCE.md),
+novelty gap #1). Both apps (SAIL macro/SRL + ME micro) now condition each other over the shared
+single-writer OLM, and the round-trip is proven on the live worker.
+
+**Field ownership (extended, [`worker/src/olmCore.ts`](worker/src/olmCore.ts) = `server/src/olmCore.ts`):**
+ME owns `calibration_err / jol_trend / confusion_label / beta / voi`; SRL/SAIL now also owns
+`global.active_goal / active_plan / phase / review_schedule` (single-writer arbiter unchanged; cross-writes
+rejected). Drift-guarded by `sail-me/sim/arbiter_contract.test.mjs` + `server/test/parity.test.ts`.
+
+**Direction B — ME signal → SRL planning (ES-LLMs deterministic control rule, evidence §c):** in
+`marin.ts` (×2, byte-identical) `meControlRule()` maps each ME-flagged concept to a planning action **in
+code, not LLM-decided** — `over_confident(c) ⇒ self-check + retrieval`, `confusion(c) ⇒ review block
+before new material`, `competence low + stale ⇒ surface`. The prioritized list is injected as structured
+context (`buildMePlanningContext`) into Marin's `plan`/`goal_setup` system prompt so the plan literally
+adapts to ME calibration; a `planning_used_me_signal` event logs which concepts/reasons drove it
+(`worker/src/index.ts`, `server/src/routes.ts`). The student sees the reason as **care, never a metric**
+("felt sure but slipped a couple times — want a quick self-check?"); the prompt forbids the words
+"calibration/overconfident/confusion".
+
+**Direction A — SRL state → ME contextual render (MetaCLASS plan-then-render-on-profile + FLoRA phase,
+evidence §d):** SAIL writes `active_plan`/`phase` to the OLM on session creation and `active_goal` on goal
+creation; the ME app (`sail-me/index.html` + `shared/srl_context.mjs`) reads them into an `srlContext`
+injected into the **renderer only** (selection stays deterministic), plus a light **phase→move bias** in
+`engine.mjs candidateMoves` (forethought ⇒ ELICIT_FOK/JOL, performance ⇒ PROBE_CONFUSION, reflection ⇒
+ELICIT_FOS). Feature-detected: no SRL state ⇒ ME = the P0 version exactly (no regression; the probe cap +
+abstain-when-well-regulated are preserved).
+
+**Live proof:** [`scripts/olm_live_demo.sh`](scripts/olm_live_demo.sh) +
+[`scripts/OLM_LIVE_DEMO.md`](scripts/OLM_LIVE_DEMO.md) run a reproducible both-arrows-close round-trip on
+`sail-api.jewoong-moon.workers.dev` (ME writes two concepts → SAIL plan prioritizes them + event logged +
+plan→OLM → ME srlContext references the plan with phase bias). Tests: server 76→87, ME engine 63→74; all
+suites green; app build + worker typecheck clean.
+
 ### 2026-05-26: Benchmarking and architecture selection
 
 The first design pass compared six SRL, tutoring, and study-support codebases to identify a viable architecture for a research-grade prototype.

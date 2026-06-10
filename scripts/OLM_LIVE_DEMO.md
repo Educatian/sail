@@ -1,16 +1,65 @@
-# OLM Live Cross-App Demo — verified 2026-06-05
+# OLM Live Cross-App Demo — BIDIRECTIONAL ME↔SRL loop verified 2026-06-10
 
-Proves the **micro→macro Open Learner Model (OLM) synergy** between the two apps on the **live
-Cloudflare deployment**: the ME chatbot (micro / within-task) writes a learner's metacognitive
-state, and SAIL (macro / between-session) reads it back through its review scheduler and the Marin
-mentor. Also proves the **single-writer field-ownership guard**.
+Proves the **bidirectional ME↔SRL loop** (the project's central novelty — see
+`research/ME_SRL_LOOP_EVIDENCE.md`) closes BOTH ways on the **live Cloudflare deployment**, over the
+shared single-writer Open Learner Model (OLM):
 
-- Worker (live): https://sail-api.jewoong-moon.workers.dev  (Version `a7c0a19b`, model anthropic/claude-sonnet-4)
-- Reproduce: `bash scripts/olm_live_demo.sh`
-- Deploy that made the OLM routes live: remote D1 `olm` table applied (idempotent `schema.sql`),
-  `wrangler deploy`. Before this, `/api/olm` and `/api/review` returned 404.
+- **Direction B (ME calibration/confusion → SRL planning):** ME writes `over_confident`/`confusion`
+  on two concepts; SAIL's `plan` mode runs a **deterministic ES-LLMs control rule in code** (NOT
+  LLM-decided) that prioritizes those concepts (`over_confident ⇒ self-check`, `confusion ⇒ review
+  block`), injects them as structured context so Marin's plan literally adapts, logs
+  `planning_used_me_signal`, and writes the resulting plan back to the SRL-owned OLM fields.
+- **Direction A (SRL state → ME contextual render):** ME reads the SRL-owned `active_plan`/`phase`
+  back from the OLM into `srlContext` (renderer-only) + a phase→move bias (performance ⇒ favor
+  PROBE_CONFUSION). Feature-detected: no SRL state ⇒ ME = P0 behavior.
 
-## Verified transcript (learnerId `olm-demo-1780659108`)
+Also proves the **single-writer field-ownership guard** (ME-owned vs SRL-owned fields).
+
+- Worker (live): https://sail-api.jewoong-moon.workers.dev  (model anthropic/claude-sonnet-4)
+- Reproduce: `bash scripts/olm_live_demo.sh`  (uses a fresh ephemeral learnerId; cleans up after)
+
+## Field-ownership map (final)
+
+| Owner | Fields |
+|---|---|
+| **ME** (micro) | `by_concept.*.calibration_err`, `jol_trend` (over/under_confident sign), `confusion_label`, `beta`, `voi` (competence Beta) |
+| **SRL/SAIL** (macro) | `by_concept.*.help_seeking`, `last_session`; `global.deadline_proximity`, `srl_level`, **`active_goal`, `active_plan`, `phase`, `review_schedule`** |
+
+The bolded SRL fields are new (this build): SAIL writes them on goal/session creation; ME reads them
+for `srlContext`. Cross-writes are rejected by the arbiter (`olmCore.ts` `OWNERSHIP`).
+
+## Both-arrows-close transcript (2026-06-10, learnerId `olm-loop-*`)
+
+```
+STEP 1 (ME → OLM): wrote confounder(overconfident) + collider(confusion).
+
+STEP 2 (B: ME signal → SRL planning): Marin plan reply (warm, jargon-free):
+  "I noticed that on confounders you've felt sure but slipped a couple times recently —
+   want to start with a quick 5-minute self-check there first…?"
+  • mentions confounder (overconfident): YES ✓
+  • NO metric/jargon word leaked:        clean ✓
+  → planning_used_me_signal LOGGED:
+     - confounder → self_check   [overconfident; calibration gap 0.42]
+     - collider   → review_block [confusion flagged; calibration gap 0.31]
+
+STEP 2b (SRL → OLM): session created → active_plan + phase written (writer=sail):
+     active_plan = {"subject":"causal inference","strategy":"retrieval_practice","minutes":25,"concepts":["confounder","collider"]}
+     phase       = performance
+
+STEP 3 (A: SRL state → ME): renderer srlContext built from the live OLM:
+     {"subject":"causal inference","strategy":"retrieval_practice","phase":"performance","focusConcepts":["confounder","collider"]}
+  • renderer references subject (causal inference): YES ✓
+  • phase→move bias active (phase=performance):     YES ✓ (favor PROBE_CONFUSION)
+
+STEP 4: BOTH ARROWS CLOSE on the LIVE worker. ✓
+```
+
+The deterministic control rule chose the plan items in code; the LLM only rendered them warmly
+(self-check on the overconfident concept, no "calibration"/"overconfident" word to the student). The
+plan was written to the SRL-owned OLM fields and read straight back into the ME renderer's srlContext —
+closing the loop both ways. ME's `over_confident` reason surfaces to the student as *care*, not a metric.
+
+## Earlier micro→macro transcript (learnerId `olm-demo-1780659108`)
 
 **STEP 1 — ME writes to the shared OLM** (writer=`me`, concept `confounder`):
 ```
