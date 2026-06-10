@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1640 1020"
+     font-family="Inter, 'Helvetica Neue', Arial, sans-serif">
+  <rect width="1640" height="1020" fill="#ffffff"/>
+
+  <!-- ============ title ============ -->
+  <text x="80" y="74" font-size="16" font-weight="700" letter-spacing="0.16em" fill="#2f9d8e">ARCHITECTURE</text>
+  <text x="80" y="116" font-size="34" font-weight="700" fill="#1a1a2e">Bidirectional ME &#8596; SRL loop over a shared Open Learner Model</text>
+  <text x="80" y="150" font-size="19" fill="#5b6472">Within-task metacognitive experience (monitoring) coupled to between-task self-regulated planning (control), across two timescales.</text>
+
+  <defs>
+    <marker id="ah-me" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b5476a"/>
+    </marker>
+    <marker id="ah-srl" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f9d8e"/>
+    </marker>
+  </defs>
+
+  <!-- ============ B arrow lane (top): ME -> OLM -> SRL  (monitoring signal up to control) ============ -->
+  <path d="M300,300 C480,250 560,250 700,300" fill="none" stroke="#b5476a" stroke-width="3" marker-end="url(#ah-me)"/>
+  <path d="M940,300 C1080,250 1160,250 1340,300" fill="none" stroke="#b5476a" stroke-width="3" marker-end="url(#ah-me)"/>
+  <text x="500" y="232" text-anchor="middle" font-size="17" font-weight="700" fill="#b5476a">calibration &#183; confusion &#183; competence(&#946;)</text>
+  <text x="1140" y="232" text-anchor="middle" font-size="17" font-weight="700" fill="#b5476a">deterministic control rule</text>
+  <text x="1140" y="256" text-anchor="middle" font-size="14.5" fill="#7a4a5c">overconfident &#8658; self-check &#183; confusing &#8658; review block</text>
+
+  <!-- ============ A arrow lane (bottom): SRL -> OLM -> ME  (SRL context down to render) ============ -->
+  <path d="M1340,720 C1160,772 1080,772 940,720" fill="none" stroke="#2f9d8e" stroke-width="3" marker-end="url(#ah-srl)"/>
+  <path d="M700,720 C560,772 480,772 300,720" fill="none" stroke="#2f9d8e" stroke-width="3" marker-end="url(#ah-srl)"/>
+  <text x="1140" y="806" text-anchor="middle" font-size="17" font-weight="700" fill="#2f9d8e">goal &#183; plan &#183; phase</text>
+  <text x="500" y="806" text-anchor="middle" font-size="17" font-weight="700" fill="#2f9d8e">srlContext + phase&#8594;move bias</text>
+  <text x="500" y="830" text-anchor="middle" font-size="14.5" fill="#3d7a70">forethought&#8594;FoK/JOL &#183; performance&#8594;confusion &#183; reflection&#8594;FoS</text>
+
+  <!-- loop direction chips -->
+  <g font-size="13" font-weight="700" letter-spacing="0.08em">
+    <rect x="772" y="196" width="96" height="26" rx="13" fill="#fbeef2" stroke="#b5476a" stroke-width="1"/>
+    <text x="820" y="214" text-anchor="middle" fill="#b5476a">B &#183; ME&#8594;SRL</text>
+    <rect x="772" y="784" width="96" height="26" rx="13" fill="#e9f6f3" stroke="#2f9d8e" stroke-width="1"/>
+    <text x="820" y="802" text-anchor="middle" fill="#2f9d8e">A &#183; SRL&#8594;ME</text>
+  </g>
+
+  <!-- ============ LEFT node: ME (micro) ============ -->
+  <g>
+    <rect x="80" y="300" width="220" height="420" rx="16" fill="#fdf6f8" stroke="#b5476a" stroke-width="2"/>
+    <text x="104" y="340" font-size="13" font-weight="800" letter-spacing="0.14em" fill="#b5476a">MICRO &#183; WITHIN-TASK</text>
+    <text x="104" y="374" font-size="22" font-weight="700" fill="#1a1a2e">ME tutor</text>
+    <text x="104" y="398" font-size="15" fill="#5b6472">Metacognitive-Experience</text>
+    <line x1="104" y1="418" x2="276" y2="418" stroke="#eccfd9" stroke-width="1.5"/>
+    <g font-size="14.5" fill="#3a4250">
+      <text x="104" y="448">tracer &#8594; deterministic</text>
+      <text x="104" y="470">move policy &#8594; LLM render</text>
+      <text x="104" y="500">elicits felt signals:</text>
+      <text x="104" y="522" fill="#7a4a5c">FoK &#183; FoD &#183; FoC &#183; FoS</text>
+      <text x="104" y="544" fill="#7a4a5c">JOL &#183; confusion</text>
+      <text x="104" y="574">No-intervention (ABSTAIN)</text>
+      <text x="104" y="596">= first-class move</text>
+    </g>
+    <!-- nested fast-loop glyph -->
+    <g transform="translate(190,648)">
+      <circle r="30" fill="none" stroke="#b5476a" stroke-width="2" stroke-dasharray="3 4"/>
+      <path d="M-21,-6 A22 22 0 1 1 -6 21" fill="none" stroke="#b5476a" stroke-width="2" marker-end="url(#ah-me)"/>
+    </g>
+    <text x="104" y="700" font-size="12.5" fill="#7a4a5c">fast loop: monitoring&#8596;control</text>
+    <text x="104" y="306" font-size="0" fill="none">.</text>
+  </g>
+  <text x="190" y="752" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="0.06em" fill="#9a6477">ES-LLMs &#183; MetaCLASS &#183; StratL</text>
+
+  <!-- ============ CENTER hub: shared OLM ============ -->
+  <g>
+    <rect x="700" y="300" width="240" height="420" rx="16" fill="#f4f5f8" stroke="#1a1a2e" stroke-width="2"/>
+    <text x="820" y="340" text-anchor="middle" font-size="13" font-weight="800" letter-spacing="0.12em" fill="#1a1a2e">SHARED OLM</text>
+    <text x="820" y="366" text-anchor="middle" font-size="18" font-weight="700" fill="#1a1a2e">single-writer</text>
+    <text x="820" y="388" text-anchor="middle" font-size="14" fill="#5b6472">field ownership &#183; arbiter</text>
+
+    <rect x="724" y="408" width="192" height="138" rx="10" fill="#fdf6f8" stroke="#b5476a" stroke-width="1.5"/>
+    <text x="740" y="432" font-size="12.5" font-weight="800" letter-spacing="0.08em" fill="#b5476a">ME-OWNED</text>
+    <g font-size="14.5" fill="#3a4250">
+      <text x="740" y="458">calibration_err</text>
+      <text x="740" y="480">jol_trend (over/under)</text>
+      <text x="740" y="502">confusion_label</text>
+      <text x="740" y="524">competence &#946;(a,b)</text>
+    </g>
+
+    <rect x="724" y="560" width="192" height="138" rx="10" fill="#e9f6f3" stroke="#2f9d8e" stroke-width="1.5"/>
+    <text x="740" y="584" font-size="12.5" font-weight="800" letter-spacing="0.08em" fill="#2f9d8e">SRL-OWNED</text>
+    <g font-size="14.5" fill="#3a4250">
+      <text x="740" y="610">active_goal</text>
+      <text x="740" y="632">active_plan</text>
+      <text x="740" y="654">phase</text>
+      <text x="740" y="676">review_schedule</text>
+    </g>
+  </g>
+
+  <!-- ============ RIGHT node: SRL (macro) ============ -->
+  <g>
+    <rect x="1340" y="300" width="220" height="420" rx="16" fill="#f1faf8" stroke="#2f9d8e" stroke-width="2"/>
+    <text x="1364" y="340" font-size="13" font-weight="800" letter-spacing="0.12em" fill="#2f9d8e">MACRO &#183; BETWEEN-TASK</text>
+    <text x="1364" y="374" font-size="22" font-weight="700" fill="#1a1a2e">SRL planner</text>
+    <text x="1364" y="398" font-size="15" fill="#5b6472">Self-Regulated Learning</text>
+    <line x1="1364" y1="418" x2="1536" y2="418" stroke="#cfeae3" stroke-width="1.5"/>
+    <g font-size="14.5" fill="#3a4250">
+      <text x="1364" y="448">goal &#183; plan &#183; reflection</text>
+      <text x="1364" y="470">(conversational Marin)</text>
+      <text x="1364" y="500">review scheduler</text>
+      <text x="1364" y="522" fill="#3d7a70">latent-&#946; + drift queue</text>
+      <text x="1364" y="552">meControlRule()</text>
+      <text x="1364" y="574">= plan adapts to ME</text>
+      <text x="1364" y="596" fill="#3d7a70">phase set by trace parser</text>
+    </g>
+    <text x="1450" y="700" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="0.06em" fill="#3d7a70">FLoRA trace &#183; review scheduler</text>
+  </g>
+
+  <!-- ============ big outer-loop label ============ -->
+  <text x="820" y="900" text-anchor="middle" font-size="14" font-style="italic" fill="#8a93a3">slow loop: between-task regulation &#8212; nests the fast within-task loop</text>
+
+  <!-- ============ footer: theory anchors + novelty ============ -->
+  <line x1="80" y1="936" x2="1560" y2="936" stroke="#e4e7ee" stroke-width="1.5"/>
+  <text x="80" y="966" font-size="14.5" fill="#5b6472"><tspan font-weight="700" fill="#1a1a2e">Theory:</tspan> Efklides MASRL (Person &#247; Task&#215;Person levels) &#183; Nelson&#8211;Narens monitoring&#8211;control &#183; Flavell metacognitive experiences &#183; Winne nested SRL loops</text>
+  <text x="80" y="992" font-size="14.5" fill="#5b6472"><tspan font-weight="700" fill="#b5476a">Novelty:</tspan> no prior validated system closes BOTH arrows across two timescales &#8212; ME calibration drives between-task planning, SRL state conditions within-task metacognition.</text>
+</svg>
