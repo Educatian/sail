@@ -174,10 +174,10 @@ app.post('/api/llm/chat/completions', async (c) => {
   try { body = await c.req.json(); } catch { return c.json({ error: { message: 'bad json' } }, 400); }
   const messages = Array.isArray(body?.messages) ? body.messages : null;
   if (!messages) return c.json({ error: { message: 'messages[] required' } }, 400);
-  // FREE Qwen first; OpenRouter auto-falls-back through the list when a free provider is saturated (429).
-  // The last entry is a very-cheap PAID Qwen (~$0.04/M tokens ≈ $0.00002/turn) so the demo never dead-ends.
-  // Client cannot override the model. Override the whole list with ME_LLM_MODEL (comma-separated) if needed.
-  const models = (c.env.ME_LLM_MODEL ?? 'qwen/qwen3-next-80b-a3b-instruct:free,qwen/qwen3-coder:free,qwen/qwen-2.5-7b-instruct').split(',').map(s => s.trim());
+  // GPT (gpt-4o-mini) via OpenRouter — reliable + cheap (~$0.0004/turn), no free-tier 429 churn. Falls back
+  // to a free Qwen then a cheap paid Qwen if GPT is unavailable. Client cannot override the model.
+  // Override the whole list with ME_LLM_MODEL (comma-separated) if needed.
+  const models = (c.env.ME_LLM_MODEL ?? 'openai/gpt-4o-mini,qwen/qwen3-next-80b-a3b-instruct:free,qwen/qwen-2.5-7b-instruct').split(',').map(s => s.trim());
   const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: { 'content-type': 'application/json', Authorization: `Bearer ${key}`, 'HTTP-Referer': 'https://sail-me.pages.dev', 'X-Title': 'SAIL-ME' },
