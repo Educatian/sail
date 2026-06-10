@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
 import { Landing } from './routes/Landing';
-import { getStudent } from './lib/api';
+import { getStudent, isInstructor } from './lib/api';
 import { MarinChat } from './components/MarinChat';
 import { MarinMark } from './components/MarinMark';
+import { AmbientMood } from './components/AmbientMood';
+import { useAmbientMood } from './lib/ambient';
 
 function Icon({ d, active }: { d: string; active?: boolean }) {
   return (
@@ -58,9 +60,13 @@ export function RootLayout() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const hideTabs = path.startsWith('/study/active') || path.startsWith('/study/reflect');
   const allowSharedSessionLink = hideTabs;
+  const mood = useAmbientMood();
+  // instructor / research surfaces stay clean (no ambient wash behind data tables)
+  const ambient = isInstructor() || path.startsWith('/research') ? null : mood;
   if (!authed && !allowSharedSessionLink) return <Landing onAuthed={() => setAuthed(true)} />;
   return (
     <>
+      <AmbientMood mood={ambient} />
       <Outlet />
       {authed && !hideTabs && (
         <button

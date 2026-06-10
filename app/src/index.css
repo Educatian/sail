@@ -75,3 +75,33 @@ input, textarea, select { font-size: 16px; }
 /* buttons — soft, rounded, cozy */
 .btn-accent { background: var(--color-accent); color: #fff; font-weight: 700; border-radius: 9999px; }
 .btn-ghost { border: 1.5px solid color-mix(in srgb, var(--color-ink) 22%, transparent); color: var(--color-ink); border-radius: 9999px; font-weight: 700; }
+
+/* ─── Ambient mood — faint full-bleed background that responds to learner affect ───
+   fixed behind everything, never interactive, gentle opacity cross-fade. NO mix-blend-mode. */
+.ambient-mood {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  /* sits behind content; #root children paint above via their own stacking */
+}
+.ambient-mood__img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  opacity: 0.13;                 /* faint — must never overpower text/data */
+  transition: opacity 600ms ease;
+  will-change: opacity;
+}
+/* the app surfaces must paint above the ambient layer */
+#root > * { position: relative; z-index: 1; }
+
+/* ─── Unified nautical loader (CSS fallback + the instant first-paint spinner) ───
+   a compass-rose mark whose needle sweeps gently; reduced-motion → static mark. */
+.marin-loader { display: inline-grid; place-items: center; color: var(--color-accent); }
+.marin-loader__svg { display: block; }
+.marin-loader__needle { transform-box: fill-box; transform-origin: 50% 50%; animation: marin-sweep 2.4s cubic-bezier(.45,.05,.55,.95) infinite; }
+@keyframes marin-sweep { 0% { transform: rotate(0deg); } 50% { transform: rotate(180deg); } 100% { transform: rotate(360deg); } }
+/* video variant (used only when /art/loop/marin-loop.mp4 is present) */
+.marin-loader__video { display: block; height: 120px; width: auto; border-radius: 16px; object-fit: cover; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-mood__img { transition: none; }          /* instant swap, no fade */
+  .marin-loader__needle { animation: none; }        /* static compass mark */
+}
