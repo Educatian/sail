@@ -53,6 +53,63 @@ To capture a metacognitive feeling, emit on its own a fenced probe block the app
 feeling is one of: knowing | difficulty | confidence. phase is pre or post. Use a probe at the start (pre) and after the stretch (post); otherwise keep it conversational.`,
 };
 
+// ============================================================================
+// DIRECTION B — ME calibration/confusion signal -> SRL planning (ES-LLMs deterministic control rule).
+// The PRIORITIZATION is computed in code (NOT decided by the LLM); the LLM only renders it warmly.
+// Evidence: ES-LLMs (2603.23990) rules-over-interpretable-model + MetaCLASS move vocab (ME_SRL_LOOP_EVIDENCE.md §c).
+// Student-facing rule (P0 invariant): the ME-reason is rendered as CARE, never as a metric/jargon word.
+// ============================================================================
+export interface MeSignal {
+  concept_id: string; over_confident: boolean; under_confident: boolean; confusion: boolean;
+  calibration_err: number; competence: number | null; staleDays: number;
+}
+export interface PlanItem { concept_id: string; action: 'self_check' | 'review_block' | 'surface'; reason: string; metric: string; }
+
+// Deterministic rule (in code): map each ME-flagged concept to a planning action + reason.
+//   over_confident(c)            => self-check on c + schedule retrieval (CHI-2025 overconfidence target)
+//   confusion(c) high            => review block BEFORE new material
+//   competence low + stale       => surface in plan
+// Returns the prioritized list (self_check/review_block rank above surface) — at most `limit` items.
+export function meControlRule(signals: MeSignal[], opts: { staleThreshold?: number; lowComp?: number; limit?: number } = {}): PlanItem[] {
+  const staleThreshold = opts.staleThreshold ?? 3, lowComp = opts.lowComp ?? 0.5, limit = opts.limit ?? 3;
+  const items: PlanItem[] = [];
+  for (const s of signals) {
+    if (s.over_confident) {
+      items.push({ concept_id: s.concept_id, action: 'self_check',
+        reason: `felt sure but slipped a couple of times on ${s.concept_id}`,
+        metric: `overconfident; calibration gap ${s.calibration_err.toFixed(2)}` });
+    } else if (s.confusion) {
+      items.push({ concept_id: s.concept_id, action: 'review_block',
+        reason: `${s.concept_id} felt confusing last time`,
+        metric: `confusion flagged; calibration gap ${s.calibration_err.toFixed(2)}` });
+    } else if (s.competence != null && s.competence < lowComp && s.staleDays >= staleThreshold) {
+      items.push({ concept_id: s.concept_id, action: 'surface',
+        reason: `${s.concept_id} hasn't come up in a while and could use a refresher`,
+        metric: `competence ${(s.competence * 100) | 0}%, ${s.staleDays}d stale` });
+    }
+  }
+  const rank = { self_check: 0, review_block: 1, surface: 2 } as const;
+  items.sort((a, b) => rank[a.action] - rank[b.action]);
+  return items.slice(0, limit);
+}
+
+// Render the control-rule output as STRUCTURED CONTEXT injected into the planning system prompt.
+// The reasons are warm + jargon-free; an explicit instruction forbids surfacing the metric words.
+export function buildMePlanningContext(items: PlanItem[]): string {
+  if (!items.length) return '';
+  const lines = items.map((it) => {
+    const verb = it.action === 'self_check' ? 'a quick self-check first'
+      : it.action === 'review_block' ? 'a short review block before new material'
+      : 'a brief refresher';
+    return `- ${it.concept_id}: suggest ${verb} — because ${it.reason}.`;
+  });
+  return `\n\n## What their recent practice suggests for this plan (shape the plan around this)\n` +
+    `These priorities come from how their practice actually went. Weave them into the plan in PLAIN, CARING language ` +
+    `("On confounders you've felt sure but slipped a couple times — want a 5-min self-check there first?"). ` +
+    `Do NOT use the words "calibration", "overconfident", "confusion score" or any metric/jargon with the student — render the reason as care, not a measurement.\n` +
+    lines.join('\n');
+}
+
 export function buildMarinSystem(mode: MarinMode, ctx: MarinCtx): string {
   const lines: string[] = [];
   if (ctx.courses?.length) {

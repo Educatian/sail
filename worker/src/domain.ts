@@ -125,6 +125,8 @@ export type MetricEventType =
   | 'badge_earned'
   | 'marin_chat'
   | 'metacog_experience'
+  | 'planning_used_me_signal'
+  | 'srl_state_written'
   | 'research_exported'
   | 'client_error';
 
