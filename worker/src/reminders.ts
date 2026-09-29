@@ -46,6 +46,7 @@ function escapeHtml(s: string) {
 
 /** Send via Resend. Returns true if sent, false if no key (dev) or error. */
 export async function sendEmail(env: { RESEND_API_KEY?: string; RESEND_FROM?: string }, to: string, subject: string, html: string, text: string): Promise<boolean> {
+  if (!to.includes('@')) return false;   // coded Study IDs are not email addresses: never attempt to send
   if (!env.RESEND_API_KEY) { console.log(`[reminder dev-stub] to=${to} subject="${subject}"`); return false; }
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',

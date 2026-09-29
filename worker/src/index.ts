@@ -19,7 +19,7 @@ import { meSignalsFrom } from './olmCore';
 import { scheduleReviews, reviewNudge } from './reviewScheduler';
 import type { StudySession, ChatMessage, Condition, ContextTrace, MetricEvent, MetricEventType, SpatialTrace, Course, AchievementGoal, ProximalSubgoal, GoalOrientation } from './domain';
 
-type Bindings = { DB: D1Database; LLM_API_KEY?: string; LLM_BASE_URL?: string; SAIL_MODEL?: string; ME_LLM_MODEL?: string; ENABLE_ME_PUBLIC_PROXY?: string; DISABLE_REMINDER_EMAILS?: string; RESEND_API_KEY?: string; RESEND_FROM?: string };
+type Bindings = { DB: D1Database; LLM_API_KEY?: string; LLM_BASE_URL?: string; SAIL_MODEL?: string; ME_LLM_MODEL?: string; ENABLE_ME_PUBLIC_PROXY?: string; DISABLE_REMINDER_EMAILS?: string; REQUIRE_CODED_IDS?: string; RESEND_API_KEY?: string; RESEND_FROM?: string };
 const app = new Hono<{ Bindings: Bindings }>();
 app.use('/api/*', cors());
 
@@ -301,11 +301,15 @@ app.get('/api/sessions/:id', async (c) => { const s = await getSession(c.env.DB,
 app.delete('/api/sessions/:id', async (c) => { await deleteSession(c.env.DB, c.req.param('id')); return c.json({ ok: true }); });
 app.get('/api/learner', async (c) => c.json(await buildLearnerModel(c.env.DB, c.req.query('studentId') ?? 'demo')));
 
-// --- auth: email + passcode (new = register, existing = login). studentId = normalized email. ---
+// --- auth: ID + passcode (new = register, existing = login). Default: studentId = normalized email.
+// Study build (REQUIRE_CODED_IDS=1): studentId = coded Study ID issued by the research team after consent; email addresses are rejected. ---
 app.post('/api/auth', async (c) => {
-  const { email, passcode, mode } = await c.req.json().catch(() => ({}));
-  const sid = String(email ?? '').trim().toLowerCase();
-  if (!sid || !passcode || String(passcode).length < 4) return c.json({ error: 'Email and a 4+ character passcode are required.' }, 400);
+  const { email, studyId, passcode, mode } = await c.req.json().catch(() => ({}));
+  const coded = c.env.REQUIRE_CODED_IDS === '1';
+  const rawId = String(studyId ?? email ?? '').trim();
+  if (coded && !/^[A-Za-z0-9][A-Za-z0-9_-]{5,31}$/.test(rawId)) return c.json({ error: 'Enter the coded Study ID from the research team (6-32 letters, numbers, - or _). Email addresses are not accepted.' }, 400);
+  const sid = coded ? rawId.toUpperCase() : rawId.toLowerCase();
+  if (!sid || !passcode || String(passcode).length < 4) return c.json({ error: coded ? 'Study ID and a 4+ character passcode are required.' : 'Email and a 4+ character passcode are required.' }, 400);
   const existing = await getUser(c.env.DB, sid);
   if (mode === 'login') {
     if (!existing) return c.json({ error: 'No account for this email — sign up first.' }, 404);
