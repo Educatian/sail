@@ -53,7 +53,7 @@ JOL is deliberately not collected inside the app. For the intended KPIDT study, 
 
 ## Stack
 
-Vite + React 19 + TypeScript + TanStack Router + Tailwind v4 SPA; Hono Node API for local development; Cloudflare Worker + D1 for public deployment; OpenRouter-compatible LLM provider for Marin; Capacitor for Android packaging.
+Vite + React 19 + TypeScript + TanStack Router + Tailwind v4 SPA; Hono Node API for local development; Cloudflare Worker + D1 for public deployment; Gemini (OpenAI-compatible endpoint) LLM provider for Marin; Capacitor for Android packaging.
 
 ## Run Locally
 
@@ -61,7 +61,7 @@ Vite + React 19 + TypeScript + TanStack Router + Tailwind v4 SPA; Hono Node API 
 # 1) API  (http://localhost:3001)
 cd server
 cp .env.example .env
-# Optional: add OPENROUTER_API_KEY for the live mentor.
+# Optional: add LLM_API_KEY (Gemini) for the live mentor.
 # Without it, Marin runs in dev-stub mode.
 npm run dev
 

@@ -5,7 +5,7 @@
 ## Stack decision
 - **Frontend**: Vite + React + TypeScript + TanStack Router (SPA) + Tailwind. (Matches Hephaestus webapp; per project skill note this codebase uses Vite+TanStack, NOT Next.js.)
 - **Backend**: Node API (Hono) — LLM proxy (keys server-side only), JSONL session logging, event metrics, export, future `ltijs` Canvas LTI mount.
-- **LLM**: provider abstraction; default Anthropic Claude (`claude-sonnet-4-6`), OpenAI/Azure fallback. Streaming.
+- **LLM**: provider abstraction; default Google Gemini via its OpenAI-compatible endpoint (`gemini-2.5-flash`); any OpenAI-compatible endpoint via `LLM_BASE_URL`. Streaming.
 - **DB**: SQLite (better-sqlite3) MVP; mirrors PracLog `Log` + dialogue/event logs. Trivial CSV/JSON export.
 - **Theory split (critical)**: UX runs Zimmerman forethought→performance→reflection. Research *measurement* (JOL calibration) stays OUTSIDE the bot (Canvas form, Nelson-Narens, per Cash 2025) to avoid LLM contaminating calibration. SAIL logs help-seeking + metacog signals only.
 

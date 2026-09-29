@@ -23,7 +23,7 @@ cd worker
 npm install
 wrangler d1 create sail
 npm run db:init:remote
-wrangler secret put OPENROUTER_API_KEY
+wrangler secret put LLM_API_KEY   # Gemini API key or bearer token
 wrangler secret put RESEND_API_KEY
 npm run deploy
 ```
