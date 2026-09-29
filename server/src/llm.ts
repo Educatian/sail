@@ -1,8 +1,9 @@
-// Marin (the SAIL mentor). Uses Google Gemini through its OpenAI-compatible API when LLM_API_KEY is set. Without a key it
-// defaults to LOCAL Ollama (Qwen) so local development works with no key. LLM_BASE_URL / SAIL_MODEL override either default.
+// Marin (the SAIL mentor). Uses Microsoft AI Foundry (Azure OpenAI v1, OpenAI-compatible) when LLM_API_KEY and LLM_BASE_URL are set.
+// Without them it defaults to LOCAL Ollama (Qwen) so local development works with no key. SAIL_MODEL is the Foundry deployment name.
 const apiKey = process.env.LLM_API_KEY;
-const BASE = process.env.LLM_BASE_URL ?? (apiKey ? 'https://generativelanguage.googleapis.com/v1beta/openai' : 'http://localhost:11434/v1');
-const MODEL = process.env.SAIL_MODEL ?? (apiKey ? 'gemini-2.5-flash' : 'qwen2.5-coder:7b');
+const foundry = !!(apiKey && process.env.LLM_BASE_URL);
+const BASE = foundry ? process.env.LLM_BASE_URL! : 'http://localhost:11434/v1';
+const MODEL = process.env.SAIL_MODEL ?? (foundry ? 'gpt-4o-mini' : 'qwen2.5-coder:7b');
 
 export interface LlmTurn {
   system: string;
@@ -14,11 +15,11 @@ export async function* streamMentor(turn: LlmTurn): AsyncGenerator<string> {
   try {
     res = await fetch(`${BASE}/chat/completions`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}) },
+      headers: { 'content-type': 'application/json', ...(foundry ? (/azure\.com|azure\.net/i.test(BASE) ? { 'api-key': apiKey! } : { Authorization: `Bearer ${apiKey}` }) : {}) },
       body: JSON.stringify({ model: MODEL, stream: true, max_tokens: 1024, messages: [{ role: 'system', content: turn.system }, ...turn.messages] }),
     });
   } catch {
-    yield '[[LABEL:SOCRATIC]] (mentor offline — start Ollama, or set LLM_API_KEY) ';
+    yield '[[LABEL:SOCRATIC]] (mentor offline — start Ollama, or set LLM_API_KEY and LLM_BASE_URL) ';
     yield 'What is the very first thing you want to understand here, in your own words?';
     return;
   }
