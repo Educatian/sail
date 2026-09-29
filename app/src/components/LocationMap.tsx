@@ -1,3 +1,5 @@
+import { STUDY_BUILD } from '../lib/api';
+
 interface LocationPoint {
   lat: number;
   lng: number;
@@ -83,7 +85,7 @@ export function LocationMap({ center, points = [], live = false, label = 'Map lo
   return (
     <div className={`relative h-44 overflow-hidden rounded border border-black/10 bg-[#dce7e2] ${className}`}>
       <svg viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`} className="h-full w-full" role="img" aria-label={label}>
-        {tileRange.flatMap((dx) => tileRange.map((dy) => {
+        {!STUDY_BUILD && tileRange.flatMap((dx) => tileRange.map((dy) => {   // study build: no external map tiles
           const tx = centerTileX + dx;
           const ty = centerTileY + dy;
           return (
@@ -113,14 +115,16 @@ export function LocationMap({ center, points = [], live = false, label = 'Map lo
       <div className="absolute bottom-3 left-3 rounded-full border border-black/10 bg-white/90 px-2 py-1 text-[10px] text-ink/65 shadow-sm">
         {latest.accuracy ? `accuracy ~${Math.round(latest.accuracy)}m` : `zoom ${zoom}`}
       </div>
-      <a
-        href="https://www.openstreetmap.org/copyright"
-        target="_blank"
-        rel="noreferrer"
-        className="absolute bottom-2 right-2 rounded bg-white/80 px-1.5 py-0.5 text-[9px] text-ink/45"
-      >
-        OSM
-      </a>
+      {!STUDY_BUILD && (
+        <a
+          href="https://www.openstreetmap.org/copyright"
+          target="_blank"
+          rel="noreferrer"
+          className="absolute bottom-2 right-2 rounded bg-white/80 px-1.5 py-0.5 text-[9px] text-ink/45"
+        >
+          OSM
+        </a>
+      )}
     </div>
   );
 }
