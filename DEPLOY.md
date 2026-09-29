@@ -23,7 +23,7 @@ cd worker
 npm install
 wrangler d1 create sail
 npm run db:init:remote
-wrangler secret put LLM_API_KEY   # Gemini API key or bearer token
+wrangler secret put LLM_API_KEY   # Microsoft AI Foundry resource key (also set LLM_BASE_URL and SAIL_MODEL)
 wrangler secret put RESEND_API_KEY
 npm run deploy
 ```
