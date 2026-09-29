@@ -1,31 +1,35 @@
 export interface LlmTurn {
   apiKey?: string;
   model: string;
-  /** OpenAI-compatible base URL (no trailing /chat/completions). Defaults to Google Gemini. */
+  /** OpenAI-compatible base URL of the Microsoft AI Foundry / Azure OpenAI v1 endpoint, e.g. https://<resource>.openai.azure.com/openai/v1 (no trailing /chat/completions). */
   baseUrl?: string;
   system: string;
   messages: { role: 'user' | 'assistant'; content: string }[];
 }
 
-// Gemini through its OpenAI-compatible endpoint. To point at another OpenAI-compatible Gemini endpoint
-// (for example a UA-managed Vertex AI project), set LLM_BASE_URL and LLM_API_KEY (bearer token).
-export const DEFAULT_LLM_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai';
-export const DEFAULT_LLM_MODEL = 'gemini-2.5-flash';
+// Microsoft AI Foundry (Azure OpenAI v1, OpenAI-compatible chat/completions). Set LLM_BASE_URL to the resource endpoint,
+// LLM_API_KEY to the resource key, and SAIL_MODEL to the name of your Foundry model deployment.
+export const DEFAULT_LLM_MODEL = 'gpt-4o-mini';   // replace with your deployment name
 
-// Marin (the SAIL mentor) runs on Gemini (OpenAI-compatible chat/completions). Dev stub when no key.
+/** Azure endpoints use the `api-key` header; other OpenAI-compatible endpoints use a bearer token. */
+export function llmAuthHeaders(baseUrl: string, key: string): Record<string, string> {
+  return /azure\.com|azure\.net/i.test(baseUrl) ? { 'api-key': key } : { Authorization: `Bearer ${key}` };
+}
+
+// Marin (the SAIL mentor) runs on Microsoft AI Foundry. Dev stub when the key or endpoint is missing.
 export async function* streamMentor(turn: LlmTurn): AsyncGenerator<string> {
-  if (!turn.apiKey) {
+  if (!turn.apiKey || !turn.baseUrl) {
     yield '[[LABEL:SOCRATIC]] ';
-    yield '(dev mode: set LLM_API_KEY secret to enable Marin) ';
+    yield '(dev mode: set the LLM_API_KEY secret and LLM_BASE_URL to enable Marin) ';
     yield 'What is the very first thing you want to understand here, in your own words?';
     return;
   }
-  const base = (turn.baseUrl ?? DEFAULT_LLM_BASE_URL).replace(/\/+$/, '');
+  const base = turn.baseUrl.replace(/\/+$/, '');
   const res = await fetch(`${base}/chat/completions`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      Authorization: `Bearer ${turn.apiKey}`,
+      ...llmAuthHeaders(base, turn.apiKey),
     },
     body: JSON.stringify({
       model: turn.model,

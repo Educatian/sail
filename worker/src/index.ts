@@ -6,7 +6,7 @@ import { saveSession, getSession, listSessions, deleteSession, saveMessage, getM
 import { randSalt, pbkdf2 } from './auth';
 import { dueReminder, reminderEmail, sendEmail } from './reminders';
 import { chunkText, retrieve } from './rag';
-import { streamMentor, DEFAULT_LLM_BASE_URL, DEFAULT_LLM_MODEL } from './llm';
+import { streamMentor, llmAuthHeaders, DEFAULT_LLM_MODEL } from './llm';
 import { buildSystemPrompt } from './prompts';
 import { decidePolicy, policyInstruction } from './policy';
 import { classifyHelpSeeking, scaffoldFidelity } from './analysis';
@@ -154,7 +154,7 @@ function normalizeSpatialTrace(input: unknown): SpatialTrace | undefined {
   };
 }
 
-app.get('/health', (c) => c.json({ ok: true, llm: !!c.env.LLM_API_KEY, model: c.env.SAIL_MODEL ?? DEFAULT_LLM_MODEL }));
+app.get('/health', (c) => c.json({ ok: true, llm: !!(c.env.LLM_API_KEY && c.env.LLM_BASE_URL), model: c.env.SAIL_MODEL ?? DEFAULT_LLM_MODEL }));
 
 // Optional public OpenAI-compatible LLM proxy for the ME demo chatbot (sail-me). DISABLED by default: the route is
 // unauthenticated, so enable it only for a public demo (ENABLE_ME_PUBLIC_PROXY=1) and never in a study deployment.
@@ -163,7 +163,7 @@ const ME_RL = new Map<string, { n: number; t: number }>();
 app.post('/api/llm/chat/completions', async (c) => {
   if (c.env.ENABLE_ME_PUBLIC_PROXY !== '1') return c.json({ error: { message: 'proxy disabled' } }, 404);
   const key = c.env.LLM_API_KEY;
-  if (!key) return c.json({ error: { message: 'LLM not configured' } }, 503);
+  if (!key || !c.env.LLM_BASE_URL) return c.json({ error: { message: 'LLM not configured' } }, 503);
   const ip = c.req.header('cf-connecting-ip') ?? 'anon';
   const now = Date.now();
   const rec = ME_RL.get(ip);
@@ -177,12 +177,12 @@ app.post('/api/llm/chat/completions', async (c) => {
   if (!messages) return c.json({ error: { message: 'messages[] required' } }, 400);
   // Client cannot override the model. ME_LLM_MODEL may hold a comma-separated fallback list, tried in order.
   const models = (c.env.ME_LLM_MODEL ?? c.env.SAIL_MODEL ?? DEFAULT_LLM_MODEL).split(',').map((s) => s.trim()).filter(Boolean);
-  const base = (c.env.LLM_BASE_URL ?? DEFAULT_LLM_BASE_URL).replace(/\/+$/, '');
+  const base = c.env.LLM_BASE_URL.replace(/\/+$/, '');
   let lastStatus = 502; let lastDetail = '';
   for (const model of models) {
     const r = await fetch(`${base}/chat/completions`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', Authorization: `Bearer ${key}` },
+      headers: { 'content-type': 'application/json', ...llmAuthHeaders(base, key) },
       body: JSON.stringify({ model, max_tokens: 700, temperature: typeof body.temperature === 'number' ? body.temperature : 0.4, messages: messages.slice(-12) }),
     });
     const txt = await r.text();
