@@ -61,5 +61,5 @@ npx wrangler pages deploy dist --project-name sail-dia
 ## Study Build (coded IDs, no reminder emails)
 
 - Worker: `worker/wrangler.toml` sets `REQUIRE_CODED_IDS = "1"` and `DISABLE_REMINDER_EMAILS = "1"`. `/api/auth` then accepts only coded Study IDs (no email addresses) and no reminder emails are sent.
-- Frontend: build with `VITE_CODED_IDS=1 npm run build` so the sign-in form asks for a Study ID, guest mode is hidden, and the email-reminder controls are removed.
+- Frontend: build with `VITE_CODED_IDS=1 npm run build` so the sign-in form asks for a Study ID, guest mode is hidden, the email-reminder controls are removed, voice input is off, the location map draws no external map tiles, and the Google Fonts links are stripped from the built HTML (participant devices then contact only the study app).
 - Study IDs are issued by the research team after consent (the ID-to-person crosswalk stays outside this app). Remove both settings to restore the email-based prototype behavior.
