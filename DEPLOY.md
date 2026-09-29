@@ -57,3 +57,9 @@ npx wrangler pages deploy dist --project-name sail-dia
 - Export routes are available through the Worker API.
 - Raw secrets and local SQLite/log files should not be committed.
 - Exact raw GPS should not be stored; telemetry payloads are sanitized before persistence.
+
+## Study Build (coded IDs, no reminder emails)
+
+- Worker: `worker/wrangler.toml` sets `REQUIRE_CODED_IDS = "1"` and `DISABLE_REMINDER_EMAILS = "1"`. `/api/auth` then accepts only coded Study IDs (no email addresses) and no reminder emails are sent.
+- Frontend: build with `VITE_CODED_IDS=1 npm run build` so the sign-in form asks for a Study ID, guest mode is hidden, and the email-reminder controls are removed.
+- Study IDs are issued by the research team after consent (the ID-to-person crosswalk stays outside this app). Remove both settings to restore the email-based prototype behavior.
