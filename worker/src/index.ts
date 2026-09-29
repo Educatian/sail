@@ -6,7 +6,7 @@ import { saveSession, getSession, listSessions, deleteSession, saveMessage, getM
 import { randSalt, pbkdf2 } from './auth';
 import { dueReminder, reminderEmail, sendEmail } from './reminders';
 import { chunkText, retrieve } from './rag';
-import { streamMentor } from './llm';
+import { streamMentor, DEFAULT_LLM_BASE_URL, DEFAULT_LLM_MODEL } from './llm';
 import { buildSystemPrompt } from './prompts';
 import { decidePolicy, policyInstruction } from './policy';
 import { classifyHelpSeeking, scaffoldFidelity } from './analysis';
@@ -19,7 +19,7 @@ import { meSignalsFrom } from './olmCore';
 import { scheduleReviews, reviewNudge } from './reviewScheduler';
 import type { StudySession, ChatMessage, Condition, ContextTrace, MetricEvent, MetricEventType, SpatialTrace, Course, AchievementGoal, ProximalSubgoal, GoalOrientation } from './domain';
 
-type Bindings = { DB: D1Database; OPENROUTER_API_KEY?: string; SAIL_MODEL?: string; ME_LLM_MODEL?: string; RESEND_API_KEY?: string; RESEND_FROM?: string };
+type Bindings = { DB: D1Database; LLM_API_KEY?: string; LLM_BASE_URL?: string; SAIL_MODEL?: string; ME_LLM_MODEL?: string; ENABLE_ME_PUBLIC_PROXY?: string; RESEND_API_KEY?: string; RESEND_FROM?: string };
 const app = new Hono<{ Bindings: Bindings }>();
 app.use('/api/*', cors());
 
@@ -154,14 +154,15 @@ function normalizeSpatialTrace(input: unknown): SpatialTrace | undefined {
   };
 }
 
-app.get('/health', (c) => c.json({ ok: true, llm: !!c.env.OPENROUTER_API_KEY, model: c.env.SAIL_MODEL ?? 'claude-sonnet-4-6' }));
+app.get('/health', (c) => c.json({ ok: true, llm: !!c.env.LLM_API_KEY, model: c.env.SAIL_MODEL ?? DEFAULT_LLM_MODEL }));
 
-// Keyless OpenAI-compatible LLM proxy for the ME chatbot (sail-me) — so the public demo gets a REAL model
-// without baking an API key into the client. The server holds the OpenRouter key and HARDCODES a FREE Qwen
-// model (the client's `model` is ignored → even if abused, cost stays $0). Light per-IP rate limit.
+// Optional public OpenAI-compatible LLM proxy for the ME demo chatbot (sail-me). DISABLED by default: the route is
+// unauthenticated, so enable it only for a public demo (ENABLE_ME_PUBLIC_PROXY=1) and never in a study deployment.
+// The server holds the API key; the client's `model` is ignored. Light per-IP rate limit.
 const ME_RL = new Map<string, { n: number; t: number }>();
 app.post('/api/llm/chat/completions', async (c) => {
-  const key = c.env.OPENROUTER_API_KEY;
+  if (c.env.ENABLE_ME_PUBLIC_PROXY !== '1') return c.json({ error: { message: 'proxy disabled' } }, 404);
+  const key = c.env.LLM_API_KEY;
   if (!key) return c.json({ error: { message: 'LLM not configured' } }, 503);
   const ip = c.req.header('cf-connecting-ip') ?? 'anon';
   const now = Date.now();
@@ -174,19 +175,22 @@ app.post('/api/llm/chat/completions', async (c) => {
   try { body = await c.req.json(); } catch { return c.json({ error: { message: 'bad json' } }, 400); }
   const messages = Array.isArray(body?.messages) ? body.messages : null;
   if (!messages) return c.json({ error: { message: 'messages[] required' } }, 400);
-  // GPT (gpt-4o-mini) via OpenRouter — reliable + cheap (~$0.0004/turn), no free-tier 429 churn. Falls back
-  // to a free Qwen then a cheap paid Qwen if GPT is unavailable. Client cannot override the model.
-  // Override the whole list with ME_LLM_MODEL (comma-separated) if needed.
-  const models = (c.env.ME_LLM_MODEL ?? 'openai/gpt-4o-mini,qwen/qwen3-next-80b-a3b-instruct:free,qwen/qwen-2.5-7b-instruct').split(',').map(s => s.trim());
-  const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', Authorization: `Bearer ${key}`, 'HTTP-Referer': 'https://sail-me.pages.dev', 'X-Title': 'SAIL-ME' },
-    body: JSON.stringify({ models, max_tokens: 700, temperature: typeof body.temperature === 'number' ? body.temperature : 0.4, messages: messages.slice(-12) }),
-  });
-  const txt = await r.text();
-  if (!r.ok) return c.json({ error: { message: `upstream ${r.status}`, detail: txt.slice(0, 300) } }, 502);
-  let j: unknown; try { j = JSON.parse(txt); } catch { return c.json({ error: { message: 'bad upstream json' } }, 502); }
-  return c.json(j);   // OpenAI-compatible { choices:[{ message:{ content } }], model }
+  // Client cannot override the model. ME_LLM_MODEL may hold a comma-separated fallback list, tried in order.
+  const models = (c.env.ME_LLM_MODEL ?? c.env.SAIL_MODEL ?? DEFAULT_LLM_MODEL).split(',').map((s) => s.trim()).filter(Boolean);
+  const base = (c.env.LLM_BASE_URL ?? DEFAULT_LLM_BASE_URL).replace(/\/+$/, '');
+  let lastStatus = 502; let lastDetail = '';
+  for (const model of models) {
+    const r = await fetch(`${base}/chat/completions`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', Authorization: `Bearer ${key}` },
+      body: JSON.stringify({ model, max_tokens: 700, temperature: typeof body.temperature === 'number' ? body.temperature : 0.4, messages: messages.slice(-12) }),
+    });
+    const txt = await r.text();
+    if (!r.ok) { lastStatus = r.status; lastDetail = txt.slice(0, 300); continue; }
+    let j: unknown; try { j = JSON.parse(txt); } catch { lastDetail = 'bad upstream json'; continue; }
+    return c.json(j);   // OpenAI-compatible { choices:[{ message:{ content } }], model }
+  }
+  return c.json({ error: { message: `upstream ${lastStatus}`, detail: lastDetail } }, 502);
 });
 
 app.post('/api/events', async (c) => {
@@ -511,13 +515,13 @@ app.post('/api/sessions/:id/chat', async (c) => {
   const llmMessages = kickoff
     ? [{ role: 'user' as const, content: '[Session start. The learner has not spoken yet. Proactively open: greet in one short line and ask ONE planning question to kick off forethought.]' }]
     : toLlmMessages(prior);
-  const model = c.env.SAIL_MODEL ?? 'claude-sonnet-4-6';
-  const apiKey = c.env.OPENROUTER_API_KEY;
+  const model = c.env.SAIL_MODEL ?? DEFAULT_LLM_MODEL;
+  const apiKey = c.env.LLM_API_KEY;
   const db = c.env.DB;
   return streamSSE(c, async (stream) => {
     let full = ''; const t0 = Date.now();
     try {
-      for await (const chunk of streamMentor({ apiKey, model, system, messages: llmMessages })) {
+      for await (const chunk of streamMentor({ apiKey, model, baseUrl: c.env.LLM_BASE_URL, system, messages: llmMessages })) {
         full += chunk;
         await stream.writeSSE({ event: 'delta', data: JSON.stringify(chunk) });
       }
@@ -617,14 +621,14 @@ app.post('/api/marin/chat', async (c) => {
     system += `\n\n## Move steering (deterministic — obey exactly)\nA policy engine has selected the next move. Render ONLY this move; do not run the full loop yourself.\n${steer.directive}`;
   }
   const llmMessages = history.length ? history : [{ role: 'user' as const, content: '[Open the conversation. Greet briefly and ask one helpful opening question for this mode.]' }];
-  const model = c.env.SAIL_MODEL ?? 'claude-sonnet-4-6';
-  const apiKey = c.env.OPENROUTER_API_KEY;
+  const model = c.env.SAIL_MODEL ?? DEFAULT_LLM_MODEL;
+  const apiKey = c.env.LLM_API_KEY;
   const db = c.env.DB;
   await emit(db, { sessionId: body.sessionId ?? '', studentId, type: 'marin_chat', payload: { mode, turn: history.length, ...(steer ? { move: steer.decision.move, V: steer.decision.V, abstain: steer.decision.move === 'ABSTAIN' } : {}) }, condition: 'metacog' });
   return streamSSE(c, async (stream) => {
     let full = '';
     try {
-      for await (const chunk of streamMentor({ apiKey, model, system, messages: llmMessages })) {
+      for await (const chunk of streamMentor({ apiKey, model, baseUrl: c.env.LLM_BASE_URL, system, messages: llmMessages })) {
         full += chunk;
         await stream.writeSSE({ event: 'delta', data: JSON.stringify(chunk) });
       }

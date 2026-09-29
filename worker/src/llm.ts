@@ -1,25 +1,31 @@
 export interface LlmTurn {
   apiKey?: string;
   model: string;
+  /** OpenAI-compatible base URL (no trailing /chat/completions). Defaults to Google Gemini. */
+  baseUrl?: string;
   system: string;
   messages: { role: 'user' | 'assistant'; content: string }[];
 }
 
-// Marin (the SAIL mentor) runs on OpenRouter (OpenAI-compatible). Dev stub when no key.
+// Gemini through its OpenAI-compatible endpoint. To point at another OpenAI-compatible Gemini endpoint
+// (for example a UA-managed Vertex AI project), set LLM_BASE_URL and LLM_API_KEY (bearer token).
+export const DEFAULT_LLM_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai';
+export const DEFAULT_LLM_MODEL = 'gemini-2.5-flash';
+
+// Marin (the SAIL mentor) runs on Gemini (OpenAI-compatible chat/completions). Dev stub when no key.
 export async function* streamMentor(turn: LlmTurn): AsyncGenerator<string> {
   if (!turn.apiKey) {
     yield '[[LABEL:SOCRATIC]] ';
-    yield '(dev mode: set OPENROUTER_API_KEY secret to enable Marin) ';
+    yield '(dev mode: set LLM_API_KEY secret to enable Marin) ';
     yield 'What is the very first thing you want to understand here, in your own words?';
     return;
   }
-  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const base = (turn.baseUrl ?? DEFAULT_LLM_BASE_URL).replace(/\/+$/, '');
+  const res = await fetch(`${base}/chat/completions`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
       Authorization: `Bearer ${turn.apiKey}`,
-      'HTTP-Referer': 'https://sail.pages.dev',
-      'X-Title': 'SAIL',
     },
     body: JSON.stringify({
       model: turn.model,
