@@ -4,7 +4,7 @@ import { Screen, TopBar, Label, AccentButton, GhostButton, Rule } from '../compo
 import { LocationMap } from '../components/LocationMap';
 import { MarinChat } from '../components/MarinChat';
 import { parseMentor, labelBadge } from '../lib/mentor';
-import { api, streamChat, isInstructor } from '../lib/api';
+import { api, streamChat, isInstructor, STUDY_BUILD } from '../lib/api';
 import { canInterrupt, spendInterruption } from '../lib/friction';
 import { setAmbientMood, resetAmbientMood, affectToMood, affectFromCheck } from '../lib/ambient';
 import { MarinLoader } from '../components/MarinLoader';
@@ -156,7 +156,7 @@ export function ActiveSession() {
   const [mFit, setMFit] = useState<ContextFit | null>(null);
   const [stretchOpen, setStretchOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const SR: any = typeof window !== 'undefined' ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition : null;
+  const SR: any = !STUDY_BUILD && typeof window !== 'undefined' ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition : null;   // study build: voice input off
   function toggleMic() {
     if (!SR) return;
     if (listening) { void api.track('voice_input_stopped', { surface: 'active_session' }, id, session?.condition); recRef.current?.stop(); return; }
