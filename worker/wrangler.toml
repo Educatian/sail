@@ -9,10 +9,10 @@ binding = "DB"
 database_name = "sail"
 database_id = "03161a20-1d52-471a-a5b8-b49c7abf3ec4"
 
-# Secrets: `wrangler secret put LLM_API_KEY` (Gemini key or token for the mentor), `wrangler secret put RESEND_API_KEY` (email reminders)
+# Secrets: `wrangler secret put LLM_API_KEY` (Microsoft AI Foundry resource key) and set LLM_BASE_URL to the Foundry endpoint, `wrangler secret put RESEND_API_KEY` (email reminders)
 [vars]
-# Gemini via its OpenAI-compatible endpoint; set LLM_BASE_URL to use another endpoint (confirm the model name available under the UA agreement).
-SAIL_MODEL = "gemini-2.5-flash"
+# Microsoft AI Foundry: SAIL_MODEL is the name of the Foundry model deployment (replace the placeholder).
+SAIL_MODEL = "gpt-4o-mini"
 # Study build: reminder emails (Resend) are disabled.
 DISABLE_REMINDER_EMAILS = "1"
 # Study build: participants sign in with a coded Study ID (no email addresses).
