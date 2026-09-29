@@ -15,6 +15,8 @@ database_id = "03161a20-1d52-471a-a5b8-b49c7abf3ec4"
 SAIL_MODEL = "gemini-2.5-flash"
 # Study build: reminder emails (Resend) are disabled.
 DISABLE_REMINDER_EMAILS = "1"
+# Study build: participants sign in with a coded Study ID (no email addresses).
+REQUIRE_CODED_IDS = "1"
 RESEND_FROM = "SAIL <onboarding@resend.dev>"
 
 # Daily reminder cron (16:00 UTC). Sends spacing-based metacognitive scaffold emails.
