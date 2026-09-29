@@ -19,7 +19,7 @@ import { meSignalsFrom } from './olmCore';
 import { scheduleReviews, reviewNudge } from './reviewScheduler';
 import type { StudySession, ChatMessage, Condition, ContextTrace, MetricEvent, MetricEventType, SpatialTrace, Course, AchievementGoal, ProximalSubgoal, GoalOrientation } from './domain';
 
-type Bindings = { DB: D1Database; LLM_API_KEY?: string; LLM_BASE_URL?: string; SAIL_MODEL?: string; ME_LLM_MODEL?: string; ENABLE_ME_PUBLIC_PROXY?: string; RESEND_API_KEY?: string; RESEND_FROM?: string };
+type Bindings = { DB: D1Database; LLM_API_KEY?: string; LLM_BASE_URL?: string; SAIL_MODEL?: string; ME_LLM_MODEL?: string; ENABLE_ME_PUBLIC_PROXY?: string; DISABLE_REMINDER_EMAILS?: string; RESEND_API_KEY?: string; RESEND_FROM?: string };
 const app = new Hono<{ Bindings: Bindings }>();
 app.use('/api/*', cors());
 
@@ -395,6 +395,7 @@ app.get('/api/materials', async (c) => c.json({ count: (await getMaterialChunks(
 
 // --- email reminder scaffolding: send a test now (bypasses dedup/due) ---
 app.post('/api/reminders/test', async (c) => {
+  if (c.env.DISABLE_REMINDER_EMAILS === '1') return c.json({ error: 'reminder emails are disabled in this deployment' }, 403);
   const b = await c.req.json().catch(() => ({}));
   const sid = b.studentId ?? c.req.query('studentId') ?? 'demo';
   const sessions = await listSessions(c.env.DB, sid);
@@ -655,6 +656,7 @@ app.get('/api/export.csv', async (c) => {
 
 // --- scheduled reminders (Cloudflare Cron) ---
 async function runReminders(env: Bindings): Promise<{ checked: number; sent: number }> {
+  if (env.DISABLE_REMINDER_EMAILS === '1') return { checked: 0, sent: 0 };   // study build: no reminder emails via Resend
   const users = await listUsers(env.DB);
   let sent = 0;
   for (const u of users) {
