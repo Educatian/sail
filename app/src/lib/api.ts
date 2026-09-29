@@ -3,6 +3,8 @@ import type { StudySession, ChatMessage, Condition, StrategyKind, Checkpoint, Me
 // In the browser dev server, '' lets Vite proxy /api -> :3001.
 // In a bundled mobile (Capacitor) build, set VITE_API_BASE to the hosted/LAN server, e.g. http://192.168.0.10:3001
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '';
+// Study build: build with VITE_CODED_IDS=1 so participants sign in with a coded Study ID (no email, no guest mode, no reminder-email UI).
+export const CODED_IDS = import.meta.env.VITE_CODED_IDS === '1';
 export const apiUrl = (path: string) => `${API_BASE}${path}`;
 
 const j = async (r: Response) => {
@@ -15,7 +17,7 @@ const j = async (r: Response) => {
 };
 const JSON_H = { 'Content-Type': 'application/json' };
 
-// --- current student (lightweight email+passcode auth; studentId = normalized email) ---
+// --- current student (lightweight ID+passcode auth; studentId = normalized email, or the coded Study ID when CODED_IDS) ---
 const SKEY = 'sail-student';
 export const getStudent = (): string => { try { return localStorage.getItem(SKEY) ?? ''; } catch { return ''; } };
 export const setStudent = (sid: string) => { try { localStorage.setItem(SKEY, sid); } catch { /* ignore */ } };
@@ -58,8 +60,8 @@ export const api = {
       keepalive: true,
     }).then(j).catch(() => ({ ok: false }));
   },
-  auth(email: string, passcode: string): Promise<{ studentId: string; returning: boolean }> {
-    return fetch(apiUrl('/api/auth'), { method: 'POST', headers: JSON_H, body: JSON.stringify({ email, passcode }) }).then(j);
+  auth(idOrEmail: string, passcode: string): Promise<{ studentId: string; returning: boolean }> {
+    return fetch(apiUrl('/api/auth'), { method: 'POST', headers: JSON_H, body: JSON.stringify({ email: idOrEmail, studyId: idOrEmail, passcode }) }).then(j);
   },
   createSession(body: {
     subject: string;
