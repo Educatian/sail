@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Screen, Label, Field, AccentButton, GhostButton, Rule } from '../components/editorial';
 import { Reveal } from '../components/ui';
-import { api, setStudent } from '../lib/api';
+import { api, setStudent, CODED_IDS } from '../lib/api';
 import { MarinMark } from '../components/MarinMark';
 
 const LOOP = [
@@ -33,7 +33,7 @@ export function Landing({ onAuthed }: { onAuthed: () => void }) {
   const [passcode, setPasscode] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
-  const [showAccount, setShowAccount] = useState(false);
+  const [showAccount, setShowAccount] = useState(CODED_IDS);
   const heroRef = useRef<HTMLDivElement>(null);
   const fancy = typeof window !== 'undefined'
     && window.matchMedia('(hover: hover)').matches
@@ -54,6 +54,7 @@ export function Landing({ onAuthed }: { onAuthed: () => void }) {
   }, []);
 
   function skip() {
+    if (CODED_IDS) return;   // study build: no guest mode
     const sid = 'tester-' + Math.random().toString(36).slice(2, 8) + '@sail.dev';
     setStudent(sid);
     void api.track('client_anonymous_started', { surface: 'landing' });
@@ -104,10 +105,12 @@ export function Landing({ onAuthed }: { onAuthed: () => void }) {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <div className="mt-8 space-y-3">
-              <AccentButton onClick={skip}>Start a session</AccentButton>
-              <GhostButton onClick={skip}>Try without account</GhostButton>
-            </div>
+            {!CODED_IDS && (
+              <div className="mt-8 space-y-3">
+                <AccentButton onClick={skip}>Start a session</AccentButton>
+                <GhostButton onClick={skip}>Try without account</GhostButton>
+              </div>
+            )}
             <div className="mt-5 flex gap-3 text-sm leading-snug text-ink/55">
               <svg className="mt-0.5 h-6 w-6 shrink-0 text-ink/65" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                 <rect x="5" y="10" width="14" height="10" rx="1.5" />
@@ -121,13 +124,13 @@ export function Landing({ onAuthed }: { onAuthed: () => void }) {
           {showAccount && (
             <Reveal delay={0.04}>
               <div className="mt-8 border-l-2 border-accent pl-4">
-                <Label className="mb-5 accent">Save across sessions</Label>
+                <Label className="mb-5 accent">{CODED_IDS ? 'Sign in with your Study ID' : 'Save across sessions'}</Label>
                 <div className="space-y-5">
-                  <Field label="Email" type="email" placeholder="you@university.edu" value={email} onChange={(e) => setEmail(e.target.value)} autoCapitalize="off" autoCorrect="off" />
+                  <Field label={CODED_IDS ? 'Study ID' : 'Email'} type={CODED_IDS ? 'text' : 'email'} placeholder={CODED_IDS ? 'Study ID from the research team' : 'you@university.edu'} value={email} onChange={(e) => setEmail(e.target.value)} autoCapitalize="off" autoCorrect="off" />
                   <Field label="Passcode" type="password" placeholder="4+ characters" value={passcode} onChange={(e) => setPasscode(e.target.value)} />
                   {err && <p className="text-sm text-accent">{err}</p>}
                   <AccentButton onClick={enter} disabled={busy || !email.trim() || passcode.length < 4}>{busy ? 'Signing in...' : 'Continue with account'}</AccentButton>
-                  <p className="text-xs leading-relaxed text-ink/45">A new email creates an account; the same email and passcode signs you back in.</p>
+                  <p className="text-xs leading-relaxed text-ink/45">{CODED_IDS ? 'Use the coded Study ID the research team gave you after consent. Do not use your name or email address.' : 'A new email creates an account; the same email and passcode signs you back in.'}</p>
                 </div>
               </div>
             </Reveal>
