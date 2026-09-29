@@ -23,7 +23,7 @@ cd worker
 npm install
 wrangler d1 create sail
 npm run db:init:remote
-wrangler secret put OPENROUTER_API_KEY
+wrangler secret put LLM_API_KEY   # Microsoft AI Foundry resource key (also set LLM_BASE_URL and SAIL_MODEL)
 wrangler secret put RESEND_API_KEY
 npm run deploy
 ```
@@ -57,3 +57,9 @@ npx wrangler pages deploy dist --project-name sail-dia
 - Export routes are available through the Worker API.
 - Raw secrets and local SQLite/log files should not be committed.
 - Exact raw GPS should not be stored; telemetry payloads are sanitized before persistence.
+
+## Study Build (coded IDs, no reminder emails)
+
+- Worker: `worker/wrangler.toml` sets `REQUIRE_CODED_IDS = "1"` and `DISABLE_REMINDER_EMAILS = "1"`. `/api/auth` then accepts only coded Study IDs (no email addresses) and no reminder emails are sent.
+- Frontend: build with `VITE_CODED_IDS=1 npm run build` so the sign-in form asks for a Study ID, guest mode is hidden, the email-reminder controls are removed, voice input is off, the location map draws no external map tiles, and the Google Fonts links are stripped from the built HTML (participant devices then contact only the study app).
+- Study IDs are issued by the research team after consent (the ID-to-person crosswalk stays outside this app). Remove both settings to restore the email-based prototype behavior.

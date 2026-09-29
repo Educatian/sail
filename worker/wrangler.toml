@@ -9,9 +9,14 @@ binding = "DB"
 database_name = "sail"
 database_id = "03161a20-1d52-471a-a5b8-b49c7abf3ec4"
 
-# Secrets: `wrangler secret put OPENROUTER_API_KEY` (mentor), `wrangler secret put RESEND_API_KEY` (email reminders)
+# Secrets: `wrangler secret put LLM_API_KEY` (Microsoft AI Foundry resource key) and set LLM_BASE_URL to the Foundry endpoint, `wrangler secret put RESEND_API_KEY` (email reminders)
 [vars]
-SAIL_MODEL = "anthropic/claude-sonnet-4"
+# Microsoft AI Foundry: SAIL_MODEL is the name of the Foundry model deployment (replace the placeholder).
+SAIL_MODEL = "gpt-4o-mini"
+# Study build: reminder emails (Resend) are disabled.
+DISABLE_REMINDER_EMAILS = "1"
+# Study build: participants sign in with a coded Study ID (no email addresses).
+REQUIRE_CODED_IDS = "1"
 RESEND_FROM = "SAIL <onboarding@resend.dev>"
 
 # Daily reminder cron (16:00 UTC). Sends spacing-based metacognitive scaffold emails.

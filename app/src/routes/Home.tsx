@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Screen, TopBar, Rule, Label, Stat, AccentButton, Row } from '../components/editorial';
 import { CountUp, Reveal } from '../components/ui';
-import { api, apiUrl, studentQuery, getStudent, clearStudent, isInstructor, setInstructor, enableInstructorWithPasscode, type LearnerModel, type Stats } from '../lib/api';
+import { api, apiUrl, studentQuery, CODED_IDS, getStudent, clearStudent, isInstructor, setInstructor, enableInstructorWithPasscode, type LearnerModel, type Stats } from '../lib/api';
 import { MarinChat, type MarinMode } from '../components/MarinChat';
 import type { StudySession, Profile, Course, AchievementGoal } from '../domain';
 
@@ -224,6 +224,7 @@ export function Home() {
         </Reveal>
       ))}
 
+      {!CODED_IDS && (<>
       <div className="mt-10 px-5"><Label>Email reminders</Label></div>
       <Rule className="mt-3" />
       <div className="px-5 py-4">
@@ -236,6 +237,7 @@ export function Home() {
           {testMsg && <span className="label-mono normal-case tracking-normal" style={{ letterSpacing: 0 }}>{testMsg}</span>}
         </div>
       </div>
+      </>)}
 
       {instructor && (
         <div className="px-5 py-8">
