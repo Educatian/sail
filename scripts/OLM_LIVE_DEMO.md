@@ -15,7 +15,7 @@ shared single-writer Open Learner Model (OLM):
 
 Also proves the **single-writer field-ownership guard** (ME-owned vs SRL-owned fields).
 
-- Worker (live): https://sail-api.jewoong-moon.workers.dev  (model gemini-2.5-flash)
+- Worker (live): https://sail-api.jewoong-moon.workers.dev  (Microsoft AI Foundry deployment)
 - Reproduce: `bash scripts/olm_live_demo.sh`  (uses a fresh ephemeral learnerId; cleans up after)
 
 ## Field-ownership map (final)
