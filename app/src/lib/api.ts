@@ -5,6 +5,9 @@ import type { StudySession, ChatMessage, Condition, StrategyKind, Checkpoint, Me
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '';
 // Study build: build with VITE_CODED_IDS=1 so participants sign in with a coded Study ID (no email, no guest mode, no reminder-email UI).
 export const CODED_IDS = import.meta.env.VITE_CODED_IDS === '1';
+// Study build (VITE_CODED_IDS=1 or VITE_STUDY_BUILD=1): also no voice input (browser speech recognition can send audio to the browser vendor),
+// no external map tiles, and no web-font requests, so participant devices contact only the study app.
+export const STUDY_BUILD = CODED_IDS || import.meta.env.VITE_STUDY_BUILD === '1';
 export const apiUrl = (path: string) => `${API_BASE}${path}`;
 
 const j = async (r: Response) => {
