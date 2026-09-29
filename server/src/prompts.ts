@@ -13,7 +13,9 @@ export function buildContextSnapshot(s: StudySession, hintLevelSoFar: number): s
       plannedMinutes: s.plannedMinutes,
       elapsedMinutes: s.actualMinutes,
       contextTrace: s.contextTrace ?? null,
-      spatialTrace: s.spatialTrace ?? null,
+      spatialTrace: s.spatialTrace
+      ? { acquisitionMode: s.spatialTrace.acquisitionMode, mobilityState: s.spatialTrace.mobilityState, trackingMode: s.spatialTrace.trackingMode, distanceMeters: s.spatialTrace.distanceMeters, dwellSeconds: s.spatialTrace.dwellSeconds, transitionCount: s.spatialTrace.transitionCount }
+      : null,   // data minimization: coordinates, accuracy and route previews are never sent to the LLM
       momentary: (s.momentaryChecks ?? []).length
         ? { count: s.momentaryChecks!.length, latest: s.momentaryChecks!.at(-1), focusTrend: s.momentaryChecks!.map((c) => c.focus) }
         : null,
